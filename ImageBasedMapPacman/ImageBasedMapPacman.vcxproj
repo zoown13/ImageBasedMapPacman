@@ -151,6 +151,8 @@
     <ResourceCompile Include="ImageBasedMapPacman.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\Packman1.bmp" />
+    <Image Include="bitmap1.bmp" />
     <Image Include="ImageBasedMapPacman.ico" />
     <Image Include="small.ico" />
   </ItemGroup>

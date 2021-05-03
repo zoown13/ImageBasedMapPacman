@@ -1,6 +1,8 @@
 ﻿// ImageBasedMapPacman.cpp : 애플리케이션에 대한 진입점을 정의합니다.
 //
-
+#include <windows.h>
+#include <TCHAR.H>
+#include "Resource.h"
 #include "framework.h"
 #include "ImageBasedMapPacman.h"
 
@@ -121,16 +123,63 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_DESTROY  - 종료 메시지를 게시하고 반환합니다.
 //
 //
+
+void Animation(int xPos, int yPos, HDC hdc)
+{
+    HDC memdc;
+    HBITMAP RunBit[2], hBit, oldBit;
+    static int count;
+    int i;
+    count++;
+    count = count % 10;
+    RunBit[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_BITMAP_R1)); //	for (i = 0; i < 10; i++)
+    RunBit[1] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_BITMAP_R2)); //		RunBit[i] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_BITMAP_R1+i));
+    memdc = CreateCompatibleDC(hdc);
+    hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_BITMAP5_6));
+    oldBit = (HBITMAP)SelectObject(memdc, hBit);
+    BitBlt(hdc, 0, 0, 819, 614, memdc, 0, 0, SRCCOPY);
+    SelectObject(memdc, RunBit[count]);
+    BitBlt(hdc, xPos, yPos, 180, 240, memdc, 0, 0, SRCCOPY);
+    SelectObject(memdc, oldBit);
+    for (i = 0; i < 10; i++)
+        DeleteObject(RunBit[i]);
+    DeleteDC(memdc);
+    DeleteObject(hBit);
+}
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    OPENFILENAME OFN;
+    TCHAR str[100], lpstrFile[100] = _T("");
+    TCHAR filter[] = _T("JPG(.jpg)\0*.jpg\0PNG(.png)\0*.png\0");
+
     switch (message)
     {
+    case WM_CREATE:
+        break;
+
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
             // 메뉴 선택을 구문 분석합니다:
             switch (wmId)
             {
+            case IDM_UPLOAD:    // 사진 업로드 기능
+                memset(&OFN, 0, sizeof(OPENFILENAME));
+                OFN.lStructSize = sizeof(OPENFILENAME);
+                OFN.hwndOwner = hWnd;
+                OFN.lpstrFilter = filter;
+                OFN.lpstrFile = lpstrFile;
+                OFN.nMaxFile = 100;
+                OFN.lpstrInitialDir = _T(".");
+                if (GetOpenFileName(&OFN) != 0) {
+                    _stprintf_s(str, _T("%s 파일을 업로드하겠습니가?"), OFN.lpstrFile);
+                    MessageBox(hWnd, str, _T("업로드 확인"), MB_OK);
+                }
+
+                break;
+            case IDM_DOWNLOAD:  // 사진 가져오는 기능 
+                break;
+
             case IDM_ABOUT:
                 DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
                 break;
@@ -178,3 +227,4 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     }
     return (INT_PTR)FALSE;
 }
+
