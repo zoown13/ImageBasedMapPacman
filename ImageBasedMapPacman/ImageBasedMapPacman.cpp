@@ -57,8 +57,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     return (int) msg.wParam;
 }
 
-
-
 //
 //  함수: MyRegisterClass()
 //
@@ -124,30 +122,37 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 //
 
-/* void Animation(int xPos, int yPos, HDC hdc)
+ void Animation(int xPos, int yPos, HDC hdc)
 {
     HDC memdc;
-    HBITMAP RunBit[2], hBit, oldBit;
+    HBITMAP RunBit[2], hBit, oldBit, Mask[2];
     static int count;
     int i;
     count++;
-    count = count % 10;
-    RunBit[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_BITMAP_R1)); //	for (i = 0; i < 10; i++)
-    RunBit[1] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_BITMAP_R2)); //		RunBit[i] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_BITMAP_R1+i));
+    count = count % 2;
+    RunBit[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Packman1)); 
+    RunBit[1] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Packman2)); 
+    Mask[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Mask1));
+    Mask[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Mask2));
     memdc = CreateCompatibleDC(hdc);
-    hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_BITMAP5_6));
+    hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Background));
     oldBit = (HBITMAP)SelectObject(memdc, hBit);
-    BitBlt(hdc, 0, 0, 819, 614, memdc, 0, 0, SRCCOPY);
+    BitBlt(hdc, 0, 0, 1920, 1080, memdc, 0, 0, SRCAND);
     SelectObject(memdc, RunBit[count]);
-    BitBlt(hdc, xPos, yPos, 180, 240, memdc, 0, 0, SRCCOPY);
+    BitBlt(hdc, xPos, yPos, 77, 77, memdc, 0, 0, SRCPAINT);
     SelectObject(memdc, oldBit);
-    for (i = 0; i < 10; i++)
+    for (i = 0; i < 2; i++)
         DeleteObject(RunBit[i]);
     DeleteDC(memdc);
     DeleteObject(hBit);
-}*/
+}
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    HDC hdc;
+    PAINTSTRUCT ps;
+    static int x, y;
+    static RECT rectView;
+
     OPENFILENAME OFN;
     TCHAR str[100], lpstrFile[100] = _T("");
     TCHAR filter[] = _T("JPG(.jpg)\0*.jpg\0PNG(.png)\0*.png\0");
@@ -155,15 +160,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     switch (message)
     {
     case WM_CREATE:
+        GetClientRect(hWnd, &rectView);
+        x = 20; y = 20;
         break;
-
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
-            // 메뉴 선택을 구문 분석합니다:
+
             switch (wmId)
             {
-            case IDM_UPLOAD:    // 사진 업로드 기능
+            case IDM_UPLOAD:                                // 사진 업로드 기능
                 memset(&OFN, 0, sizeof(OPENFILENAME));
                 OFN.lStructSize = sizeof(OPENFILENAME);
                 OFN.hwndOwner = hWnd;
@@ -177,7 +183,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 }
 
                 break;
-            case IDM_DOWNLOAD:  // 사진 가져오는 기능 
+            case IDM_DOWNLOAD:                             // 사진 가져오는 기능 
                 break;
 
             case IDM_ABOUT:
@@ -192,14 +198,36 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         break;
     case WM_PAINT:
-        {
-            PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hWnd, &ps);
-            // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
+            hdc = BeginPaint(hWnd, &ps);
+            Animation(x, y, hdc);
             EndPaint(hWnd, &ps);
+            break;
+    case WM_KEYDOWN: //키보드의 어떤 버튼이 내려간 것을 감지했을 때 발생되는 메시지
+        switch (wParam) { // 키보드가 눌렸을때 wParam에 값이 저장된다 값과 비교하여 switch 문에 진입한다
+        case VK_LEFT: // 왼쪽 화살표
+            x -= 40; // 왼쪽으로 원 이동
+            if (x - 20 < rectView.left) x += 40; // x - 20 보다 rect 구조체의 left 변수가 더 크면 x좌표에 40 추가하여 윈도우 밖으로 벗어나지 못하게 한다
+                break; 
+        case VK_RIGHT: // 오른쪽 화살표
+            x += 40; // 오른쪽으로 원 이동
+            if (x + 50 > rectView.right) x -= 40; // x + 20 보다 rect 구조체의 right 변수가 더 작으면 x에 - 40 원은 윈도우 안의 Rectangle을 벗어나지 못한다!
+                break;
+        case VK_UP:
+            y -= 40; // up, down은 수직 이동이므로 y값을 변경한다 이후 비슷
+            if (y - 20 < rectView.top) y += 40;
+            break;
+        case VK_DOWN:
+            y += 40;
+            if (y + 20 > rectView.bottom) y -= 40;
+            break;
+        case VK_HOME:
+            x = 20, y = 20;
+            break;
         }
-        break;
+        InvalidateRgn(hWnd, NULL, TRUE); // 화면 다시그리기 함수 호출하여 WM_PAINT 메시지를 발생시키고 즉시 원을 새로 그린다
+            break;
     case WM_DESTROY:
+        KillTimer(hWnd, 1);
         PostQuitMessage(0);
         break;
     default:

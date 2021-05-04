@@ -45,5 +45,20 @@
     <Image Include="ImageBasedMapPacman.ico">
       <Filter>리소스 파일</Filter>
     </Image>
+    <Image Include="..\mask1.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\mask2.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\packman1.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\packman2.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\background.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
   </ItemGroup>
 </Project>

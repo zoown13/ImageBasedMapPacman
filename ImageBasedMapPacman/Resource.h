@@ -12,6 +12,12 @@
 #define IDI_SMALL                       108
 #define IDC_IMAGEBASEDMAPPACMAN         109
 #define IDR_MAINFRAME                   128
+#define IDB_Mask1                       132
+#define IDB_BITMAP2                     133
+#define IDB_Mask2                       133
+#define IDB_Packman1                    134
+#define IDB_Packman2                    135
+#define IDB_Background                  138
 #define ID_MAP_32771                    32771
 #define IDM_UPLOAD                      32772
 #define IDM_DOWNLOAD                    32773
@@ -22,7 +28,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        132
+#define _APS_NEXT_RESOURCE_VALUE        139
 #define _APS_NEXT_COMMAND_VALUE         32774
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           110
