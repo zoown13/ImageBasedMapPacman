@@ -2,7 +2,7 @@
 //
 #include <windows.h>
 #include <TCHAR.H>
-#include "Resource.h"
+#include "resource.h"
 #include "framework.h"
 #include "ImageBasedMapPacman.h"
 
@@ -10,7 +10,7 @@
 
 // 전역 변수:
 HINSTANCE hInst;                                // 현재 인스턴스입니다.
-WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
+WCHAR szTitle[] = _T("ImageBasedMapPackman");                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
 
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
@@ -100,7 +100,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
 
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
+      CW_USEDEFAULT, 0, 1920, 1080, nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd)
    {
@@ -124,7 +124,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 //
 
-void Animation(int xPos, int yPos, HDC hdc)
+/* void Animation(int xPos, int yPos, HDC hdc)
 {
     HDC memdc;
     HBITMAP RunBit[2], hBit, oldBit;
@@ -145,7 +145,7 @@ void Animation(int xPos, int yPos, HDC hdc)
         DeleteObject(RunBit[i]);
     DeleteDC(memdc);
     DeleteObject(hBit);
-}
+}*/
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     OPENFILENAME OFN;

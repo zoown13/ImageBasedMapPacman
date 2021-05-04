@@ -12,7 +12,6 @@
 #define IDI_SMALL                       108
 #define IDC_IMAGEBASEDMAPPACMAN         109
 #define IDR_MAINFRAME                   128
-#define IDB_BITMAP1                     131
 #define ID_MAP_32771                    32771
 #define IDM_UPLOAD                      32772
 #define IDM_DOWNLOAD                    32773
