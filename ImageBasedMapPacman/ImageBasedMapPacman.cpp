@@ -2,6 +2,7 @@
 //
 #include <windows.h>
 #include <TCHAR.H>
+#include <time.h>
 #include "resource.h"
 #include "framework.h"
 #include "ImageBasedMapPacman.h"
@@ -98,7 +99,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
 
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, nullptr, hInstance, nullptr);
+      0, 0, 1920, 1080, nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd)
    {
@@ -122,9 +123,10 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 //
 
- void Animation(int xPos, int yPos, HDC hdc)
+ void Animation(int xPos, int yPos, RECT rectObject, int rectsize, HDC hdc)
 {
     HDC memdc;
+    HBRUSH hBrush, oldBrush;
     HBITMAP RunBit[2], hBit, oldBit, Mask[2];
     static int count;
     int i;
@@ -145,13 +147,20 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
         DeleteObject(RunBit[i]);
     DeleteDC(memdc);
     DeleteObject(hBit);
+    hBrush = CreateSolidBrush(RGB(0, 255, 0));
+    oldBrush = (HBRUSH)SelectObject(hdc, hBrush);
+    Rectangle(hdc, rectObject.left, rectObject.top, rectObject.right, rectObject.bottom);
+    SelectObject(hdc, oldBrush);
+    DeleteObject(hBrush);
 }
+#define rectsize 50
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    static bool go = true;
     HDC hdc;
     PAINTSTRUCT ps;
-    static int x, y;
-    static RECT rectView;
+    static int x, y, objx, objy;
+    static RECT rectView, rectObject; // 장애물용 RECT 구조체 추가 
 
     OPENFILENAME OFN;
     TCHAR str[100], lpstrFile[100] = _T("");
@@ -162,6 +171,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_CREATE:
         GetClientRect(hWnd, &rectView);
         x = 20; y = 20;
+        srand((unsigned)time(NULL));    // 랜덤으로 장애물 생성하기 
+        objx = rand() % rectView.right;
+        objy = rand() % rectView.bottom;
+        rectObject.left = objx;         // 장애물 좌표 구조체 
+        rectObject.top = objy;
+        rectObject.right = objx + rectsize;
+        rectObject.bottom = objy - rectsize;
         break;
     case WM_COMMAND:
         {
@@ -199,7 +215,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_PAINT:
             hdc = BeginPaint(hWnd, &ps);
-            Animation(x, y, hdc);
+            Animation(x, y, rectObject, rectsize, hdc);
             EndPaint(hWnd, &ps);
             break;
     case WM_KEYDOWN: //키보드의 어떤 버튼이 내려간 것을 감지했을 때 발생되는 메시지
@@ -215,10 +231,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case VK_UP:
             y -= 40; // up, down은 수직 이동이므로 y값을 변경한다 이후 비슷
             if (y - 20 < rectView.top) y += 40;
+            if (y - 24 < rectObject.bottom && x - 40 < rectObject.left && x + 120 > rectObject.right&& go) y += 40;
+            {
+                if (y - 25 < rectObject.bottom) go = false;
+                else go = true;
+            }
             break;
         case VK_DOWN:
             y += 40;
             if (y + 20 > rectView.bottom) y -= 40;
+            if (y + 90 > rectObject.top && x - 40 < rectObject.left && x + 120 > rectObject.right&& go ) y -= 40;
+            {
+                if (y + 90 > rectObject.top) go = false;
+                else go = true;
+            }
             break;
         case VK_HOME:
             x = 20, y = 20;
