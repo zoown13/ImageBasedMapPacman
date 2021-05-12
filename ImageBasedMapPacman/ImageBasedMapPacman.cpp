@@ -5,6 +5,8 @@
 #include "resource.h"
 #include "framework.h"
 #include "ImageBasedMapPacman.h"
+#include <wchar.h>
+#include "ImageLabels.h"
 
 #define MAX_LOADSTRING 100
 
@@ -157,12 +159,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     TCHAR str[100], lpstrFile[100] = _T("");
     TCHAR filter[] = _T("JPG(.jpg)\0*.jpg\0PNG(.png)\0*.png\0");
 
+    /**
+       * imageName: /api/ + 사진 파일 이름
+       * labels: 사진 라벨링 데이터가 저장될 배열
+    */
+    static wchar_t imageName[20] = L"/api/test.jpeg";
+    static wchar_t labels[500];
+
     switch (message)
     {
     case WM_CREATE:
         GetClientRect(hWnd, &rectView);
         x = 20; y = 20;
         break;
+
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
@@ -183,7 +193,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 }
 
                 break;
-            case IDM_DOWNLOAD:                             // 사진 가져오는 기능 
+            case IDM_DOWNLOAD:                             // 사진 라벨링 데이터 가져오는 버튼, 실험적으로 사용
+             
+                getImageLabels(imageName, labels);
+                MessageBox(hWnd, labels,
+                    _T("이미지 라벨링 데이터 확인"), MB_OKCANCEL);
                 break;
 
             case IDM_ABOUT:

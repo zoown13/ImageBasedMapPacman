@@ -27,9 +27,21 @@
     <ClInclude Include="ImageBasedMapPacman.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="WinHttpWrapper.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageLabels.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ImageBasedMapPacman.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="WinHttpWrapper.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageLabels.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
