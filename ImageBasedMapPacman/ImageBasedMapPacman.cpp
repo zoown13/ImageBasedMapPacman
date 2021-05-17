@@ -156,7 +156,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 #define rectsize 50
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    static bool go = true;
+    static bool go1, go2, go3, go4 = true;
     HDC hdc;
     PAINTSTRUCT ps;
     static int x, y, objx, objy;
@@ -223,27 +223,39 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case VK_LEFT: // 왼쪽 화살표
             x -= 40; // 왼쪽으로 원 이동
             if (x - 20 < rectView.left) x += 40; // x - 20 보다 rect 구조체의 left 변수가 더 크면 x좌표에 40 추가하여 윈도우 밖으로 벗어나지 못하게 한다
+            if (x  < rectObject.right && y > rectObject.top -120&& y < rectObject.bottom+30 && go1)
+                x += 40;
+                {
+                if (x  < rectObject.right) go1 = false;
+                else go1 = true;
+            }
                 break; 
         case VK_RIGHT: // 오른쪽 화살표
             x += 40; // 오른쪽으로 원 이동
-            if (x + 50 > rectView.right) x -= 40; // x + 20 보다 rect 구조체의 right 변수가 더 작으면 x에 - 40 원은 윈도우 안의 Rectangle을 벗어나지 못한다!
+            if (x + 40 > rectView.right) x -= 40; // x + 20 보다 rect 구조체의 right 변수가 더 작으면 x에 - 40 원은 윈도우 안의 Rectangle을 벗어나지 못한다!
+            if (x + 50 > rectObject.left && y > rectObject.top - 120 && y < rectObject.bottom + 30 && go2) 
+                x -= 40;
+            {
+                if (x + 51 > rectObject.left) go2 = false;
+                else go2 = true;
+            }
                 break;
         case VK_UP:
             y -= 40; // up, down은 수직 이동이므로 y값을 변경한다 이후 비슷
             if (y - 20 < rectView.top) y += 40;
-            if (y - 24 < rectObject.bottom && x - 40 < rectObject.left && x + 120 > rectObject.right&& go) y += 40;
+            if (y - 24 < rectObject.bottom && x - 40 < rectObject.left && x + 120 > rectObject.right && go3) y += 40;
             {
-                if (y - 25 < rectObject.bottom) go = false;
-                else go = true;
+                if (y - 25 < rectObject.bottom) go3 = false;    // 이게 없으면 장애물에 처박혀버린다
+                else go3 = true;
             }
             break;
         case VK_DOWN:
             y += 40;
             if (y + 20 > rectView.bottom) y -= 40;
-            if (y + 90 > rectObject.top && x - 40 < rectObject.left && x + 120 > rectObject.right&& go ) y -= 40;
+            if (y + 90 > rectObject.top && x - 40 < rectObject.left && x + 120 > rectObject.right&& go4 ) y -= 40;
             {
-                if (y + 90 > rectObject.top) go = false;
-                else go = true;
+                if (y + 90 > rectObject.top) go4 = false;
+                else go4 = true;
             }
             break;
         case VK_HOME:
