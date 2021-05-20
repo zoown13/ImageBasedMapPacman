@@ -7,6 +7,8 @@ public:
 	ImageLabels();
 	static ImageLabels& getInstance();
 	void getImageLabels(wchar_t* filename, wchar_t* labels);
+	void getUploadUrl(wchar_t* filename, wchar_t* url);
+	
 };
 
 #endif
@@ -17,6 +19,7 @@ extern "C"
 #endif
 
 	void getImageLabels(wchar_t* filename, wchar_t* labels);
+	void getUploadUrl(wchar_t* filename, wchar_t* url);
 
 
 #ifdef __cplusplus

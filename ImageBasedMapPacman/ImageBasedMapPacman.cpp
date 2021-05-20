@@ -165,7 +165,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
        * labels: 사진 라벨링 데이터가 저장될 배열
     */
     static wchar_t imageName[100];
+    static wchar_t imageNameUrl[100];
     static wchar_t labels[500];
+    static wchar_t url[5000];
 
     switch (message)
     {
@@ -192,14 +194,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 OFN.nMaxFileTitle = 100;
                 if (GetOpenFileName(&OFN) != 0) {
                     _stprintf_s(imageName, _T("/api/%s"), lpstrFileTitle); // label을 가져오기 위해 필요한 파일명 저장
+                    _stprintf_s(imageNameUrl, _T("/api/uploads/%s"), lpstrFileTitle); // url을 가져오기 위해 필요한 파일명 저장
                     _stprintf_s(str, _T("%s 파일을 업로드하겠습니가?"), lpstrFile);                    
                     MessageBox(hWnd, str, _T("업로드 확인"), MB_OK);
                 }
+
+                getUploadUrl(imageNameUrl, url); // 이미지 업로드 할 url 가져옴
+
 
                 break;
             case IDM_DOWNLOAD:                             // 사진 라벨링 데이터 가져오는 버튼, 실험적으로 사용
              
                 getImageLabels(imageName, labels); // 라벨링 데이터 가져와 labels에 저장
+                
                 MessageBox(hWnd, labels,
                     _T("이미지 라벨링 데이터 확인"), MB_OKCANCEL);
                 break;

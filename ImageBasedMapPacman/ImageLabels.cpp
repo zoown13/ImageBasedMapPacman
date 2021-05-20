@@ -39,7 +39,7 @@ void getImageLabels(wchar_t* filename, wchar_t* labels)
 	cout << "Returned Status:" << response.statusCode << endl << endl;
 	response.Reset();*/
 
-	cout << "Action: Retrieve the product with id = 1" << endl;
+	
 	req.Get(filename, L"", response);
 	cout << "Returned Text:" << response.text << endl << endl;
 	std::wstring widestr = std::wstring(response.text.begin(), response.text.end());
@@ -68,6 +68,28 @@ void getImageLabels(wchar_t* filename, wchar_t* labels)
 	req.Get(L"/api/products", L"", response);
 	cout << "Returned Text:" << response.text << endl << endl;
 	response.Reset();*/
+
+	return;
+}
+
+void getUploadUrl(wchar_t* filename, wchar_t* url) {
+
+	using namespace std;
+	const wstring domain = L"z3r78ucou9.execute-api.ap-northeast-2.amazonaws.com";
+	const wstring requestHeader = L"Content-Type: image/jpeg";
+	int port = INTERNET_DEFAULT_HTTPS_PORT;
+	bool https = true;
+
+	using namespace WinHttpWrapper;
+
+	HttpRequest req(domain, port, https);
+	HttpResponse response;
+
+	req.Get(filename, L"", response);
+	cout << "Returned Text:" << response.text << endl << endl;
+	std::wstring widestr = std::wstring(response.text.begin(), response.text.end());
+	wcscpy(url, widestr.c_str());
+	response.Reset();
 
 	return;
 }
