@@ -12,12 +12,8 @@
 #define IDI_SMALL                       108
 #define IDC_IMAGEBASEDMAPPACMAN         109
 #define IDR_MAINFRAME                   128
-
 #define IDB_MaskRight                   132
-
-
 #define IDB_MaskCLose                   133
-
 #define IDB_PackmanRight1               134
 #define IDB_PackmanRight2               135
 #define IDB_Background                  138
@@ -30,6 +26,7 @@
 #define IDB_MaskUp                      147
 #define IDB_MaskLeft                    148
 #define IDB_PackmanUp2                  149
+#define IDB_Map                         150
 #define ID_MAP_32771                    32771
 #define IDM_UPLOAD                      32772
 #define IDM_DOWNLOAD                    32773
@@ -40,7 +37,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        150
+#define _APS_NEXT_RESOURCE_VALUE        153
 #define _APS_NEXT_COMMAND_VALUE         32775
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           110
