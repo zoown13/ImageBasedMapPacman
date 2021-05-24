@@ -202,6 +202,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     static int x, y, objx, objy;
     static RECT rectView, rectObject; // 장애물용 RECT 구조체 추가 
     static int s = 1;//방향설정 변수
+    static bool go = false; // 팩맨이 움직일지 말지 결정하는 불 변수 
 
     OPENFILENAME OFN;
     TCHAR str[100], lpstrFile[100] = _T("");
@@ -219,6 +220,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         rectObject.top = objy;
         rectObject.right = objx + rectsize;
         rectObject.bottom = objy - rectsize;
+
+        SetTimer(hWnd, 1, 70, NULL);    // 팩맨의 움직임을 위한 타이머 설정
         break;
     case WM_COMMAND:
         {
@@ -260,55 +263,87 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             EndPaint(hWnd, &ps);
             break;
     case WM_KEYDOWN: //키보드의 어떤 버튼이 내려간 것을 감지했을 때 발생되는 메시지
-        switch (wParam) { // 키보드가 눌렸을때 wParam에 값이 저장된다 값과 비교하여 switch 문에 진입한다
-        case VK_LEFT: // 왼쪽 화살표
+        // 키보드가 눌렸을때 wParam에 값이 저장된다 값과 비교하여 switch 문에 진입한다
+        if (wParam == VK_LEFT)
+        { // 왼쪽 화살표
             s = 1;//왼쪽상수
-            x -= 40; // 왼쪽으로 원 이동
-            if (x - 20 < rectView.left) x += 40; // x - 20 보다 rect 구조체의 left 변수가 더 크면 x좌표에 40 추가하여 윈도우 밖으로 벗어나지 못하게 한다
-            if (x  < rectObject.right && y > rectObject.top -120&& y < rectObject.bottom+30 && go1)
-                x += 40;
-                {
-                if (x  < rectObject.right) go1 = false;
-                else go1 = true;
-            }
-                break; 
-        case VK_RIGHT: // 오른쪽 화살표
-            s = 2;//오른쪽상수
-            x += 40; // 오른쪽으로 원 이동
-            if (x + 40 > rectView.right-40) x -= 40; // x + 20 보다 rect 구조체의 right 변수가 더 작으면 x에 - 40 원은 윈도우 안의 Rectangle을 벗어나지 못한다!
-            if (x + 50 > rectObject.left && y > rectObject.top - 120 && y < rectObject.bottom + 30 && go2) 
-                x -= 40;
-            {
-                if (x + 51 > rectObject.left) go2 = false;
-                else go2 = true;
-            }
-                break;
-        case VK_UP:
-            s = 3;//위쪽상수
-            y -= 40; // up, down은 수직 이동이므로 y값을 변경한다 이후 비슷
-            if (y - 20 < rectView.top) y += 40;
-            if (y - 24 < rectObject.bottom && x - 40 < rectObject.left && x + 120 > rectObject.right && go3) y += 40;
-            {
-                if (y - 25 < rectObject.bottom) go3 = false;    // 이게 없으면 장애물에 처박혀버린다
-                else go3 = true;
-            }
-            break;
-        case VK_DOWN:
-            s = 4;
-            y += 40;
-            if (y + 20 > rectView.bottom) y -= 40;
-            if (y + 90 > rectObject.top && x - 40 < rectObject.left && x + 120 > rectObject.right&& go4 ) y -= 40;
-            {
-                if (y + 90 > rectObject.top) go4 = false;
-                else go4 = true;
-            }
-            break;
-        case VK_HOME:
-            x = 20, y = 20;
-            break;
+            go = true;  // 팩맨 이동 허용 
         }
-        InvalidateRgn(hWnd, NULL, TRUE); // 화면 다시그리기 함수 호출하여 WM_PAINT 메시지를 발생시키고 즉시 원을 새로 그린다
-            break;
+                     
+        else if (wParam == VK_RIGHT) // 오른쪽 화살표
+        {
+            s = 2;//오른쪽상수
+            go = true;
+        }    
+
+        else if (wParam == VK_UP) // 위쪽 화살표
+        {
+            s = 3;//위쪽상수
+            go = true;
+        }
+
+        else if (wParam == VK_DOWN)
+        {
+            s = 4;// 아래쪽상수
+            go = true;
+        }
+           
+       if(wParam == VK_RETURN)  // 엔터키 누르면 초기 위치로 이동 && 움직임 정지 
+       {
+            x = 20, y = 20;
+            go = false; // 팩맨 이동 금지
+            InvalidateRgn(hWnd, NULL, TRUE);
+       }
+    case WM_TIMER:
+        if (go) { // go 가 true 일때만 팩맨이 움직인다 
+            switch (s)
+            {
+            case(1):    // 왼쪽
+                x -= 20; // 왼쪽으로 원 이동
+                if (x - 20 < rectView.left) x += 20; // x - 20 보다 rect 구조체의 left 변수가 더 크면 x좌표에 40 추가하여 윈도우 밖으로 벗어나지 못하게 한다
+                if (x  < rectObject.right && y > rectObject.top - 120 && y < rectObject.bottom + 30 && go1)
+                    x += 20;
+                {
+                    if (x < rectObject.right) go1 = false;
+                    else go1 = true;
+                }
+
+                break;
+            case(2):    // 오른쪽 
+                x += 20; // 오른쪽으로 원 이동
+                if (x + 40 > rectView.right - 40) x -= 20; // x + 40 보다 rect 구조체의 right 변수가 더 작으면 x에 - 40 원은 윈도우 안의 Rectangle을 벗어나지 못한다!
+                if (x + 50 > rectObject.left && y > rectObject.top - 120 && y < rectObject.bottom + 30 && go2)
+                    x -= 20;
+                {
+                    if (x + 51 > rectObject.left) go2 = false;
+                    else go2 = true;
+                }
+                break;
+            case(3):    // 위
+                y -= 20; // up, down은 수직 이동이므로 y값을 변경한다 이후 비슷
+                if (y - 20 < rectView.top) y += 20;
+                if (y - 24 < rectObject.bottom && x - 40 < rectObject.left && x + 120 > rectObject.right && go3)
+                    y += 20;
+                {
+                    if (y - 25 < rectObject.bottom) go3 = false;    // 이게 없으면 장애물에 처박혀버린다
+                    else go3 = true;
+                }
+                break;
+            case(4):    // 아래 
+                y += 20;
+                if (y + 20 > rectView.bottom) y -= 20;
+                if (y + 90 > rectObject.top && x - 40 < rectObject.left && x + 120 > rectObject.right && go4)
+                    y -= 20;
+                {
+                    if (y + 90 > rectObject.top) go4 = false;
+                    else go4 = true;
+                }
+                break;
+            }
+            InvalidateRgn(hWnd, NULL, TRUE); // 화면 다시그리기 함수 호출하여 WM_PAINT 메시지를 발생시키고 즉시 팩맨을 새로 그린다
+        }
+        
+        break;
     case WM_DESTROY:
         KillTimer(hWnd, 1);
         PostQuitMessage(0);
