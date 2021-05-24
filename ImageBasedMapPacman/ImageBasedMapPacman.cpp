@@ -203,6 +203,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     static RECT rectView, rectObject; // 장애물용 RECT 구조체 추가 
     static int s = 1;//방향설정 변수
     static bool go = false; // 팩맨이 움직일지 말지 결정하는 불 변수 
+    static bool Game_Start = false;
 
     OPENFILENAME OFN;
     TCHAR str[100], lpstrFile[100] = _T("");
@@ -229,7 +230,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
             switch (wmId)
             {
-            case IDM_UPLOAD:                                // 사진 업로드 기능
+            case IDM_UPLOAD:                                // 사진 업로드 기능       
                 memset(&OFN, 0, sizeof(OPENFILENAME));
                 OFN.lStructSize = sizeof(OPENFILENAME);
                 OFN.hwndOwner = hWnd;
@@ -238,10 +239,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 OFN.nMaxFile = 100;
                 OFN.lpstrInitialDir = _T(".");
                 if (GetOpenFileName(&OFN) != 0) {
-                    _stprintf_s(str, _T("%s 파일을 업로드하겠습니가?"), OFN.lpstrFile);
+                    _stprintf_s(str, _T("%s 파일을 업로드하겠습니까?"), OFN.lpstrFile);
                     MessageBox(hWnd, str, _T("업로드 확인"), MB_OK);
                 }
-
+                Game_Start = true; // 게임 시작 가능 
                 break;
             case IDM_DOWNLOAD:                             // 사진 가져오는 기능 
                 break;
@@ -258,44 +259,48 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         break;
     case WM_PAINT:
+        if (Game_Start) {
             hdc = BeginPaint(hWnd, &ps);
             Animation(x, y, rectObject, rectsize, hdc, s);
             EndPaint(hWnd, &ps);
+        }
             break;
     case WM_KEYDOWN: //키보드의 어떤 버튼이 내려간 것을 감지했을 때 발생되는 메시지
         // 키보드가 눌렸을때 wParam에 값이 저장된다 값과 비교하여 switch 문에 진입한다
-        if (wParam == VK_LEFT)
-        { // 왼쪽 화살표
-            s = 1;//왼쪽상수
-            go = true;  // 팩맨 이동 허용 
-        }
-                     
-        else if (wParam == VK_RIGHT) // 오른쪽 화살표
-        {
-            s = 2;//오른쪽상수
-            go = true;
-        }    
+        if (Game_Start) {
+            if (wParam == VK_LEFT)
+            { // 왼쪽 화살표
+                s = 1;//왼쪽상수
+                go = true;  // 팩맨 이동 허용 
+            }
 
-        else if (wParam == VK_UP) // 위쪽 화살표
-        {
-            s = 3;//위쪽상수
-            go = true;
-        }
+            else if (wParam == VK_RIGHT) // 오른쪽 화살표
+            {
+                s = 2;//오른쪽상수
+                go = true;
+            }
 
-        else if (wParam == VK_DOWN)
-        {
-            s = 4;// 아래쪽상수
-            go = true;
+            else if (wParam == VK_UP) // 위쪽 화살표
+            {
+                s = 3;//위쪽상수
+                go = true;
+            }
+
+            else if (wParam == VK_DOWN)
+            {
+                s = 4;// 아래쪽상수
+                go = true;
+            }
+
+            if (wParam == VK_RETURN)  // 엔터키 누르면 초기 위치로 이동 && 움직임 정지 
+            {
+                x = 20, y = 20;
+                go = false; // 팩맨 이동 금지
+                InvalidateRgn(hWnd, NULL, TRUE);
+            }
         }
-           
-       if(wParam == VK_RETURN)  // 엔터키 누르면 초기 위치로 이동 && 움직임 정지 
-       {
-            x = 20, y = 20;
-            go = false; // 팩맨 이동 금지
-            InvalidateRgn(hWnd, NULL, TRUE);
-       }
     case WM_TIMER:
-        if (go) { // go 가 true 일때만 팩맨이 움직인다 
+        if (go && Game_Start) { // go 가 true 일때만 팩맨이 움직인다 
             switch (s)
             {
             case(1):    // 왼쪽
