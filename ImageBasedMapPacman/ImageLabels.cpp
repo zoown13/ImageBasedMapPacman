@@ -5,6 +5,8 @@
 #include <winhttp.h>
 #include "ImageLabels.h"
 #include <string>
+#include <fstream>
+#include <algorithm>  // std::for_each
 
 static ImageLabels iUsage;
 
@@ -90,6 +92,44 @@ void getUploadUrl(wchar_t* filename, wchar_t* url) {
 	std::wstring widestr = std::wstring(response.text.begin(), response.text.end());
 	wcscpy(url, widestr.c_str());
 	response.Reset();
+
+	return;
+}
+
+void uploadImage(wchar_t* filepath, wchar_t* filename) {
+
+	using namespace std;
+	const wstring domain = L"media-query-mediabucket-1i4slys4cekco.s3.amazonaws.com";
+	const wstring requestHeader = L"Content-Type: image/jpeg";
+	int port = INTERNET_DEFAULT_HTTPS_PORT;
+	bool https = true;
+
+	wchar_t url[5000]; // 이미지 업로드 할 서명된 url이 담길 배열
+	getUploadUrl(filename, url); // 이미지 업로드 할 서명된 url 가져옴
+
+	using namespace WinHttpWrapper;
+
+	HttpRequest req(domain, port, https);
+	HttpResponse response;
+
+	ifstream ifs(filepath, ios::binary);
+
+	//파일 정상적으로 읽히지 않으면 return
+	if (!ifs) {
+		cout << "Error happend during file read" << endl;
+		return ;
+	}
+
+	string image = string(istreambuf_iterator<char>(ifs), istreambuf_iterator<char>()); // 이미지 binary 데이터를 string data로 변환
+
+	req.Put(url, requestHeader, image, response);
+	cout << "Returned Text:" << response.statusCode << endl << endl; //성공여부 확인을 위한 http 상태코드 출력
+	response.Reset();
+
+
+	return;
+
+
 
 	return;
 }
