@@ -137,7 +137,7 @@ int packman[10][16] = {
     {1,0,1,1,0,0,1,1,1,1,0,0,1,1,0,1},
     {1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1},
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
-    };
+    };//1일때 장애물, 0일때 빈공간
 int mapE1 = 96;//장애물의 세로(960/10)
 int mapE2 = 80;//장애물의 가로(1280/16)
 
@@ -150,23 +150,12 @@ HDC MakeMap(HDC hdc) //맵 장애물 표시
     memdc = CreateCompatibleDC(hdc);
     hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Map));
     SelectObject(memdc, hBit);
-   /* int map[10][16] =
-    {
-        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-        {1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1},
-        {1,0,1,1,0,0,1,1,1,1,0,0,1,1,0,1},
-        {1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,1},
-        {1,0,0,0,1,1,0,0,0,0,1,1,0,0,0,1},
-        {1,0,0,0,1,1,0,0,0,0,1,1,0,0,0,1},
-        {1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,1},
-        {1,0,1,1,0,0,1,1,1,1,0,0,1,1,0,1},
-        {1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1},
-        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
-    };*/
+  
     for (i = 0; i < 10; i++)
         for (j = 0; j < 16; j++)
             if (packman[i][j] == 1)
                 BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+    
     DeleteObject(hBit);
     return hdc;
 }
@@ -217,14 +206,13 @@ HDC Animation(HDC hdc, int xPos, int yPos, int s)
 
     for (i = 0; i < 10; i++)
         for (j = 0; j < 16; j++)
-            if (packman[i][j] == 2) {
+            if (packman[i][j] == 2) {//배열이 2일때 팩맨 배경에 저장
                 SelectObject(memdc, Mask[count]);
                 BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCAND);//배경위에 마스크
                 SelectObject(memdc, RunBit[count]);
                 BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCPAINT);//배경위에 원본
             }
     
-
     for (i = 0; i < 2; i++) {
         DeleteObject(Mask[i]);
         DeleteObject(RunBit[i]);
@@ -242,10 +230,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     static RECT rectView;
     static char s;//방향설정 변수
     
-
     int i, j;
     
-
     OPENFILENAME OFN;
     TCHAR str[100], lpstrFile[100] = _T("");
     TCHAR filter[] = _T("JPG(.jpg)\0*.jpg\0PNG(.png)\0*.png\0");
@@ -255,10 +241,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_CREATE:
         GetClientRect(hWnd, &rectView);
         x = 1; y = 1;
-        packman[y][x] = 2;
-        s = 'R';
-        hBit2 = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Background));
-
+        packman[y][x] = 2;//배열의 2로 팩맨위치 표현
+        s = 'R';//팩맨의 기본위치 
+        hBit2 = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Background));//배경 비트맵 저장
         break;
     case WM_COMMAND:
         {
@@ -299,12 +284,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         mem1dc = CreateCompatibleDC(hdc);
         mem2dc = CreateCompatibleDC(mem1dc);
          if (hBit1 == NULL)
-            hBit1 = CreateCompatibleBitmap(hdc, 1280,960);
+            hBit1 = CreateCompatibleBitmap(hdc, 1280, 960);
         oldBit1 = (HBITMAP)SelectObject(mem1dc, hBit1);
         oldBit2 = (HBITMAP)SelectObject(mem2dc, hBit2);
-        BitBlt(mem1dc, 0, 0, 1280, 960, MakeMap(mem2dc), 0, 0, SRCCOPY);//배경출력
-        Animation(mem1dc, x, y, s);
-        BitBlt(hdc, 0, 0, 1280, 960, mem1dc, 0, 0, SRCCOPY); //배경위에 그린거 출력
+        BitBlt(mem1dc, 0, 0, 1280, 960, MakeMap(mem2dc), 0, 0, SRCCOPY);//배경과 장애물 출력
+        Animation(mem1dc, x, y, s);//움직이는 팩맨 비트맵 배경에 저장
+        BitBlt(hdc, 0, 0, 1280, 960, mem1dc, 0, 0, SRCCOPY); //배경위에 저장된거 출력
         SelectObject(mem1dc, oldBit1);
         SelectObject(mem2dc, oldBit2);
         DeleteObject(mem2dc);
@@ -327,20 +312,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case VK_DOWN:
            s = 'D';//아래쪽상수
             break;
-        case VK_RETURN:
+        case VK_RETURN://엔터
             s = 'B';  //처음으로돌아가기
             break;
         }
         break;
 
     case WM_TIMER:
-         packman[y][x] = 0;
+         packman[y][x] = 0;//팩맨이 중복되어 출력되지 않게하기위해 팩맨 출력후 빈공간으로 설정
         switch (s) {
         case 'L'://Left
             x--;
             if (x <= 0)
                 x++;
-            if (packman[y][x] == 1)
+            if (packman[y][x] == 1)//배열의 내용이 1(장애물)일때 위치 복구
                 x++;
             InvalidateRgn(hWnd, NULL, TRUE);
             break;
@@ -369,11 +354,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             InvalidateRgn(hWnd, NULL, TRUE);
             break;
         case 'B'://Back
-          
+            x = 1; y = 1;
             InvalidateRgn(hWnd, NULL, TRUE);
             break;
         }
-      packman[y][x] = 2;
+      packman[y][x] = 2;//좌표 이동후 팩맨위치 설정
                     return 0;
                     
     case WM_DESTROY:
