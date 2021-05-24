@@ -9,6 +9,9 @@
 
 #define MAX_LOADSTRING 100
 
+HDC MakeMap(HDC hdc);
+HDC Animation(HDC mem1dc, int xPos, int yPos, int s);
+
 // 전역 변수:
 HINSTANCE hInst;                                // 현재 인스턴스입니다.
 WCHAR szTitle[] = _T("ImageBasedMapPackman");                  // 제목 표시줄 텍스트입니다.
@@ -99,7 +102,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
 
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      0, 0, 1920, 1080, nullptr, nullptr, hInstance, nullptr);
+     0, 0, 1280, 960, nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd)
    {
@@ -123,44 +126,126 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 //
 
- void Animation(int xPos, int yPos, RECT rectObject, int rectsize, HDC hdc)
+
+int packman[10][16] = {
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1},
+    {1,0,1,1,0,0,1,1,1,1,0,0,1,1,0,1},
+    {1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,1},
+    {1,0,0,0,1,1,0,0,0,0,1,1,0,0,0,1},
+    {1,0,0,0,1,1,0,0,0,0,1,1,0,0,0,1},
+    {1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,1},
+    {1,0,1,1,0,0,1,1,1,1,0,0,1,1,0,1},
+    {1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
+    };
+int mapE1 = 96;//장애물의 세로(960/10)
+int mapE2 = 80;//장애물의 가로(1280/16)
+
+HDC MakeMap(HDC hdc) //맵 장애물 표시
 {
     HDC memdc;
-    HBRUSH hBrush, oldBrush;
-    HBITMAP RunBit[2], hBit, oldBit, Mask[2];
+    HBITMAP hBit;
+    int i, j;
+    
+    memdc = CreateCompatibleDC(hdc);
+    hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Map));
+    SelectObject(memdc, hBit);
+   /* int map[10][16] =
+    {
+        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+        {1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1},
+        {1,0,1,1,0,0,1,1,1,1,0,0,1,1,0,1},
+        {1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,1},
+        {1,0,0,0,1,1,0,0,0,0,1,1,0,0,0,1},
+        {1,0,0,0,1,1,0,0,0,0,1,1,0,0,0,1},
+        {1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,1},
+        {1,0,1,1,0,0,1,1,1,1,0,0,1,1,0,1},
+        {1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1},
+        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
+    };*/
+    for (i = 0; i < 10; i++)
+        for (j = 0; j < 16; j++)
+            if (packman[i][j] == 1)
+                BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+    DeleteObject(hBit);
+    return hdc;
+}
+
+HDC Animation(HDC hdc, int xPos, int yPos, int s)
+    {
+    HDC memdc;
+    HBITMAP RunBit[2], Mask[2];
     static int count;
-    int i;
+    int i,j;
+   
     count++;
     count = count % 2;
-    RunBit[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Packman1)); 
-    RunBit[1] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Packman2)); 
-    Mask[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Mask1));
-    Mask[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Mask2));
+    
+    switch (s) {
+    case 'L'://Left 왼쪽으로 갈때 PackmanLeft비트맵 사용
+        RunBit[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_PackmanLeft1));
+        RunBit[1] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_PackmanLeft2));
+        Mask[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_MaskLeft));
+        Mask[1] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_MaskCLose));
+        break;
+    case 'R'://Right 오른쪽으로 갈때 PackmanRightt비트맵 사용
+        RunBit[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_PackmanRight1));
+        RunBit[1] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_PackmanRight2));
+        Mask[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_MaskRight));
+        Mask[1] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_MaskCLose));
+        break;
+    case 'U'://Up 위로 갈때 PackmanUp비트맵 사용
+        RunBit[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_PackmanUp1));
+        RunBit[1] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_PackmanUp2));
+        Mask[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_MaskUp));
+        Mask[1] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_MaskCLose));
+        break;
+    case 'D'://Down 아래로 갈때 PackmanDown비트맵 사용
+        RunBit[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_PackmanDown1));
+        RunBit[1] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_PackmanDown2));
+        Mask[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_MaskDown));
+        Mask[1] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_MaskCLose));
+        break;
+    case 'B': // Back
+        RunBit[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_PackmanRight1));
+        RunBit[1] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_PackmanRight2));
+        Mask[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_MaskRight));
+        Mask[1] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_MaskCLose));
+        break;
+    }
     memdc = CreateCompatibleDC(hdc);
-    hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Background));
-    oldBit = (HBITMAP)SelectObject(memdc, hBit);
-    BitBlt(hdc, 0, 0, 1920, 1080, memdc, 0, 0, SRCAND);
-    SelectObject(memdc, RunBit[count]);
-    BitBlt(hdc, xPos, yPos, 77, 77, memdc, 0, 0, SRCPAINT);
-    SelectObject(memdc, oldBit);
-    for (i = 0; i < 2; i++)
+
+    for (i = 0; i < 10; i++)
+        for (j = 0; j < 16; j++)
+            if (packman[i][j] == 2) {
+                SelectObject(memdc, Mask[count]);
+                BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCAND);//배경위에 마스크
+                SelectObject(memdc, RunBit[count]);
+                BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCPAINT);//배경위에 원본
+            }
+    
+
+    for (i = 0; i < 2; i++) {
+        DeleteObject(Mask[i]);
         DeleteObject(RunBit[i]);
+    }
     DeleteDC(memdc);
-    DeleteObject(hBit);
-    hBrush = CreateSolidBrush(RGB(0, 255, 0));
-    oldBrush = (HBRUSH)SelectObject(hdc, hBrush);
-    Rectangle(hdc, rectObject.left, rectObject.top, rectObject.right, rectObject.bottom);
-    SelectObject(hdc, oldBrush);
-    DeleteObject(hBrush);
+    return hdc;
 }
-#define rectsize 50
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    static bool go = true;
-    HDC hdc;
+    static HDC hdc, mem1dc, mem2dc;
     PAINTSTRUCT ps;
-    static int x, y, objx, objy;
-    static RECT rectView, rectObject; // 장애물용 RECT 구조체 추가 
+    static HBITMAP hBit1, hBit2, oldBit1, oldBit2;
+    static int x, y;
+    static RECT rectView;
+    static char s;//방향설정 변수
+    
+
+    int i, j;
+    
 
     OPENFILENAME OFN;
     TCHAR str[100], lpstrFile[100] = _T("");
@@ -170,14 +255,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
     case WM_CREATE:
         GetClientRect(hWnd, &rectView);
-        x = 20; y = 20;
-        srand((unsigned)time(NULL));    // 랜덤으로 장애물 생성하기 
-        objx = rand() % rectView.right;
-        objy = rand() % rectView.bottom;
-        rectObject.left = objx;         // 장애물 좌표 구조체 
-        rectObject.top = objy;
-        rectObject.right = objx + rectsize;
-        rectObject.bottom = objy - rectsize;
+        x = 1; y = 1;
+        packman[y][x] = 2;
+        s = 'R';
+        hBit2 = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Background));
+
         break;
     case WM_COMMAND:
         {
@@ -214,45 +296,90 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         break;
     case WM_PAINT:
-            hdc = BeginPaint(hWnd, &ps);
-            Animation(x, y, rectObject, rectsize, hdc);
-            EndPaint(hWnd, &ps);
-            break;
+        hdc = BeginPaint(hWnd, &ps);    
+        mem1dc = CreateCompatibleDC(hdc);
+        mem2dc = CreateCompatibleDC(mem1dc);
+         if (hBit1 == NULL)
+            hBit1 = CreateCompatibleBitmap(hdc, 1280,960);
+        oldBit1 = (HBITMAP)SelectObject(mem1dc, hBit1);
+        oldBit2 = (HBITMAP)SelectObject(mem2dc, hBit2);
+        BitBlt(mem1dc, 0, 0, 1280, 960, MakeMap(mem2dc), 0, 0, SRCCOPY);//배경출력
+        Animation(mem1dc, x, y, s);
+        BitBlt(hdc, 0, 0, 1280, 960, mem1dc, 0, 0, SRCCOPY); //배경위에 그린거 출력
+        SelectObject(mem1dc, oldBit1);
+        SelectObject(mem2dc, oldBit2);
+        DeleteObject(mem2dc);
+        DeleteObject(mem1dc);
+        EndPaint(hWnd, &ps);
+        break;
+
     case WM_KEYDOWN: //키보드의 어떤 버튼이 내려간 것을 감지했을 때 발생되는 메시지
+        SetTimer(hWnd, 1, 100, NULL);
         switch (wParam) { // 키보드가 눌렸을때 wParam에 값이 저장된다 값과 비교하여 switch 문에 진입한다
         case VK_LEFT: // 왼쪽 화살표
-            x -= 40; // 왼쪽으로 원 이동
-            if (x - 20 < rectView.left) x += 40; // x - 20 보다 rect 구조체의 left 변수가 더 크면 x좌표에 40 추가하여 윈도우 밖으로 벗어나지 못하게 한다
-                break; 
+            s = 'L';//왼쪽
+            break;
         case VK_RIGHT: // 오른쪽 화살표
-            x += 40; // 오른쪽으로 원 이동
-            if (x + 50 > rectView.right) x -= 40; // x + 20 보다 rect 구조체의 right 변수가 더 작으면 x에 - 40 원은 윈도우 안의 Rectangle을 벗어나지 못한다!
-                break;
+            s = 'R';//오른쪽
+            break;
         case VK_UP:
-            y -= 40; // up, down은 수직 이동이므로 y값을 변경한다 이후 비슷
-            if (y - 20 < rectView.top) y += 40;
-            if (y - 24 < rectObject.bottom && x - 40 < rectObject.left && x + 120 > rectObject.right&& go) y += 40;
-            {
-                if (y - 25 < rectObject.bottom) go = false;
-                else go = true;
-            }
+            s = 'U';//위쪽 
             break;
         case VK_DOWN:
-            y += 40;
-            if (y + 20 > rectView.bottom) y -= 40;
-            if (y + 90 > rectObject.top && x - 40 < rectObject.left && x + 120 > rectObject.right&& go ) y -= 40;
-            {
-                if (y + 90 > rectObject.top) go = false;
-                else go = true;
-            }
+           s = 'D';//아래쪽상수
             break;
-        case VK_HOME:
-            x = 20, y = 20;
+        case VK_RETURN:
+            s = 'B';  //처음으로돌아가기
             break;
         }
-        InvalidateRgn(hWnd, NULL, TRUE); // 화면 다시그리기 함수 호출하여 WM_PAINT 메시지를 발생시키고 즉시 원을 새로 그린다
+        break;
+
+    case WM_TIMER:
+         packman[y][x] = 0;
+        switch (s) {
+        case 'L'://Left
+            x--;
+            if (x <= 0)
+                x++;
+            if (packman[y][x] == 1)
+                x++;
+            InvalidateRgn(hWnd, NULL, TRUE);
             break;
+        case 'R'://Right
+            x++;
+            if (x >= 15)
+                x--;
+            if (packman[y][x] == 1)
+                x--;
+            InvalidateRgn(hWnd, NULL, TRUE);
+            break;
+        case 'U'://Up
+            y--;
+            if (y <= 0)
+                y++;
+            if (packman[y][x] == 1)
+                y++;
+            InvalidateRgn(hWnd, NULL, TRUE);
+            break;
+        case 'D'://Down
+            y++;
+            if (y >= 9)
+                y--;
+            if (packman[y][x] == 1)
+                y--;
+            InvalidateRgn(hWnd, NULL, TRUE);
+            break;
+        case 'B'://Back
+          
+            InvalidateRgn(hWnd, NULL, TRUE);
+            break;
+        }
+      packman[y][x] = 2;
+                    return 0;
+                    
     case WM_DESTROY:
+        if (hBit1)
+            DeleteObject(hBit1);
         KillTimer(hWnd, 1);
         PostQuitMessage(0);
         break;
