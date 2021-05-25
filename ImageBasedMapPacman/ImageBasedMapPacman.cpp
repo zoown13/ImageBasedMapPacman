@@ -24,9 +24,9 @@ LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
-                     _In_opt_ HINSTANCE hPrevInstance,
-                     _In_ LPWSTR    lpCmdLine,
-                     _In_ int       nCmdShow)
+    _In_opt_ HINSTANCE hPrevInstance,
+    _In_ LPWSTR    lpCmdLine,
+    _In_ int       nCmdShow)
 {
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
@@ -39,7 +39,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     MyRegisterClass(hInstance);
 
     // 애플리케이션 초기화를 수행합니다:
-    if (!InitInstance (hInstance, nCmdShow))
+    if (!InitInstance(hInstance, nCmdShow))
     {
         return FALSE;
     }
@@ -58,7 +58,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         }
     }
 
-    return (int) msg.wParam;
+    return (int)msg.wParam;
 }
 
 //
@@ -72,17 +72,17 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 
     wcex.cbSize = sizeof(WNDCLASSEX);
 
-    wcex.style          = CS_HREDRAW | CS_VREDRAW;
-    wcex.lpfnWndProc    = WndProc;
-    wcex.cbClsExtra     = 0;
-    wcex.cbWndExtra     = 0;
-    wcex.hInstance      = hInstance;
-    wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_IMAGEBASEDMAPPACMAN));
-    wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
-    wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
-    wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_IMAGEBASEDMAPPACMAN);
-    wcex.lpszClassName  = szWindowClass;
-    wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
+    wcex.style = CS_HREDRAW | CS_VREDRAW;
+    wcex.lpfnWndProc = WndProc;
+    wcex.cbClsExtra = 0;
+    wcex.cbWndExtra = 0;
+    wcex.hInstance = hInstance;
+    wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_IMAGEBASEDMAPPACMAN));
+    wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
+    wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+    wcex.lpszMenuName = MAKEINTRESOURCEW(IDC_IMAGEBASEDMAPPACMAN);
+    wcex.lpszClassName = szWindowClass;
+    wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
     return RegisterClassExW(&wcex);
 }
@@ -99,20 +99,20 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-   hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
+    hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
 
-   HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-     0, 0, 1280, 960, nullptr, nullptr, hInstance, nullptr);
+    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+        0, 0, 1280, 960, nullptr, nullptr, hInstance, nullptr);
 
-   if (!hWnd)
-   {
-      return FALSE;
-   }
+    if (!hWnd)
+    {
+        return FALSE;
+    }
 
-   ShowWindow(hWnd, nCmdShow);
-   UpdateWindow(hWnd);
+    ShowWindow(hWnd, nCmdShow);
+    UpdateWindow(hWnd);
 
-   return TRUE;
+    return TRUE;
 }
 
 //
@@ -138,7 +138,7 @@ int packman[10][16] = {
     {1,0,1,1,0,0,1,1,1,1,0,0,1,1,0,1},
     {1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1},
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
-    };
+};
 int mapE1 = 96;//장애물의 세로(960/10)
 int mapE2 = 80;//장애물의 가로(1280/16)
 
@@ -147,23 +147,23 @@ HDC MakeMap(HDC hdc) //맵 장애물 표시
     HDC memdc;
     HBITMAP hBit;
     int i, j;
-    
+
     memdc = CreateCompatibleDC(hdc);
     hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Map));
     SelectObject(memdc, hBit);
-   /* int map[10][16] =
-    {
-        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-        {1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1},
-        {1,0,1,1,0,0,1,1,1,1,0,0,1,1,0,1},
-        {1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,1},
-        {1,0,0,0,1,1,0,0,0,0,1,1,0,0,0,1},
-        {1,0,0,0,1,1,0,0,0,0,1,1,0,0,0,1},
-        {1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,1},
-        {1,0,1,1,0,0,1,1,1,1,0,0,1,1,0,1},
-        {1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1},
-        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
-    };*/
+    /* int map[10][16] =
+     {
+         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+         {1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1},
+         {1,0,1,1,0,0,1,1,1,1,0,0,1,1,0,1},
+         {1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,1},
+         {1,0,0,0,1,1,0,0,0,0,1,1,0,0,0,1},
+         {1,0,0,0,1,1,0,0,0,0,1,1,0,0,0,1},
+         {1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,1},
+         {1,0,1,1,0,0,1,1,1,1,0,0,1,1,0,1},
+         {1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1},
+         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
+     };*/
     for (i = 0; i < 10; i++)
         for (j = 0; j < 16; j++)
             if (packman[i][j] == 1)
@@ -173,15 +173,15 @@ HDC MakeMap(HDC hdc) //맵 장애물 표시
 }
 
 HDC Animation(HDC hdc, int xPos, int yPos, int s)
-    {
+{
     HDC memdc;
     HBITMAP RunBit[2], Mask[2];
     static int count;
-    int i,j;
-   
+    int i, j;
+
     count++;
     count = count % 2;
-    
+
     switch (s) {
     case 'L'://Left 왼쪽으로 갈때 PackmanLeft비트맵 사용
         RunBit[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_PackmanLeft1));
@@ -224,7 +224,7 @@ HDC Animation(HDC hdc, int xPos, int yPos, int s)
                 SelectObject(memdc, RunBit[count]);
                 BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCPAINT);//배경위에 원본
             }
-    
+
 
     for (i = 0; i < 2; i++) {
         DeleteObject(Mask[i]);
@@ -242,10 +242,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     static int x, y;
     static RECT rectView;
     static char s;//방향설정 변수
-    
+    static int count_time = 60; // 1분간 게임 가능하게하는 변수
+    static TCHAR time_announcer[1024]; // drawtext할 문자열
+    static int time_announcer_len; // drawtext에서 문자열 길이를 넘겨줄 변수
+    RECT time_announcer_size;   // drawtext 크기 
+    time_announcer_size.left = 50;
+    time_announcer_size.top = 50;
+    time_announcer_size.right = 200;
+    time_announcer_size.bottom = 140;
+
+    static bool game_state = true;
 
     int i, j;
-    
+
 
     OPENFILENAME OFN;
     TCHAR str[100], lpstrFile[100] = _T("");
@@ -254,6 +263,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     switch (message)
     {
     case WM_CREATE:
+        SetTimer(hWnd, 2, 1000, NULL); // 제한시간용 타이머
         GetClientRect(hWnd, &rectView);
         x = 1; y = 1;
         packman[y][x] = 2;
@@ -262,125 +272,156 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         break;
     case WM_COMMAND:
-        {
-            int wmId = LOWORD(wParam);
+    {
+        int wmId = LOWORD(wParam);
 
-            switch (wmId)
+        switch (wmId)
+        {
+        case IDM_UPLOAD:                                // 사진 업로드 기능
+            memset(&OFN, 0, sizeof(OPENFILENAME));
+            OFN.lStructSize = sizeof(OPENFILENAME);
+            OFN.hwndOwner = hWnd;
+            OFN.lpstrFilter = filter;
+            OFN.lpstrFile = lpstrFile;
+            OFN.nMaxFile = 100;
+            OFN.lpstrInitialDir = _T(".");
+            if (GetOpenFileName(&OFN) != 0) {
+                _stprintf_s(str, _T("%s 파일을 업로드하겠습니가?"), OFN.lpstrFile);
+                MessageBox(hWnd, str, _T("업로드 확인"), MB_OK);
+            }
+
+            break;
+        case IDM_DOWNLOAD:                             // 사진 가져오는 기능 
+            break;
+
+        case IDM_ABOUT:
+            DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+            break;
+        case IDM_EXIT:
+            DestroyWindow(hWnd);
+            break;
+        default:
+            return DefWindowProc(hWnd, message, wParam, lParam);
+        }
+    }
+    break;
+    case WM_PAINT:
+        
+        switch (game_state) {
+        case true:
+
+            hdc = BeginPaint(hWnd, &ps);
+            mem1dc = CreateCompatibleDC(hdc);
+            mem2dc = CreateCompatibleDC(mem1dc);
+            if (hBit1 == NULL)
+                hBit1 = CreateCompatibleBitmap(hdc, 1280, 960);
+            oldBit1 = (HBITMAP)SelectObject(mem1dc, hBit1);
+            oldBit2 = (HBITMAP)SelectObject(mem2dc, hBit2);
+            BitBlt(mem1dc, 0, 0, 1280, 960, MakeMap(mem2dc), 0, 0, SRCCOPY);//배경출력
+            Animation(mem1dc, x, y, s);
+            BitBlt(hdc, 0, 0, 1280, 960, mem1dc, 0, 0, SRCCOPY); //배경위에 그린거 출력
+            SelectObject(mem1dc, oldBit1);
+            SelectObject(mem2dc, oldBit2);
+            DeleteObject(mem2dc);
+            DeleteObject(mem1dc);
+            DrawText(hdc, time_announcer, time_announcer_len, &time_announcer_size, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+            EndPaint(hWnd, &ps);
+            break;
+        case false:
+            hdc = BeginPaint(hWnd, &ps);
+            TextOut(hdc, 640, 455, _T("게임종료"), _tcslen(_T("게임종료")));
+            EndPaint(hWnd, &ps);
+            break;
+        }
+        break;
+        break;
+    case WM_KEYDOWN: //키보드의 어떤 버튼이 내려간 것을 감지했을 때 발생되는 메시지
+        if (game_state == true) {
+            SetTimer(hWnd, 1, 100, NULL);
+             
+            switch (wParam) { // 키보드가 눌렸을때 wParam에 값이 저장된다 값과 비교하여 switch 문에 진입한다
+            case VK_LEFT: // 왼쪽 화살표
+                s = 'L';//왼쪽
+                break;
+            case VK_RIGHT: // 오른쪽 화살표
+                s = 'R';//오른쪽
+                break;
+            case VK_UP:
+                s = 'U';//위쪽 
+                break;
+            case VK_DOWN:
+                s = 'D';//아래쪽상수
+                break;
+            case VK_RETURN:
+                s = 'B';  //처음으로돌아가기
+                break;
+            }
+            
+        }break;
+    case WM_TIMER:
+        if (game_state == true) {
+            switch (wParam)
             {
-            case IDM_UPLOAD:                                // 사진 업로드 기능
-                memset(&OFN, 0, sizeof(OPENFILENAME));
-                OFN.lStructSize = sizeof(OPENFILENAME);
-                OFN.hwndOwner = hWnd;
-                OFN.lpstrFilter = filter;
-                OFN.lpstrFile = lpstrFile;
-                OFN.nMaxFile = 100;
-                OFN.lpstrInitialDir = _T(".");
-                if (GetOpenFileName(&OFN) != 0) {
-                    _stprintf_s(str, _T("%s 파일을 업로드하겠습니가?"), OFN.lpstrFile);
-                    MessageBox(hWnd, str, _T("업로드 확인"), MB_OK);
+            case 1:
+                packman[y][x] = 0;
+                switch (s) {
+                case 'L'://Left
+                    x--;
+                    if (x <= 0)
+                        x++;
+                    if (packman[y][x] == 1)
+                        x++;
+                    InvalidateRgn(hWnd, NULL, TRUE);
+                    break;
+                case 'R'://Right
+                    x++;
+                    if (x >= 15)
+                        x--;
+                    if (packman[y][x] == 1)
+                        x--;
+                    InvalidateRgn(hWnd, NULL, TRUE);
+                    break;
+                case 'U'://Up
+                    y--;
+                    if (y <= 0)
+                        y++;
+                    if (packman[y][x] == 1)
+                        y++;
+                    InvalidateRgn(hWnd, NULL, TRUE);
+                    break;
+                case 'D'://Down
+                    y++;
+                    if (y >= 9)
+                        y--;
+                    if (packman[y][x] == 1)
+                        y--;
+                    InvalidateRgn(hWnd, NULL, TRUE);
+                    break;
+                case 'B'://Back
+
+                    InvalidateRgn(hWnd, NULL, TRUE);
+                    break;
+                }
+                packman[y][x] = 2;
+                if (count_time < 0)
+                    game_state = false;
+                break;
+            case 2:
+                if (count_time >= 0)
+                {
+
+                    count_time = count_time--;
                 }
 
+                time_announcer_len = wsprintf(time_announcer, TEXT("남은시간: %d"), count_time);
                 break;
-            case IDM_DOWNLOAD:                             // 사진 가져오는 기능 
-                break;
-
-            case IDM_ABOUT:
-                DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-                break;
-            case IDM_EXIT:
-                DestroyWindow(hWnd);
-                break;
-            default:
-                return DefWindowProc(hWnd, message, wParam, lParam);
-            }
-        }
-        break;
-    case WM_PAINT:
-        hdc = BeginPaint(hWnd, &ps);    
-        mem1dc = CreateCompatibleDC(hdc);
-        mem2dc = CreateCompatibleDC(mem1dc);
-         if (hBit1 == NULL)
-            hBit1 = CreateCompatibleBitmap(hdc, 1280,960);
-        oldBit1 = (HBITMAP)SelectObject(mem1dc, hBit1);
-        oldBit2 = (HBITMAP)SelectObject(mem2dc, hBit2);
-        BitBlt(mem1dc, 0, 0, 1280, 960, MakeMap(mem2dc), 0, 0, SRCCOPY);//배경출력
-        Animation(mem1dc, x, y, s);
-        BitBlt(hdc, 0, 0, 1280, 960, mem1dc, 0, 0, SRCCOPY); //배경위에 그린거 출력
-        SelectObject(mem1dc, oldBit1);
-        SelectObject(mem2dc, oldBit2);
-        DeleteObject(mem2dc);
-        DeleteObject(mem1dc);
-        EndPaint(hWnd, &ps);
-        break;
-
-    case WM_KEYDOWN: //키보드의 어떤 버튼이 내려간 것을 감지했을 때 발생되는 메시지
-        SetTimer(hWnd, 1, 100, NULL);
-        switch (wParam) { // 키보드가 눌렸을때 wParam에 값이 저장된다 값과 비교하여 switch 문에 진입한다
-        case VK_LEFT: // 왼쪽 화살표
-            s = 'L';//왼쪽
-            break;
-        case VK_RIGHT: // 오른쪽 화살표
-            s = 'R';//오른쪽
-            break;
-        case VK_UP:
-            s = 'U';//위쪽 
-            break;
-        case VK_DOWN:
-           s = 'D';//아래쪽상수
-            break;
-        case VK_RETURN:
-            s = 'B';  //처음으로돌아가기
-            break;
-        }
-        break;
-
-    case WM_TIMER:
-         packman[y][x] = 0;
-        switch (s) {
-        case 'L'://Left
-            x--;
-            if (x <= 0)
-                x++;
-            if (packman[y][x] == 1)
-                x++;
-            InvalidateRgn(hWnd, NULL, TRUE);
-            break;
-        case 'R'://Right
-            x++;
-            if (x >= 15)
-                x--;
-            if (packman[y][x] == 1)
-                x--;
-            InvalidateRgn(hWnd, NULL, TRUE);
-            break;
-        case 'U'://Up
-            y--;
-            if (y <= 0)
-                y++;
-            if (packman[y][x] == 1)
-                y++;
-            InvalidateRgn(hWnd, NULL, TRUE);
-            break;
-        case 'D'://Down
-            y++;
-            if (y >= 9)
-                y--;
-            if (packman[y][x] == 1)
-                y--;
-            InvalidateRgn(hWnd, NULL, TRUE);
-            break;
-        case 'B'://Back
-          
-            InvalidateRgn(hWnd, NULL, TRUE);
-            break;
-        }
-      packman[y][x] = 2;
-                    return 0;
-                    
+            }return 0;
+        }break;
     case WM_DESTROY:
         if (hBit1)
             DeleteObject(hBit1);
         KillTimer(hWnd, 1);
+        KillTimer(hWnd, 2);
         PostQuitMessage(0);
         break;
     default:
