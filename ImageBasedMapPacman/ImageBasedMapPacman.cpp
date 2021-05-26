@@ -16,6 +16,7 @@ HDC Animation(HDC mem1dc, int xPos, int yPos, int s);
 HINSTANCE hInst;                                // 현재 인스턴스입니다.
 WCHAR szTitle[] = _T("ImageBasedMapPackman");                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
+ int score = 0; // 과자를 하나씩 먹으면 점수도  오릅니다 
 
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -127,7 +128,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 
 
-int packman[10][16] = {
+static int packman[10][16] = {
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
     {1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1},
     {1,0,1,1,0,0,1,1,1,1,0,0,1,1,0,1},
@@ -171,7 +172,7 @@ HDC MakeMap(HDC hdc) //맵 장애물 표시
     DeleteObject(hBit);
     return hdc;
 }
-HDC Snack(HDC hdc) {
+HDC Snack(HDC hdc) {    // 과자 그리기 함수 
     HDC memdc;
     HBITMAP Snack, Mask;
     int i, j;
@@ -186,10 +187,11 @@ HDC Snack(HDC hdc) {
         for (j = 0; j < 16; j++)
             if (packman[i][j] == 0) {
                 SelectObject(memdc, Mask);
-                BitBlt(hdc, j * mapE2+25, i * mapE1+20, snackSize/*20*/, snackSize, memdc, 0, 0, SRCAND);//배경위에 마스크
+                BitBlt(hdc, j * mapE2+25, i * mapE1+20, snackSize, snackSize, memdc, 0, 0, SRCAND);//배경위에 마스크 (snackSize =20)
                 SelectObject(memdc, Snack);
                 BitBlt(hdc, j * mapE2+25, i * mapE1+20, snackSize, snackSize, memdc, 0, 0, SRCPAINT);//배경위에 원본
             }
+
     DeleteObject(Snack);
     DeleteObject(Mask);
 
@@ -270,11 +272,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     RECT time_announcer_size;   // drawtext 크기 
     time_announcer_size.left = 50;
     time_announcer_size.top = 50;
-    time_announcer_size.right = 200;
+    time_announcer_size.right = 300;
     time_announcer_size.bottom = 140;
 
-    static bool game_state = true;
-
+    static bool game_state = true; // 1분이 지나면 false로 바뀌고 게임 종료 
     int i, j;
 
 
@@ -342,9 +343,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
            
             BitBlt(mem1dc, 0, 0, 1280, 960, MakeMap(mem2dc), 0, 0, SRCCOPY);//장애물 그리기
             Animation(mem1dc, x, y, s); // 팩맨그리기 
-           
             BitBlt(hdc, 0, 0, 1280, 960, mem1dc, 0, 0, SRCCOPY); //배경위에 그린거 출력
-            Snack(mem1dc);//장애물 그리기
+            Snack(mem1dc);//과자 그리기 
             BitBlt(hdc, 0, 0, 1280, 960, mem1dc, 0, 0, SRCCOPY); //배경위에 그린거 출력
             SelectObject(mem1dc, oldBit1);
             SelectObject(mem2dc, oldBit2);
@@ -386,10 +386,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }break;
     case WM_TIMER:
         if (game_state == true) {
-            switch (wParam)
+            switch (wParam) // 타이머의 id가 1일때와 2일때의 동작 
             {
-            case 1:
-                packman[y][x] = 0;
+            case 1: // 타이머가 1일때
+                packman[y][x] = 3; // 먹은 과자가 다시 생성되지 않도록 0도 아니고 1도 아니고 2도 아닌 3으로 두었습니다
+             
                 switch (s) {
                 case 'L'://Left
                     x--;
@@ -429,17 +430,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     break;
                 }
                 packman[y][x] = 2;
-                if (count_time < 0)
-                    game_state = false;
+                if (count_time < 0) // 시간이 0보다 작아지면 
+                    game_state = false; // false로 만들어 게임 종료 
+                
                 break;
-            case 2:
+            case 2: // 타이머가 2일때
                 if (count_time >= 0)
                 {
 
                     count_time = count_time--;
                 }
 
-                time_announcer_len = wsprintf(time_announcer, TEXT("남은시간: %d"), count_time);
+                time_announcer_len = wsprintf(time_announcer, TEXT("남은시간: %d SCORE: %d"), count_time, score);    
                 break;
             }return 0;
         }break;
