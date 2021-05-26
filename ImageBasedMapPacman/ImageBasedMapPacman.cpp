@@ -177,7 +177,7 @@ HDC Snack(HDC hdc) {
     int i, j;
 
     memdc = CreateCompatibleDC(hdc);
-    Snack = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_snack));
+    Snack = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Snack));
     Mask = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_MaskSnack));
     SelectObject(memdc, Mask);
 
@@ -341,9 +341,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             oldBit1 = (HBITMAP)SelectObject(mem1dc, hBit1);
             oldBit2 = (HBITMAP)SelectObject(mem2dc, hBit2);
             oldBit3 = (HBITMAP)SelectObject(mem3dc, hBit3);
-            BitBlt(mem1dc, 0, 0, 1280, 960, Snack(mem3dc), 0, 0, SRCCOPY);//장애물 그리기
-            MakeMap(mem2dc);//장애물 그리기
+           
+            BitBlt(mem1dc, 0, 0, 1280, 960, MakeMap(mem2dc), 0, 0, SRCCOPY);//장애물 그리기
             Animation(mem1dc, x, y, s); // 팩맨그리기 
+           
+            BitBlt(hdc, 0, 0, 1280, 960, mem1dc, 0, 0, SRCCOPY); //배경위에 그린거 출력
+            Snack(mem1dc);//장애물 그리기
             BitBlt(hdc, 0, 0, 1280, 960, mem1dc, 0, 0, SRCCOPY); //배경위에 그린거 출력
             SelectObject(mem1dc, oldBit1);
             SelectObject(mem2dc, oldBit2);
