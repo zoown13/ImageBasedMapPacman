@@ -186,9 +186,9 @@ HDC Snack(HDC hdc) {
         for (j = 0; j < 16; j++)
             if (packman[i][j] == 0) {
                 SelectObject(memdc, Mask);
-                BitBlt(hdc, j * mapE2, i * mapE1, snackSize/*20*/, snackSize, memdc, 0, 0, SRCAND);//배경위에 마스크
+                BitBlt(hdc, j * mapE2+25, i * mapE1+20, snackSize/*20*/, snackSize, memdc, 0, 0, SRCAND);//배경위에 마스크
                 SelectObject(memdc, Snack);
-                BitBlt(hdc, j * mapE2, i * mapE1, snackSize, snackSize, memdc, 0, 0, SRCPAINT);//배경위에 원본
+                BitBlt(hdc, j * mapE2+25, i * mapE1+20, snackSize, snackSize, memdc, 0, 0, SRCPAINT);//배경위에 원본
             }
     DeleteObject(Snack);
     DeleteObject(Mask);
@@ -258,9 +258,9 @@ HDC Animation(HDC hdc, int xPos, int yPos, int s)
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    static HDC hdc, mem1dc, mem2dc, mem3dc;
+    static HDC hdc, mem1dc, mem2dc;
     PAINTSTRUCT ps;
-    static HBITMAP hBit1, hBit2, hBit3, oldBit1, oldBit2, oldBit3;
+    static HBITMAP hBit1, hBit2, oldBit1, oldBit2;
     static int x, y;
     static RECT rectView;
     static char s;//방향설정 변수
@@ -335,12 +335,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             hdc = BeginPaint(hWnd, &ps);
             mem1dc = CreateCompatibleDC(hdc);
             mem2dc = CreateCompatibleDC(mem1dc);
-            mem3dc = CreateCompatibleDC(mem1dc);
             if (hBit1 == NULL)
                 hBit1 = CreateCompatibleBitmap(hdc, 1280, 960);
             oldBit1 = (HBITMAP)SelectObject(mem1dc, hBit1);
             oldBit2 = (HBITMAP)SelectObject(mem2dc, hBit2);
-            oldBit3 = (HBITMAP)SelectObject(mem3dc, hBit3);
            
             BitBlt(mem1dc, 0, 0, 1280, 960, MakeMap(mem2dc), 0, 0, SRCCOPY);//장애물 그리기
             Animation(mem1dc, x, y, s); // 팩맨그리기 
@@ -350,8 +348,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             BitBlt(hdc, 0, 0, 1280, 960, mem1dc, 0, 0, SRCCOPY); //배경위에 그린거 출력
             SelectObject(mem1dc, oldBit1);
             SelectObject(mem2dc, oldBit2);
-            SelectObject(mem2dc, oldBit3);
-            DeleteObject(mem3dc);
             DeleteObject(mem2dc);
             DeleteObject(mem1dc);
             DrawText(hdc, time_announcer, time_announcer_len, &time_announcer_size, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
