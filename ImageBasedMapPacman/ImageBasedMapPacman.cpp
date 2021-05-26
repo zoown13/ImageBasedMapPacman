@@ -277,13 +277,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     static RECT rectView;
     static char s;//방향설정 변수
     static int count_time = 60; // 1분간 게임 가능하게하는 변수
-    static TCHAR time_announcer[1024]; // drawtext할 문자열
-    static int time_announcer_len; // drawtext에서 문자열 길이를 넘겨줄 변수
-    RECT time_announcer_size;   // drawtext 크기 
+    static TCHAR time_announcer[1024], resultScore[1024]; // drawtext할 문자열
+    static int time_announcer_len, resultScore_len; // drawtext에서 문자열 길이를 넘겨줄 변수 
+    RECT time_announcer_size;   // drawtext 크기 (남은시간, 현재 점수 출력) 
     time_announcer_size.left = 50;
     time_announcer_size.top = 50;
     time_announcer_size.right = 300;
     time_announcer_size.bottom = 140;
+
+    RECT resultScore_size; // 게임 종료시 출력되는 문구의 크기 
+    resultScore_size.left = 340;
+    resultScore_size.top = 380;
+    resultScore_size.right = 740;
+    resultScore_size.bottom = 480;
 
     static bool game_state = true; // 1분이 지나면 false로 바뀌고 게임 종료 
     int i, j;
@@ -296,6 +302,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     switch (message)
     {
     case WM_CREATE:
+
         SetTimer(hWnd, 2, 1000, NULL); // 제한시간용 타이머
         GetClientRect(hWnd, &rectView);
         x = 1; y = 1;
@@ -340,8 +347,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     break;
     case WM_PAINT:
 
-        switch (game_state) {
-        case true:
+        switch (game_state) { // 60초가 다되면 false로 만들어 게임을 끝낸다 
+        case true: // 게임중일때 화면 출력 
 
             hdc = BeginPaint(hWnd, &ps);
             mem1dc = CreateCompatibleDC(hdc);
@@ -359,19 +366,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             SelectObject(mem1dc, oldBit1);
             SelectObject(mem2dc, oldBit2);
             DeleteObject(mem2dc);
-            DeleteObject(mem1dc);
+            DeleteObject(mem1dc); //게임 중 남은시간, 현재 점수 출력 
             DrawText(hdc, time_announcer, time_announcer_len, &time_announcer_size, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
             EndPaint(hWnd, &ps);
             break;
-        case false:
+        case false: // 게임 끝났을 때 화면 출력 
             hdc = BeginPaint(hWnd, &ps);
-            TextOut(hdc, 640, 455, _T("게임종료"), _tcslen(_T("게임종료")));
+            DrawText(hdc, resultScore, resultScore_len, &resultScore_size, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
             EndPaint(hWnd, &ps);
             break;
         }
         break;
         break;
     case WM_KEYDOWN: //키보드의 어떤 버튼이 내려간 것을 감지했을 때 발생되는 메시지
+
         if (game_state == true) {
             SetTimer(hWnd, 1, 100, NULL);
 
@@ -395,6 +403,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         }break;
     case WM_TIMER:
+
         if (game_state == true) {
             switch (wParam) // 타이머의 id가 1일때와 2일때의 동작 
             {
@@ -451,11 +460,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     count_time = count_time--; // 1초씩 감소 
                 }
                 score = Counter(packman);
+                resultScore_len = wsprintf(resultScore, TEXT("게임종료    SCORE:  %d"),score);
                 time_announcer_len = wsprintf(time_announcer, TEXT("남은시간: %d SCORE: %d"), count_time, score);    
                 break;
             }return 0;
         }break;
     case WM_DESTROY:
+
         if (hBit1)
             DeleteObject(hBit1);
         KillTimer(hWnd, 1);
