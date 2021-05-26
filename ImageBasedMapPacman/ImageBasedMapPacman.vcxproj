@@ -166,8 +166,10 @@
     <Image Include="..\mask2.bmp" />
     <Image Include="..\mask3.bmp" />
     <Image Include="..\mask4.bmp" />
+    <Image Include="..\mask_snack.bmp" />
     <Image Include="..\packman1.bmp" />
     <Image Include="..\packman2.bmp" />
+    <Image Include="..\snack.bmp" />
     <Image Include="ImageBasedMapPacman.ico" />
     <Image Include="small.ico" />
   </ItemGroup>

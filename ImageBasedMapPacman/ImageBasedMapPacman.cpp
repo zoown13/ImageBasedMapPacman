@@ -141,7 +141,7 @@ int packman[10][16] = {
 };
 int mapE1 = 96;//장애물의 세로(960/10)
 int mapE2 = 80;//장애물의 가로(1280/16)
-
+int snackSize = 20;// 과자의 크기 
 HDC MakeMap(HDC hdc) //맵 장애물 표시
 {
     HDC memdc;
@@ -171,7 +171,30 @@ HDC MakeMap(HDC hdc) //맵 장애물 표시
     DeleteObject(hBit);
     return hdc;
 }
+HDC Snack(HDC hdc) {
+    HDC memdc;
+    HBITMAP Snack, Mask;
+    int i, j;
 
+    memdc = CreateCompatibleDC(hdc);
+    Snack = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_snack));
+    Mask = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_MaskSnack));
+    SelectObject(memdc, Mask);
+
+
+    for (i = 0; i < 10; i++)
+        for (j = 0; j < 16; j++)
+            if (packman[i][j] == 0) {
+                SelectObject(memdc, Mask);
+                BitBlt(hdc, j * mapE2, i * mapE1, snackSize/*20*/, snackSize, memdc, 0, 0, SRCAND);//배경위에 마스크
+                SelectObject(memdc, Snack);
+                BitBlt(hdc, j * mapE2, i * mapE1, snackSize, snackSize, memdc, 0, 0, SRCPAINT);//배경위에 원본
+            }
+    DeleteObject(Snack);
+    DeleteObject(Mask);
+
+    return hdc;
+}
 HDC Animation(HDC hdc, int xPos, int yPos, int s)
 {
     HDC memdc;
@@ -225,7 +248,6 @@ HDC Animation(HDC hdc, int xPos, int yPos, int s)
                 BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCPAINT);//배경위에 원본
             }
 
-
     for (i = 0; i < 2; i++) {
         DeleteObject(Mask[i]);
         DeleteObject(RunBit[i]);
@@ -236,9 +258,9 @@ HDC Animation(HDC hdc, int xPos, int yPos, int s)
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    static HDC hdc, mem1dc, mem2dc;
+    static HDC hdc, mem1dc, mem2dc, mem3dc;
     PAINTSTRUCT ps;
-    static HBITMAP hBit1, hBit2, oldBit1, oldBit2;
+    static HBITMAP hBit1, hBit2, hBit3, oldBit1, oldBit2, oldBit3;
     static int x, y;
     static RECT rectView;
     static char s;//방향설정 변수
@@ -306,22 +328,27 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     }
     break;
     case WM_PAINT:
-        
+
         switch (game_state) {
         case true:
 
             hdc = BeginPaint(hWnd, &ps);
             mem1dc = CreateCompatibleDC(hdc);
             mem2dc = CreateCompatibleDC(mem1dc);
+            mem3dc = CreateCompatibleDC(mem1dc);
             if (hBit1 == NULL)
                 hBit1 = CreateCompatibleBitmap(hdc, 1280, 960);
             oldBit1 = (HBITMAP)SelectObject(mem1dc, hBit1);
             oldBit2 = (HBITMAP)SelectObject(mem2dc, hBit2);
-            BitBlt(mem1dc, 0, 0, 1280, 960, MakeMap(mem2dc), 0, 0, SRCCOPY);//배경출력
-            Animation(mem1dc, x, y, s);
+            oldBit3 = (HBITMAP)SelectObject(mem3dc, hBit3);
+            BitBlt(mem1dc, 0, 0, 1280, 960, Snack(mem3dc), 0, 0, SRCCOPY);//장애물 그리기
+            MakeMap(mem2dc);//장애물 그리기
+            Animation(mem1dc, x, y, s); // 팩맨그리기 
             BitBlt(hdc, 0, 0, 1280, 960, mem1dc, 0, 0, SRCCOPY); //배경위에 그린거 출력
             SelectObject(mem1dc, oldBit1);
             SelectObject(mem2dc, oldBit2);
+            SelectObject(mem2dc, oldBit3);
+            DeleteObject(mem3dc);
             DeleteObject(mem2dc);
             DeleteObject(mem1dc);
             DrawText(hdc, time_announcer, time_announcer_len, &time_announcer_size, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
@@ -338,7 +365,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_KEYDOWN: //키보드의 어떤 버튼이 내려간 것을 감지했을 때 발생되는 메시지
         if (game_state == true) {
             SetTimer(hWnd, 1, 100, NULL);
-             
+
             switch (wParam) { // 키보드가 눌렸을때 wParam에 값이 저장된다 값과 비교하여 switch 문에 진입한다
             case VK_LEFT: // 왼쪽 화살표
                 s = 'L';//왼쪽
@@ -356,7 +383,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 s = 'B';  //처음으로돌아가기
                 break;
             }
-            
+
         }break;
     case WM_TIMER:
         if (game_state == true) {
@@ -449,4 +476,3 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     }
     return (INT_PTR)FALSE;
 }
-
