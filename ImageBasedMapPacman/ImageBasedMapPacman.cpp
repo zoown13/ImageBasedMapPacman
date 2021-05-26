@@ -16,7 +16,8 @@ HDC Animation(HDC mem1dc, int xPos, int yPos, int s);
 HINSTANCE hInst;                                // 현재 인스턴스입니다.
 WCHAR szTitle[] = _T("ImageBasedMapPackman");                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
- int score = 0; // 과자를 하나씩 먹으면 점수도  오릅니다 
+static int score =0; // 과자를 하나씩 먹으면 점수도  오릅니다 
+
 
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -191,12 +192,21 @@ HDC Snack(HDC hdc) {    // 과자 그리기 함수
                 SelectObject(memdc, Snack);
                 BitBlt(hdc, j * mapE2+25, i * mapE1+20, snackSize, snackSize, memdc, 0, 0, SRCPAINT);//배경위에 원본
             }
-
     DeleteObject(Snack);
     DeleteObject(Mask);
 
     return hdc;
 }
+int Counter(int packman[10][16]) {
+    int i = 0, j = 0, Score = 0;
+        for (i = 0; i < 10; i++)
+            for (j = 0; j < 16; j++)
+                if (packman[i][j] == 3) {
+                    Score++;
+                }
+    return Score;
+}
+
 HDC Animation(HDC hdc, int xPos, int yPos, int s)
 {
     HDC memdc;
@@ -438,9 +448,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 if (count_time >= 0)
                 {
 
-                    count_time = count_time--;
+                    count_time = count_time--; // 1초씩 감소 
                 }
-
+                score = Counter(packman);
                 time_announcer_len = wsprintf(time_announcer, TEXT("남은시간: %d SCORE: %d"), count_time, score);    
                 break;
             }return 0;
