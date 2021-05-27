@@ -161,6 +161,7 @@
     <Image Include="..\bmp00002.bmp" />
     <Image Include="..\bmp00003.bmp" />
     <Image Include="..\bmp00004.bmp" />
+    <Image Include="..\bmp00005.bmp" />
     <Image Include="..\icon1.ico" />
     <Image Include="..\mask1.bmp" />
     <Image Include="..\mask2.bmp" />
