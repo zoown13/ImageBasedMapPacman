@@ -393,13 +393,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
         case false: // 게임 끝났을 때 화면 출력 
             hdc = BeginPaint(hWnd, &ps);
-            SelectObject(hdc, CreateSolidBrush(RGB(255, 255, 0)));
+            SelectObject(hdc, CreateSolidBrush(RGB(255, 255, 255)));
             Rectangle(hdc, 0, 0, rectView.right, rectView.bottom);
            
             SetBkMode(hdc, TRANSPARENT); // 글자 배경을 투명하게 한다 
             HFONT hFont, oldFont;
-            SetTextColor(hdc, RGB(255, 255, 255));
-            hFont = CreateFont(50, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, TEXT("넥슨"));
+            SetTextColor(hdc, RGB(0, 0, 0));
+            hFont = CreateFont(50, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, TEXT("넥슨 풋볼고딕 B"));
             oldFont = (HFONT)SelectObject(hdc, hFont);
             DrawText(hdc, resultScore, resultScore_len, &resultScore_size, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
             EndPaint(hWnd, &ps);
