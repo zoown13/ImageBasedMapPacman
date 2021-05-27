@@ -326,6 +326,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_CREATE:
         SetTimer(hWnd, 2, 1000, NULL); // 제한시간용 타이머
         GetClientRect(hWnd, &rectView);
+        AddFontResourceA("C:\Windows\Fonts\NEXONFootballGothicB.ttf"); // 폰트 불러오기 
+     
         x = 1; y = 1;
         packman[y][x] = 5;//팩맨 그림을 4등분하여 왼쪽위를 출력하기 위해 4개의 좌표 중 왼쪽위 좌표를 5로 설정
         packman[y][x + 1] = 6;//팩맨 그림을 4등분하여  오른쪽위를 출력하기 위해 4개의 좌표 중 왼쪽위 좌표를 6로 설정
@@ -393,7 +395,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             hdc = BeginPaint(hWnd, &ps);
             SelectObject(hdc, CreateSolidBrush(RGB(255, 255, 0)));
             Rectangle(hdc, 0, 0, rectView.right, rectView.bottom);
+           
             SetBkMode(hdc, TRANSPARENT); // 글자 배경을 투명하게 한다 
+            HFONT hFont, oldFont;
+            SetTextColor(hdc, RGB(255, 255, 255));
+            hFont = CreateFont(50, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, TEXT("넥슨"));
+            oldFont = (HFONT)SelectObject(hdc, hFont);
             DrawText(hdc, resultScore, resultScore_len, &resultScore_size, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
             EndPaint(hWnd, &ps);
             break;
@@ -482,7 +489,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 }
                 score = Counter(packman);
 
-                resultScore_len = wsprintf(resultScore, TEXT("게임종료    SCORE:  %d"), score);
+                resultScore_len = wsprintf(resultScore, TEXT("넥슨 풋볼 고딕"), score);
                 time_announcer_len = wsprintf(time_announcer, TEXT("남은시간: %d SCORE: %d"), count_time, score);
                 InvalidateRgn(hWnd, NULL, TRUE);                break;
             }
