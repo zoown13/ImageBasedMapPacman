@@ -2,22 +2,21 @@
 //
 #include <windows.h>
 #include <TCHAR.H>
-#include <time.h>
 #include "resource.h"
 #include "framework.h"
 #include "ImageBasedMapPacman.h"
 
 #define MAX_LOADSTRING 100
 
+//함수들 선언
 HDC MakeMap(HDC hdc);
-HDC Animation(HDC mem1dc, int xPos, int yPos, int s);
+HDC Animation(HDC mem1dc, int s);
+HDC Snack(HDC hdc);
 
 // 전역 변수:
 HINSTANCE hInst;                                // 현재 인스턴스입니다.
 WCHAR szTitle[] = _T("ImageBasedMapPackman");                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
-static int score =0; // 과자를 하나씩 먹으면 점수도  오릅니다 
-
 
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -104,7 +103,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
 
     HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-        0, 0, 1280, 960, nullptr, nullptr, hInstance, nullptr);
+        0, 0, 1600, 1000, nullptr, nullptr, hInstance, nullptr);
 
     if (!hWnd)
     {
@@ -129,21 +128,33 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 
 
-static int packman[10][16] = {
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-    {1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1},
-    {1,0,1,1,0,0,1,1,1,1,0,0,1,1,0,1},
-    {1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,1},
-    {1,0,0,0,1,1,0,0,0,0,1,1,0,0,0,1},
-    {1,0,0,0,1,1,0,0,0,0,1,1,0,0,0,1},
-    {1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,1},
-    {1,0,1,1,0,0,1,1,1,1,0,0,1,1,0,1},
-    {1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1},
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
-};
-int mapE1 = 96;//장애물의 세로(960/10)
-int mapE2 = 80;//장애물의 가로(1280/16)
-int snackSize = 20;// 과자의 크기 
+int packman[20][32] = {
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,1,1,0,0,0,0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,1,1,1,1,0,0,1},
+    {1,0,0,1,1,0,0,0,0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,1,1,1,1,0,0,1},
+    {1,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,1,1,0,0,0,0,0,0,1,1,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1},
+    {1,0,0,1,1,0,0,0,0,0,0,1,1,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,1,1,1,1,1,1,0,0,1,1,0,0,1,1,1,1,1,1,0,0,1,1,1,1,1},
+    {1,0,0,0,0,0,0,1,1,1,1,1,1,0,0,1,1,0,0,1,1,1,1,1,1,0,0,1,1,1,1,1},
+    {1,0,0,1,1,0,0,0,0,0,0,1,1,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1},
+    {1,0,0,1,1,0,0,0,0,0,0,1,1,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1},
+    {1,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,1,1,0,0,0,0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,1,1,1,1,0,0,1},
+    {1,0,0,1,1,0,0,0,0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,1,1,1,1,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+};//1일때 장애물, 0일때 빈공간
+int mapE1 = 48;//장애물의 세로(960/10)
+int mapE2 = 40;//장애물의 가로(1280/16)
+int snackSize = 10;//먹는 오브젝트 크기
+static int score = 0;//출력 스코어 저장변수
+
 HDC MakeMap(HDC hdc) //맵 장애물 표시
 {
     HDC memdc;
@@ -153,61 +164,53 @@ HDC MakeMap(HDC hdc) //맵 장애물 표시
     memdc = CreateCompatibleDC(hdc);
     hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Map));
     SelectObject(memdc, hBit);
-    /* int map[10][16] =
-     {
-         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-         {1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1},
-         {1,0,1,1,0,0,1,1,1,1,0,0,1,1,0,1},
-         {1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,1},
-         {1,0,0,0,1,1,0,0,0,0,1,1,0,0,0,1},
-         {1,0,0,0,1,1,0,0,0,0,1,1,0,0,0,1},
-         {1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,1},
-         {1,0,1,1,0,0,1,1,1,1,0,0,1,1,0,1},
-         {1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1},
-         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
-     };*/
-    for (i = 0; i < 10; i++)
-        for (j = 0; j < 16; j++)
+    for (i = 0; i < 20; i++)
+        for (j = 0; j < 32; j++)
             if (packman[i][j] == 1)
                 BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+
     DeleteObject(hBit);
+    DeleteDC(memdc);
+
     return hdc;
 }
+
 HDC Snack(HDC hdc) {    // 과자 그리기 함수 
     HDC memdc;
     HBITMAP Snack, Mask;
     int i, j;
 
     memdc = CreateCompatibleDC(hdc);
-    Snack = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Snack));
-    Mask = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_MaskSnack));
-    SelectObject(memdc, Mask);
+    Snack = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_PackmanDown2));
+    Mask = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_MaskCLose));
 
-
-    for (i = 0; i < 10; i++)
-        for (j = 0; j < 16; j++)
+    for (i = 0; i < 20; i += 2)
+        for (j = 0; j < 32; j += 2) {
             if (packman[i][j] == 0) {
                 SelectObject(memdc, Mask);
-                BitBlt(hdc, j * mapE2+25, i * mapE1+20, snackSize, snackSize, memdc, 0, 0, SRCAND);//배경위에 마스크 (snackSize =20)
+                BitBlt(hdc, j * mapE2 - 10, i * mapE1 - 10, snackSize/*10*/, snackSize, memdc, 33, 33, SRCAND);//배경위에 마스크
                 SelectObject(memdc, Snack);
-                BitBlt(hdc, j * mapE2+25, i * mapE1+20, snackSize, snackSize, memdc, 0, 0, SRCPAINT);//배경위에 원본
+                BitBlt(hdc, j * mapE2 - 10, i * mapE1 - 10, snackSize, snackSize, memdc, 33, 33, SRCPAINT);//배경위에 원본
             }
+        }
+
     DeleteObject(Snack);
     DeleteObject(Mask);
 
     return hdc;
 }
-int Counter(int packman[10][16]) {
+
+int Counter(int packman[20][32]) {//먹은 오브젝트 개수 세는 함수
     int i = 0, j = 0, Score = 0;
-        for (i = 0; i < 10; i++)
-            for (j = 0; j < 16; j++)
-                if (packman[i][j] == 3) {
-                    Score++;
-                }
+    for (i = 0; i < 20; i += 2)
+        for (j = 0; j < 32; j += 2)
+            if (packman[i][j] == 3) {
+                Score++;
+            }
     return Score;
 }
 
-HDC Animation(HDC hdc, int xPos, int yPos, int s)
+HDC Animation(HDC hdc, int s)//팩맨 그리기
 {
     HDC memdc;
     HBITMAP RunBit[2], Mask[2];
@@ -251,14 +254,33 @@ HDC Animation(HDC hdc, int xPos, int yPos, int s)
     }
     memdc = CreateCompatibleDC(hdc);
 
-    for (i = 0; i < 10; i++)
-        for (j = 0; j < 16; j++)
-            if (packman[i][j] == 2) {
+    for (i = 0; i < 20; i++)
+        for (j = 0; j < 32; j++) {
+            if (packman[i][j] == 5) {//팩맨 그림을 4등분하여 왼쪽위을 영역 배경에 저장
                 SelectObject(memdc, Mask[count]);
                 BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCAND);//배경위에 마스크
                 SelectObject(memdc, RunBit[count]);
                 BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCPAINT);//배경위에 원본
             }
+            if (packman[i][j + 1] == 6) {//팩맨 그림을 4등분하여 오른쪽위 영역을 배경에 저장
+                SelectObject(memdc, Mask[count]);
+                BitBlt(hdc, j * mapE2, i * mapE1 + mapE1, mapE2, mapE1, memdc, 0, mapE1, SRCAND);//배경위에 마스크
+                SelectObject(memdc, RunBit[count]);
+                BitBlt(hdc, j * mapE2, i * mapE1 + mapE1, mapE2, mapE1, memdc, 0, mapE1, SRCPAINT);//배경위에 원본
+            }
+            if (packman[i + 1][j] == 7) {//팩맨 그림을 4등분하여 왼쪽아래 영역을 배경에 저장
+                SelectObject(memdc, Mask[count]);
+                BitBlt(hdc, j * mapE2 + mapE2, i * mapE1, mapE2, mapE1, memdc, mapE2, 0, SRCAND);//배경위에 마스크
+                SelectObject(memdc, RunBit[count]);
+                BitBlt(hdc, j * mapE2 + mapE2, i * mapE1, mapE2, mapE1, memdc, mapE2, 0, SRCPAINT);//배경위에 원본
+            }
+            if (packman[i + 1][j + 1] == 8) {//팩맨 그림을 4등분하여 오른쪽아래 영역을 배경에 저장
+                SelectObject(memdc, Mask[count]);
+                BitBlt(hdc, j * mapE2 + mapE2, i * mapE1 + mapE1, mapE2, mapE1, memdc, mapE2, mapE1, SRCAND);//배경위에 마스크
+                SelectObject(memdc, RunBit[count]);
+                BitBlt(hdc, j * mapE2 + mapE2, i * mapE1 + mapE1, mapE2, mapE1, memdc, mapE2, mapE1, SRCPAINT);//배경위에 원본
+            }
+        }
 
     for (i = 0; i < 2; i++) {
         DeleteObject(Mask[i]);
@@ -276,24 +298,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     static int x, y;
     static RECT rectView;
     static char s;//방향설정 변수
+
+
     static int count_time = 60; // 1분간 게임 가능하게하는 변수
     static TCHAR time_announcer[1024], resultScore[1024]; // drawtext할 문자열
     static int time_announcer_len, resultScore_len; // drawtext에서 문자열 길이를 넘겨줄 변수 
     RECT time_announcer_size;   // drawtext 크기 (남은시간, 현재 점수 출력) 
-    time_announcer_size.left = 50;
-    time_announcer_size.top = 50;
-    time_announcer_size.right = 300;
-    time_announcer_size.bottom = 140;
+    time_announcer_size.left = 1280;
+    time_announcer_size.top = 10;
+    time_announcer_size.right = 1500;
+    time_announcer_size.bottom = 50;
 
     RECT resultScore_size; // 게임 종료시 출력되는 문구의 크기 
-    resultScore_size.left = 340;
+    resultScore_size.left = 500;
     resultScore_size.top = 380;
-    resultScore_size.right = 740;
+    resultScore_size.right = 900;
     resultScore_size.bottom = 480;
 
     static bool game_state = true; // 1분이 지나면 false로 바뀌고 게임 종료 
-    int i, j;
-
 
     OPENFILENAME OFN;
     TCHAR str[100], lpstrFile[100] = _T("");
@@ -302,14 +324,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     switch (message)
     {
     case WM_CREATE:
-
         SetTimer(hWnd, 2, 1000, NULL); // 제한시간용 타이머
         GetClientRect(hWnd, &rectView);
         x = 1; y = 1;
-        packman[y][x] = 2;
-        s = 'R';
-        hBit2 = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Background));
-
+        packman[y][x] = 5;//팩맨 그림을 4등분하여 왼쪽위를 출력하기 위해 4개의 좌표 중 왼쪽위 좌표를 5로 설정
+        packman[y][x + 1] = 6;//팩맨 그림을 4등분하여  오른쪽위를 출력하기 위해 4개의 좌표 중 왼쪽위 좌표를 6로 설정
+        packman[y + 1][x] = 7;//팩맨 그림을 4등분하여 왼쪽아래를 출력하기 위해 4개의 좌표 중 왼쪽위 좌표를 7로 설정
+        packman[y + 1][x + 1] = 8;//팩맨 그림을 4등분하여 오른쪽아래를 출력하기 위해 4개의 좌표 중 왼쪽위 좌표를 8로 설정
+        s = 'R';//팩맨의 기본위치 
+        hBit2 = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_BITMAP1));//배경 비트맵 저장
         break;
     case WM_COMMAND:
     {
@@ -345,41 +368,39 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
     }
     break;
+
     case WM_PAINT:
-
         switch (game_state) { // 60초가 다되면 false로 만들어 게임을 끝낸다 
-        case true: // 게임중일때 화면 출력 
-
+        case true:
             hdc = BeginPaint(hWnd, &ps);
             mem1dc = CreateCompatibleDC(hdc);
             mem2dc = CreateCompatibleDC(mem1dc);
             if (hBit1 == NULL)
-                hBit1 = CreateCompatibleBitmap(hdc, 1280, 960);
+                hBit1 = CreateCompatibleBitmap(hdc, 1500, 960);
             oldBit1 = (HBITMAP)SelectObject(mem1dc, hBit1);
             oldBit2 = (HBITMAP)SelectObject(mem2dc, hBit2);
-           
-            BitBlt(mem1dc, 0, 0, 1280, 960, MakeMap(mem2dc), 0, 0, SRCCOPY);//장애물 그리기
-            Animation(mem1dc, x, y, s); // 팩맨그리기 
-            BitBlt(hdc, 0, 0, 1280, 960, mem1dc, 0, 0, SRCCOPY); //배경위에 그린거 출력
+            BitBlt(mem1dc, 0, 0, 1280, 960, MakeMap(mem2dc), 0, 0, SRCCOPY);//배경과 장애물 출력
             Snack(mem1dc);//과자 그리기 
-            BitBlt(hdc, 0, 0, 1280, 960, mem1dc, 0, 0, SRCCOPY); //배경위에 그린거 출력
+            BitBlt(hdc, 0, 0, 1280, 960, Animation(mem1dc, s), 0, 0, SRCCOPY); //배경위에 그린것과 팩맨 출력 
             SelectObject(mem1dc, oldBit1);
             SelectObject(mem2dc, oldBit2);
             DeleteObject(mem2dc);
-            DeleteObject(mem1dc); //게임 중 남은시간, 현재 점수 출력 
+            DeleteObject(mem1dc);
             DrawText(hdc, time_announcer, time_announcer_len, &time_announcer_size, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
             EndPaint(hWnd, &ps);
             break;
         case false: // 게임 끝났을 때 화면 출력 
             hdc = BeginPaint(hWnd, &ps);
+            SelectObject(hdc, CreateSolidBrush(RGB(255, 255, 0)));
+            Rectangle(hdc, 0, 0, rectView.right, rectView.bottom);
+            SetBkMode(hdc, TRANSPARENT); // 글자 배경을 투명하게 한다 
             DrawText(hdc, resultScore, resultScore_len, &resultScore_size, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
             EndPaint(hWnd, &ps);
             break;
         }
         break;
-        break;
     case WM_KEYDOWN: //키보드의 어떤 버튼이 내려간 것을 감지했을 때 발생되는 메시지
-
+        SetTimer(hWnd, 1, 100, NULL);
         if (game_state == true) {
             SetTimer(hWnd, 1, 100, NULL);
 
@@ -391,67 +412,67 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 s = 'R';//오른쪽
                 break;
             case VK_UP:
-                s = 'U';//위쪽 
+                s = 'U';//위쪽  
                 break;
             case VK_DOWN:
                 s = 'D';//아래쪽상수
                 break;
-            case VK_RETURN:
+            case VK_RETURN://엔터
                 s = 'B';  //처음으로돌아가기
                 break;
             }
+        }
+        break;
 
-        }break;
     case WM_TIMER:
-
         if (game_state == true) {
             switch (wParam) // 타이머의 id가 1일때와 2일때의 동작 
             {
             case 1: // 타이머가 1일때
-                packman[y][x] = 3; // 먹은 과자가 다시 생성되지 않도록 0도 아니고 1도 아니고 2도 아닌 3으로 두었습니다
-             
+                packman[y][x] = 3;
+                packman[y][x + 1] = 3;
+                packman[y + 1][x] = 3;
+                packman[y + 1][x + 1] = 3;//팩맨이 중복되어 출력되지 않게하기위해와 과자 출력하지않고 스코어를 위한 변수로 0이아닌 3으로 설정
                 switch (s) {
                 case 'L'://Left
                     x--;
-                    if (x <= 0)
-                        x++;
-                    if (packman[y][x] == 1)
+                    if (packman[y][x] == 1 || packman[y + 1][x] == 1)//배열의 내용이 1(장애물)일때 위치 복구
                         x++;
                     InvalidateRgn(hWnd, NULL, TRUE);
                     break;
                 case 'R'://Right
                     x++;
-                    if (x >= 15)
-                        x--;
-                    if (packman[y][x] == 1)
+                    if (packman[y][x + 1] == 1 || packman[y + 1][x + 1] == 1)
                         x--;
                     InvalidateRgn(hWnd, NULL, TRUE);
                     break;
                 case 'U'://Up
                     y--;
-                    if (y <= 0)
-                        y++;
-                    if (packman[y][x] == 1)
+                    if (packman[y][x] == 1 || packman[y][x + 1] == 1)
                         y++;
                     InvalidateRgn(hWnd, NULL, TRUE);
                     break;
                 case 'D'://Down
                     y++;
-                    if (y >= 9)
-                        y--;
-                    if (packman[y][x] == 1)
+                    if (packman[y + 1][x] == 1 || packman[y + 1][x + 1] == 1)
                         y--;
                     InvalidateRgn(hWnd, NULL, TRUE);
                     break;
                 case 'B'://Back
-
+                    x = 1; y = 1;
                     InvalidateRgn(hWnd, NULL, TRUE);
                     break;
                 }
-                packman[y][x] = 2;
+
+                packman[y][x] = 5;
+                packman[y][x + 1] = 6;
+                packman[y + 1][x] = 7;
+                packman[y + 1][x + 1] = 8;//옮겨진 좌표에 팩맨을 그리기 위해 변수 저장
+
+
                 if (count_time < 0) // 시간이 0보다 작아지면 
                     game_state = false; // false로 만들어 게임 종료 
-                
+
                 break;
             case 2: // 타이머가 2일때
                 if (count_time >= 0)
@@ -460,13 +481,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     count_time = count_time--; // 1초씩 감소 
                 }
                 score = Counter(packman);
-                resultScore_len = wsprintf(resultScore, TEXT("게임종료    SCORE:  %d"),score);
-                time_announcer_len = wsprintf(time_announcer, TEXT("남은시간: %d SCORE: %d"), count_time, score);    
-                break;
-            }return 0;
-        }break;
-    case WM_DESTROY:
 
+                resultScore_len = wsprintf(resultScore, TEXT("게임종료    SCORE:  %d"), score);
+                time_announcer_len = wsprintf(time_announcer, TEXT("남은시간: %d SCORE: %d"), count_time, score);
+                InvalidateRgn(hWnd, NULL, TRUE);                break;
+            }
+        }
+        return 0;
+    case WM_DESTROY:
         if (hBit1)
             DeleteObject(hBit1);
         KillTimer(hWnd, 1);
