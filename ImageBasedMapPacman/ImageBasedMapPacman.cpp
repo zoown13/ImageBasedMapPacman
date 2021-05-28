@@ -5,7 +5,7 @@
 #include "resource.h"
 #include "framework.h"
 #include "ImageBasedMapPacman.h"
-#include "mmsystem.h"
+#include "mmsystem.h" // 음악 재생을 위해 인클루드 
 
 #pragma comment(lib,"winmm.lib") // lib 파일을 읽어들이는 메크로 
 
@@ -398,7 +398,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         switch (game_state) { // 60초가 다되면 false로 만들어 게임을 끝낸다 
         case 0:
             hdc = BeginPaint(hWnd, &ps);
-            SelectObject(hdc, CreateSolidBrush(RGB(25, 25, 112)));
+            SelectObject(hdc, CreateSolidBrush(RGB(0, 0, 61)));
             Rectangle(hdc, 0, 0, rectView.right, rectView.bottom);
 
             SetBkMode(hdc, TRANSPARENT); // 글자 배경을 투명하게 한다 
@@ -429,7 +429,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
         case 2: // 게임 끝났을 때 화면 출력 
             hdc = BeginPaint(hWnd, &ps);
-            SelectObject(hdc, CreateSolidBrush(RGB(25, 25, 112)));
+            SelectObject(hdc, CreateSolidBrush(RGB(0, 0, 61)));
             Rectangle(hdc, 0, 0, rectView.right, rectView.bottom);
            
             SetBkMode(hdc, TRANSPARENT); // 글자 배경을 투명하게 한다 
