@@ -306,13 +306,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 
     static int count_time = 60; // 1분간 게임 가능하게하는 변수
-    static TCHAR time_announcer[1024], resultScore[1024], /*초기 화면 문구 변수 -> */initial[1024], initial2[1024]; // drawtext할 문자열
-    static int time_announcer_len, resultScore_len, initial_len, initial_len2; // drawtext에서 문자열 길이를 넘겨줄 변수 
+    static TCHAR time_announcer[1024], time_announcer2[1024], resultScore[1024], /*초기 화면 문구 변수 -> */initial[1024], initial2[1024]; // drawtext할 문자열
+    static int time_announcer_len, time_announcer_len2, resultScore_len, initial_len, initial_len2; // drawtext에서 문자열 길이를 넘겨줄 변수 
     RECT time_announcer_size;   // drawtext 크기 (남은시간, 현재 점수 출력) 
-    time_announcer_size.left = 1280;
+    time_announcer_size.left = 1250;
     time_announcer_size.top = 10;
     time_announcer_size.right = 1500;
     time_announcer_size.bottom = 50;
+
+    RECT time_announcer_size2;   // drawtext 크기 (남은시간, 현재 점수 출력) 
+    time_announcer_size2.left = 1280;
+    time_announcer_size2.top = 50;
+    time_announcer_size2.right = 1500;
+    time_announcer_size2.bottom = 100;
 
     RECT resultScore_size; // 게임 종료시 출력되는 문구의 크기 
     resultScore_size.left = 550;
@@ -424,7 +430,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             SelectObject(mem2dc, oldBit2);
             DeleteObject(mem2dc);
             DeleteObject(mem1dc);
+            hFont = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, TEXT("넥슨 풋볼고딕 L"));
+            oldFont = (HFONT)SelectObject(hdc, hFont);
             DrawText(hdc, time_announcer, time_announcer_len, &time_announcer_size, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+            DrawText(hdc, time_announcer2, time_announcer_len2, &time_announcer_size2, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+            DeleteObject(hFont);
             EndPaint(hWnd, &ps);
             break;
         case 2: // 게임 끝났을 때 화면 출력 
@@ -533,7 +543,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 score = Counter(packman);
 
                 resultScore_len = wsprintf(resultScore, TEXT("게임종료    SCORE:  %d"), score);
-                time_announcer_len = wsprintf(time_announcer, TEXT("남은시간: %d SCORE: %d"), count_time, score);
+                time_announcer_len = wsprintf(time_announcer, TEXT("남은시간: %d"), count_time);
+                time_announcer_len2 = wsprintf(time_announcer2, TEXT("HIGH SCORE: %d"), score);
                 InvalidateRgn(hWnd, NULL, TRUE);                break;
             }
         }
