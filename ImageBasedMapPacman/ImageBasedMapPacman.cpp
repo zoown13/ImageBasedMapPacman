@@ -301,8 +301,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 
     static int count_time = 60; // 1분간 게임 가능하게하는 변수
-    static TCHAR time_announcer[1024], resultScore[1024]; // drawtext할 문자열
-    static int time_announcer_len, resultScore_len; // drawtext에서 문자열 길이를 넘겨줄 변수 
+    static TCHAR time_announcer[1024], resultScore[1024], /*초기 화면 문구 변수 -> */initial[1024], initial2[1024]; // drawtext할 문자열
+    static int time_announcer_len, resultScore_len, initial_len, initial_len2; // drawtext에서 문자열 길이를 넘겨줄 변수 
     RECT time_announcer_size;   // drawtext 크기 (남은시간, 현재 점수 출력) 
     time_announcer_size.left = 1280;
     time_announcer_size.top = 10;
@@ -310,12 +310,27 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     time_announcer_size.bottom = 50;
 
     RECT resultScore_size; // 게임 종료시 출력되는 문구의 크기 
-    resultScore_size.left = 500;
+    resultScore_size.left = 550;
     resultScore_size.top = 380;
-    resultScore_size.right = 900;
+    resultScore_size.right = 950;
     resultScore_size.bottom = 480;
 
-    static bool game_state = true; // 1분이 지나면 false로 바뀌고 게임 종료 
+    RECT initial_size; // 게임 종료시 출력되는 문구의 크기 
+    initial_size.left = 350;
+    initial_size.top = 380;
+    initial_size.right = 1050;
+    initial_size.bottom = 480;
+    
+    RECT initial_size2; // 게임 시작시 출력되는 문구의 크기2 
+    initial_size2.left = 350;
+    initial_size2.top = 480;
+    initial_size2.right = 1050;
+    initial_size2.bottom = 580;
+
+    static int game_state = 0; // 1분이 지나면 2로 바뀌고 게임 종료 
+
+    initial_len = wsprintf(initial, TEXT("PAC-MAN GAME")); // 초기 화면 문구 
+    initial_len2 = wsprintf(initial2, TEXT("'ENTER 를 눌러 게임 시작'")); // 초기 화면 문구2 
 
     OPENFILENAME OFN;
     TCHAR str[100], lpstrFile[100] = _T("");
@@ -372,8 +387,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     break;
 
     case WM_PAINT:
+        HFONT hFont, oldFont,hFont2, oldFont2;
         switch (game_state) { // 60초가 다되면 false로 만들어 게임을 끝낸다 
-        case true:
+        case 0:
+            hdc = BeginPaint(hWnd, &ps);
+            SelectObject(hdc, CreateSolidBrush(RGB(25, 25, 112)));
+            Rectangle(hdc, 0, 0, rectView.right, rectView.bottom);
+
+            SetBkMode(hdc, TRANSPARENT); // 글자 배경을 투명하게 한다 
+            SetTextColor(hdc, RGB(255, 255, 0));
+            hFont = CreateFont(70, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, TEXT("넥슨 풋볼고딕 L"));
+            oldFont = (HFONT)SelectObject(hdc, hFont);
+            DrawText(hdc, initial, initial_len, &initial_size, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+            DrawText(hdc, initial2, initial_len2, &initial_size2, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+            DeleteObject(hFont);
+            EndPaint(hWnd, &ps);
+        case 1:
             hdc = BeginPaint(hWnd, &ps);
             mem1dc = CreateCompatibleDC(hdc);
             mem2dc = CreateCompatibleDC(mem1dc);
@@ -391,24 +420,31 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             DrawText(hdc, time_announcer, time_announcer_len, &time_announcer_size, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
             EndPaint(hWnd, &ps);
             break;
-        case false: // 게임 끝났을 때 화면 출력 
+        case 2: // 게임 끝났을 때 화면 출력 
             hdc = BeginPaint(hWnd, &ps);
-            SelectObject(hdc, CreateSolidBrush(RGB(255, 255, 255)));
+            SelectObject(hdc, CreateSolidBrush(RGB(25, 25, 112)));
             Rectangle(hdc, 0, 0, rectView.right, rectView.bottom);
            
             SetBkMode(hdc, TRANSPARENT); // 글자 배경을 투명하게 한다 
-            HFONT hFont, oldFont;
-            SetTextColor(hdc, RGB(0, 0, 0));
-            hFont = CreateFont(50, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, TEXT("넥슨 풋볼고딕 B"));
+            SetTextColor(hdc, RGB(255, 255, 0));
+            hFont = CreateFont(50, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, TEXT("넥슨 풋볼고딕 L"));
             oldFont = (HFONT)SelectObject(hdc, hFont);
             DrawText(hdc, resultScore, resultScore_len, &resultScore_size, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+            DeleteObject(hFont);
             EndPaint(hWnd, &ps);
             break;
         }
         break;
     case WM_KEYDOWN: //키보드의 어떤 버튼이 내려간 것을 감지했을 때 발생되는 메시지
         SetTimer(hWnd, 1, 100, NULL);
-        if (game_state == true) {
+        if (game_state == 0) {
+            switch (wParam) {
+            case VK_RETURN:
+                game_state = 1; // 엔터 누르면 게임 시작 
+                break;
+            }
+        }
+        if (game_state == 1) {
             SetTimer(hWnd, 1, 100, NULL);
 
             switch (wParam) { // 키보드가 눌렸을때 wParam에 값이 저장된다 값과 비교하여 switch 문에 진입한다
@@ -432,7 +468,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
 
     case WM_TIMER:
-        if (game_state == true) {
+        if (game_state == 1) { // 게임 실행 중 일떄
             switch (wParam) // 타이머의 id가 1일때와 2일때의 동작 
             {
             case 1: // 타이머가 1일때
@@ -478,7 +514,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 
                 if (count_time < 0) // 시간이 0보다 작아지면 
-                    game_state = false; // false로 만들어 게임 종료 
+                    game_state = 2; // false로 만들어 게임 종료 
 
                 break;
             case 2: // 타이머가 2일때
@@ -489,7 +525,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 }
                 score = Counter(packman);
 
-                resultScore_len = wsprintf(resultScore, TEXT("넥슨 풋볼 고딕"), score);
+                resultScore_len = wsprintf(resultScore, TEXT("게임종료    SCORE:  %d"), score);
                 time_announcer_len = wsprintf(time_announcer, TEXT("남은시간: %d SCORE: %d"), count_time, score);
                 InvalidateRgn(hWnd, NULL, TRUE);                break;
             }
