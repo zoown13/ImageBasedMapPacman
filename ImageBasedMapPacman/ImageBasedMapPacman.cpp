@@ -5,6 +5,9 @@
 #include "resource.h"
 #include "framework.h"
 #include "ImageBasedMapPacman.h"
+#include "mmsystem.h"
+
+#pragma comment(lib,"winmm.lib") // lib 파일을 읽어들이는 메크로 
 
 #define MAX_LOADSTRING 100
 
@@ -289,6 +292,8 @@ HDC Animation(HDC hdc, int s)//팩맨 그리기
     DeleteDC(memdc);
     return hdc;
 }
+HINSTANCE g_hInst;
+LPCTSTR lpszClass = TEXT("First");
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -339,6 +344,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     switch (message)
     {
     case WM_CREATE:
+        PlaySound(MAKEINTRESOURCE(IDR_WAVE1), g_hInst, SND_RESOURCE | SND_ASYNC); // 소리 내는 함수
+
         SetTimer(hWnd, 2, 1000, NULL); // 제한시간용 타이머
         GetClientRect(hWnd, &rectView);
         AddFontResourceA("C:\Windows\Fonts\NEXONFootballGothicB.ttf"); // 폰트 불러오기 

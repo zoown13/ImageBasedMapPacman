@@ -173,6 +173,9 @@
     <Image Include="ImageBasedMapPacman.ico" />
     <Image Include="small.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Media Include="..\Pac Baby (3 Minutes) - Pac-Man CE 2 Music.wav" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

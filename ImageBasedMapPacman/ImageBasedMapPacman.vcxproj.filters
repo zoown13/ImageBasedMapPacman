@@ -103,4 +103,9 @@
       <Filter>리소스 파일</Filter>
     </Image>
   </ItemGroup>
+  <ItemGroup>
+    <Media Include="..\Pac Baby (3 Minutes) - Pac-Man CE 2 Music.wav">
+      <Filter>리소스 파일</Filter>
+    </Media>
+  </ItemGroup>
 </Project>
