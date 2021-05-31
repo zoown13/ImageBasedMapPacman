@@ -1,10 +1,14 @@
-﻿// ImageBasedMapPacman.cpp : 애플리케이션에 대한 진입점을 정의합니다.
+﻿#define _CRT_SECURE_NO_WARNINGS
+
+// ImageBasedMapPacman.cpp : 애플리케이션에 대한 진입점을 정의합니다.
 //
 #include <windows.h>
 #include <TCHAR.H>
 #include "resource.h"
 #include "framework.h"
 #include "ImageBasedMapPacman.h"
+#include <wchar.h>
+#include "ImageLabels.h"
 #include "mmsystem.h" // 음악 재생을 위해 인클루드 
 
 #pragma comment(lib,"winmm.lib") // lib 파일을 읽어들이는 메크로 
@@ -15,11 +19,19 @@
 HDC MakeMap(HDC hdc);
 HDC Animation(HDC mem1dc, int s);
 HDC Snack(HDC hdc);
+/**
+* 이미지에 존재하는 객체를 확인한 후 표현될 수 있는 오브젝트 목록 반환
+* result: 표현할 수 있는 오브젝트 목록
+* labels: 이미지에 존재하는 객체 목록
+*/
+void IsItemInLabels(int* result, wchar_t* labels); 
 
 // 전역 변수:
 HINSTANCE hInst;                                // 현재 인스턴스입니다.
 WCHAR szTitle[] = _T("ImageBasedMapPackman");                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
+OPENFILENAME OFN; // 파일을 열기 위한 구조체
+wchar_t items[3][100] = { L"Dog", L"Human", L"Person" }; // 맵에 표현될 수 있는 오브젝트 목록
 
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -106,7 +118,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
 
     HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-        0, 0, 1600, 1000, nullptr, nullptr, hInstance, nullptr);
+        0, 0, 1280, 960, nullptr, nullptr, hInstance, nullptr);
 
     if (!hWnd)
     {
@@ -201,6 +213,26 @@ HDC Snack(HDC hdc) {    // 과자 그리기 함수
     DeleteObject(Mask);
 
     return hdc;
+}
+
+void IsItemInLabels(int* result, wchar_t* labels)
+{
+    wchar_t* pwc;
+    wchar_t* pt;
+
+    pwc = wcstok(labels, L" ,", &pt);
+    while (pwc != NULL)
+    {
+        for (int i = 0; i < 3; i++) {
+
+            if (wcsstr(pwc, items[i]) != NULL) {
+                result[i] = 1;
+            }
+        }
+        
+        pwc = wcstok(NULL, L" ,", &pt);
+    }
+
 }
 
 int Counter(int packman[20][32]) {//먹은 오브젝트 개수 세는 함수
@@ -343,9 +375,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     initial_len = wsprintf(initial, TEXT("PAC-MAN GAME")); // 초기 화면 문구 
     initial_len2 = wsprintf(initial2, TEXT("'ENTER 를 눌러 게임 시작'")); // 초기 화면 문구2 
 
-    OPENFILENAME OFN;
-    TCHAR str[100], lpstrFile[100] = _T("");
-    TCHAR filter[] = _T("JPG(.jpg)\0*.jpg\0PNG(.png)\0*.png\0");
+    
+    TCHAR str[100], lpstrFile[100] = _T(""), lpstrFileTitle[100] = _T("");
+    TCHAR filter[] = _T("JPG(.jpg,.jpeg)\0*.jpg;*.jpeg\0PNG(.png)\0*.png\0");
+
+    /**
+       * imageName: /api/ + 사진 파일 이름
+       * labels: 사진 라벨링 데이터가 저장될 배열
+    */
+    static wchar_t imageName[100];
+    static wchar_t imageNameUrl[100];
+    static wchar_t labels[500];
+    static int result[3] = { 0, }; // 오브젝트 목록 여부
 
     switch (message)
     {
@@ -364,28 +405,43 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         s = 'R';//팩맨의 기본위치 
         hBit2 = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_BITMAP1));//배경 비트맵 저장
         break;
+
     case WM_COMMAND:
     {
         int wmId = LOWORD(wParam);
 
-        switch (wmId)
-        {
-        case IDM_UPLOAD:                                // 사진 업로드 기능
-            memset(&OFN, 0, sizeof(OPENFILENAME));
-            OFN.lStructSize = sizeof(OPENFILENAME);
-            OFN.hwndOwner = hWnd;
-            OFN.lpstrFilter = filter;
-            OFN.lpstrFile = lpstrFile;
-            OFN.nMaxFile = 100;
-            OFN.lpstrInitialDir = _T(".");
-            if (GetOpenFileName(&OFN) != 0) {
-                _stprintf_s(str, _T("%s 파일을 업로드하겠습니가?"), OFN.lpstrFile);
-                MessageBox(hWnd, str, _T("업로드 확인"), MB_OK);
-            }
+            switch (wmId)
+            {
+            case IDM_UPLOAD:                                // 사진 업로드 기능
+                memset(&OFN, 0, sizeof(OPENFILENAME));
+                OFN.lStructSize = sizeof(OPENFILENAME);
+                OFN.hwndOwner = hWnd;
+                OFN.lpstrFilter = filter;
+                OFN.lpstrFile = lpstrFile; // 파일의 경로
+                OFN.nMaxFile = 100;
+                OFN.lpstrInitialDir = _T(".");
+                OFN.lpstrFileTitle = lpstrFileTitle; // 파일명 저장
+                OFN.nMaxFileTitle = 100;
+                if (GetOpenFileName(&OFN) != 0) {
+                    _stprintf_s(imageName, _T("/api/%s"), lpstrFileTitle); // label을 가져오기 위해 필요한 파일명 저장
+                    _stprintf_s(imageNameUrl, _T("/api/uploads/%s"), lpstrFileTitle); // url을 가져오기 위해 필요한 파일명 저장
+                    _stprintf_s(str, _T("%s 파일이 성공적으로 업로드 되었습니다."), lpstrFile);
+              
+                    uploadImage(lpstrFile, imageNameUrl); // 이미지 업로드
 
-            break;
-        case IDM_DOWNLOAD:                             // 사진 가져오는 기능 
-            break;
+                    MessageBox(hWnd, str, _T("업로드 확인"), MB_OK);
+                }
+
+                break;
+            case IDM_DOWNLOAD:                             // 사진 라벨링 데이터 가져오는 버튼, 실험적으로 사용
+                
+                getImageLabels(imageName, labels); // 라벨링 데이터 가져와 labels에 저장
+
+                IsItemInLabels(result, labels); // 라벨링 데이터에서 맵에 표현가능한 오브젝트 확인
+                
+                MessageBox(hWnd, labels,
+                    _T("이미지 라벨링 데이터 확인"), MB_OKCANCEL);
+                break;
 
         case IDM_ABOUT:
             DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);

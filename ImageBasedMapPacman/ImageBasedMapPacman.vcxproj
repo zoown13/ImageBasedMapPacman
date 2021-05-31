@@ -141,11 +141,15 @@
   <ItemGroup>
     <ClInclude Include="framework.h" />
     <ClInclude Include="ImageBasedMapPacman.h" />
+    <ClInclude Include="ImageLabels.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="WinHttpWrapper.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ImageBasedMapPacman.cpp" />
+    <ClCompile Include="ImageLabels.cpp" />
+    <ClCompile Include="WinHttpWrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ImageBasedMapPacman.rc" />
