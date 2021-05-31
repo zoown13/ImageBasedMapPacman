@@ -8,7 +8,7 @@ public:
 	static ImageLabels& getInstance();
 	void getImageLabels(wchar_t* filename, wchar_t* labels);
 	void getUploadUrl(wchar_t* filename, wchar_t* url);
-	void uploadImage(wchar_t* filepath, wchar_t* filename);
+	int uploadImage(wchar_t* filepath, wchar_t* filename);
 	
 };
 
@@ -21,7 +21,7 @@ extern "C"
 
 	void getImageLabels(wchar_t* filename, wchar_t* labels);
 	void getUploadUrl(wchar_t* filename, wchar_t* url);
-	void uploadImage(wchar_t* filepath, wchar_t* filename);
+	int uploadImage(wchar_t* filepath, wchar_t* filename);
 
 
 #ifdef __cplusplus

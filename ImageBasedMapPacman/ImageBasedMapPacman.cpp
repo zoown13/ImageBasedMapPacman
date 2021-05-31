@@ -203,7 +203,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
                 break;
             case IDM_DOWNLOAD:                             // 사진 라벨링 데이터 가져오는 버튼, 실험적으로 사용
-             
+                
                 getImageLabels(imageName, labels); // 라벨링 데이터 가져와 labels에 저장
                 
                 MessageBox(hWnd, labels,

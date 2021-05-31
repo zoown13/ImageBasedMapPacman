@@ -27,50 +27,24 @@ void getImageLabels(wchar_t* filename, wchar_t* labels)
 	const wstring requestHeader = L"Content-Type: application/json";
 	int port = INTERNET_DEFAULT_HTTPS_PORT;
 	bool https = true;
+	wchar_t* pos, *startpos, *outpos;
+
 
 	using namespace WinHttpWrapper;
 
 	HttpRequest req(domain, port, https);
 	HttpResponse response;
-
-	/*cout << "Action: Create Product with Id = 1" << endl;
-	req.Post(L"/api/products/create",
-		requestHeader,
-		R"({"Id":1, "Name":"ElectricFan","Qty":14,"Price":20.90})",
-		response);
-	cout << "Returned Status:" << response.statusCode << endl << endl;
-	response.Reset();*/
-
 	
 	req.Get(filename, L"", response);
 	cout << "Returned Text:" << response.text << endl << endl;
 	std::wstring widestr = std::wstring(response.text.begin(), response.text.end());
-	wcscpy(labels, widestr.c_str());
+
+	pos = wcsstr(const_cast<wchar_t*>(widestr.c_str()), L"labels");// labels 문자 시작위치 반환
+	startpos = wcsstr(pos, L"[");// label 데이터 목록 시작위치 반환
+	outpos = wcsstr(startpos, L"]");// label 데이터 목록 종료위치 반환
+	wcsncpy(labels, startpos + 1, wcslen(startpos) - wcslen(outpos)-1);// label 데이터들만 슬라이싱 후 반환
+
 	response.Reset();
-
-	/*cout << "Action: Update Product with Id = 1" << endl;
-	req.Post(L"/api/products/1",
-		requestHeader,
-		R"({"Id":1, "Name":"ElectricFan","Qty":15,"Price":29.80})",
-		response);
-	cout << "Returned Status:" << response.statusCode << endl << endl;
-	response.Reset();
-
-	cout << "Action: Retrieve all products" << endl;
-	req.Get(L"/api/products", L"", response);
-	cout << "Returned Text:" << response.text << endl << endl;
-	response.Reset();
-
-	cout << "Action: Delete the product with id = 1" << endl;
-	req.Delete(L"/api/products/1", L"", "", response);
-	cout << "Returned Status:" << response.statusCode << endl << endl;
-	response.Reset();
-
-	cout << "Action: Retrieve all products" << endl;
-	req.Get(L"/api/products", L"", response);
-	cout << "Returned Text:" << response.text << endl << endl;
-	response.Reset();*/
-
 	return;
 }
 
@@ -96,7 +70,7 @@ void getUploadUrl(wchar_t* filename, wchar_t* url) {
 	return;
 }
 
-void uploadImage(wchar_t* filepath, wchar_t* filename) {
+int uploadImage(wchar_t* filepath, wchar_t* filename) {
 
 	using namespace std;
 	const wstring domain = L"media-query-mediabucket-1i4slys4cekco.s3.amazonaws.com";
@@ -117,7 +91,7 @@ void uploadImage(wchar_t* filepath, wchar_t* filename) {
 	//파일 정상적으로 읽히지 않으면 return
 	if (!ifs) {
 		cout << "Error happend during file read" << endl;
-		return ;
+		return -1;
 	}
 
 	string image = string(istreambuf_iterator<char>(ifs), istreambuf_iterator<char>()); // 이미지 binary 데이터를 string data로 변환
@@ -126,10 +100,5 @@ void uploadImage(wchar_t* filepath, wchar_t* filename) {
 	cout << "Returned Text:" << response.statusCode << endl << endl; //성공여부 확인을 위한 http 상태코드 출력
 	response.Reset();
 
-
-	return;
-
-
-
-	return;
+	return 0;
 }
