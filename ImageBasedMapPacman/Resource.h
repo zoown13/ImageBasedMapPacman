@@ -28,6 +28,15 @@
 #define IDB_PackmanUp2                  149
 #define IDB_Map                         150
 #define IDB_BITMAP1                     154
+#define IDB_Pink1                       156
+#define IDB_Pink2                       160
+#define IDB_MonsterMask1                161
+#define IDB_MonsterMask2                162
+#define IDB_Red1                        163
+#define IDB_Red2                        164
+#define IDB_Mint1                       165
+
+#define IDB_Mint2                       166
 #define ID_MAP_32771                    32771
 #define IDM_UPLOAD                      32772
 #define IDM_DOWNLOAD                    32773
@@ -38,8 +47,8 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        155
-#define _APS_NEXT_COMMAND_VALUE         32775
+#define _APS_NEXT_RESOURCE_VALUE        167
+#define _APS_NEXT_COMMAND_VALUE         32776
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
