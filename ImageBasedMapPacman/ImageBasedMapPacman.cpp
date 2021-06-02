@@ -171,6 +171,8 @@ int mapE2 = 40;//장애물의 가로(1280/16)
 int snackSize = 10;//먹는 오브젝트 크기
 static int score = 0;//출력 스코어 저장변수
 
+HINSTANCE g_hInst;
+
 HDC MakeMap(HDC hdc) //맵 장애물 표시
 {
     HDC memdc;
@@ -178,8 +180,8 @@ HDC MakeMap(HDC hdc) //맵 장애물 표시
     int i, j;
 
     memdc = CreateCompatibleDC(hdc);
-    hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Background));
-  
+    hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Map));
+
     SelectObject(memdc, hBit);
     for (i = 0; i < 20; i++)
         for (j = 0; j < 32; j++)
@@ -326,8 +328,7 @@ HDC Animation(HDC hdc, int s)//팩맨 그리기
     DeleteDC(memdc);
     return hdc;
 }
-HINSTANCE g_hInst;
-LPCTSTR lpszClass = TEXT("First");
+
 
 HDC RedAnimation(HDC hdc)//빨간 몬스터 그리기
 {
@@ -406,6 +407,7 @@ HDC PinkAnimation(HDC hdc)//분홍 몬스터 그리기
     DeleteDC(memdc);
     return hdc;
 }
+
 HDC MintAnimation(HDC hdc)//민트색 몬스터 그리기
 {
     HDC memdc;
@@ -456,7 +458,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     static RECT rectView;
     static char s;//방향설정 변수
-
+    static char M1, M2, M3;//몬스터들의 방향설정 변수 M1: 빨강, M2 : 분홍, M3 : 민트
+    static BOOL FLAG = FALSE;
 
     static int count_time = 60; // 1분간 게임 가능하게하는 변수
     static TCHAR time_announcer[1024], time_announcer2[1024], resultScore[1024], /*초기 화면 문구 변수 -> */initial[1024], initial2[1024]; // drawtext할 문자열
@@ -472,17 +475,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     time_announcer_size2.top = 50;
     time_announcer_size2.right = 1500;
     time_announcer_size2.bottom = 100;
-    static char M1, M2, M3;//몬스터들의 방향설정 변수 M1: 빨강, M2 : 분홍, M3 : 민트
-  
-    static int count_time = 60; // 1분간 게임 가능하게하는 변수
-    static TCHAR time_announcer[1024], resultScore[1024]; // drawtext할 문자열
-    static int time_announcer_len, resultScore_len; // drawtext에서 문자열 길이를 넘겨줄 변수 
-    RECT time_announcer_size;   // drawtext 크기 (남은시간, 현재 점수 출력) 
-    time_announcer_size.left = 1280;
-    time_announcer_size.top = 10;
-    time_announcer_size.right = 1500;
-    time_announcer_size.bottom = 50;
-
+    
     RECT resultScore_size; // 게임 종료시 출력되는 문구의 크기 
     resultScore_size.left = 550;
     resultScore_size.top = 380;
@@ -503,6 +496,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     static int game_state = 0; // 1분이 지나면 2로 바뀌고 게임 종료 
 
+    HFONT hFont, oldFont;
+
     initial_len = wsprintf(initial, TEXT("PAC-MAN GAME")); // 초기 화면 문구 
     initial_len2 = wsprintf(initial2, TEXT("'ENTER 를 눌러 게임 시작'")); // 초기 화면 문구2 
 
@@ -522,7 +517,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     switch (message)
     {
     case WM_CREATE:
-        PlaySound(MAKEINTRESOURCE(IDR_WAVE1), g_hInst, SND_RESOURCE | SND_ASYNC); // 소리 내는 함수
+        PlaySound(MAKEINTRESOURCE(IDR_WAVE1), g_hInst, SND_RESOURCE | SND_ASYNC | SND_LOOP); // 소리 내는 함수
+        AddFontResourceA("C:\Windows\Fonts\NEXONFootballGothicB.ttf"); // 폰트 불러오기 
 
         SetTimer(hWnd, 2, 1000, NULL); // 제한시간용 타이머
         GetClientRect(hWnd, &rectView);
@@ -546,15 +542,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         M1 = 2;
         M2 = 2;
         M3 = 2;//몬스터들의 기본 모습
-        AddFontResourceA("C:\Windows\Fonts\NEXONFootballGothicB.ttf"); // 폰트 불러오기 
-     
-        x = 1; y = 1;
-        packman[y][x] = 5;//팩맨 그림을 4등분하여 왼쪽위를 출력하기 위해 4개의 좌표 중 왼쪽위 좌표를 5로 설정
-        packman[y][x + 1] = 6;//팩맨 그림을 4등분하여  오른쪽위를 출력하기 위해 4개의 좌표 중 왼쪽위 좌표를 6로 설정
-        packman[y + 1][x] = 7;//팩맨 그림을 4등분하여 왼쪽아래를 출력하기 위해 4개의 좌표 중 왼쪽위 좌표를 7로 설정
-        packman[y + 1][x + 1] = 8;//팩맨 그림을 4등분하여 오른쪽아래를 출력하기 위해 4개의 좌표 중 왼쪽위 좌표를 8로 설정
-        s = 'R';//팩맨의 기본위치 
-        hBit2 = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_BITMAP1));//배경 비트맵 저장
+           
+        hBit2 = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Background));// 배경 비트맵 저장
         break;
 
     case WM_COMMAND:
@@ -607,13 +596,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     break;
 
     case WM_PAINT:
-        HFONT hFont, oldFont,hFont2, oldFont2;
+        
         switch (game_state) { // 60초가 다되면 false로 만들어 게임을 끝낸다 
         case 0:
             hdc = BeginPaint(hWnd, &ps);
             SelectObject(hdc, CreateSolidBrush(RGB(0, 0, 61)));
             Rectangle(hdc, 0, 0, rectView.right, rectView.bottom);
-
             SetBkMode(hdc, TRANSPARENT); // 글자 배경을 투명하게 한다 
             SetTextColor(hdc, RGB(255, 255, 0));
             hFont = CreateFont(70, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, TEXT("넥슨 풋볼고딕 L"));
@@ -626,13 +614,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             hdc = BeginPaint(hWnd, &ps);
             mem1dc = CreateCompatibleDC(hdc);
             mem2dc = CreateCompatibleDC(mem1dc);
+
             if (hBit1 == NULL)
                 hBit1 = CreateCompatibleBitmap(hdc, 1500, 960);
             oldBit1 = (HBITMAP)SelectObject(mem1dc, hBit1);
             oldBit2 = (HBITMAP)SelectObject(mem2dc, hBit2);
-            BitBlt(mem1dc, 0, 0, 1280, 960, MakeMap(mem2dc), 0, 0, SRCCOPY);//배경과 장애물 출력
-            Snack(mem1dc);//과자 그리기 
-            BitBlt(hdc, 0, 0, 1280, 960, Animation(mem1dc, s), 0, 0, SRCCOPY); //배경위에 그린것과 팩맨 출력 
+
+            MakeMap(mem2dc);
+            BitBlt(mem1dc, 0, 0, 1280, 960, mem2dc, 0, 0, SRCCOPY);//배경과 장애물 출력 
+            Snack(mem1dc);//과자 그리기         
+            RedAnimation(mem1dc);//빨간 몬스터 그리기
+            PinkAnimation(mem1dc);//분홍 몬스터 그리기
+            MintAnimation(mem1dc);//민트 몬스터 그리기
+            Animation(mem1dc, s); //팩맨 출력 
+            BitBlt(hdc, 0, 0, 1280, 960, mem1dc, 0, 0, SRCCOPY); //배경위에 그린것 출력 
             SelectObject(mem1dc, oldBit1);
             SelectObject(mem2dc, oldBit2);
             DeleteObject(mem2dc);
@@ -647,8 +642,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case 2: // 게임 끝났을 때 화면 출력 
             hdc = BeginPaint(hWnd, &ps);
             SelectObject(hdc, CreateSolidBrush(RGB(0, 0, 61)));
-            Rectangle(hdc, 0, 0, rectView.right, rectView.bottom);
-           
+            Rectangle(hdc, 0, 0, rectView.right, rectView.bottom);           
             SetBkMode(hdc, TRANSPARENT); // 글자 배경을 투명하게 한다 
             SetTextColor(hdc, RGB(255, 255, 0));
             hFont = CreateFont(50, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, TEXT("넥슨 풋볼고딕 L"));
@@ -660,7 +654,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         break;
     case WM_KEYDOWN: //키보드의 어떤 버튼이 내려간 것을 감지했을 때 발생되는 메시지
-        SetTimer(hWnd, 1, 100, NULL);
+        
         if (game_state == 0) {
             switch (wParam) {
             case VK_RETURN:
@@ -692,7 +686,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
 
     case WM_TIMER:
-        if (game_state == true) {
+        if (game_state == 1) {
             switch (wParam) // 타이머의 id가 1일때와 2일때의 동작 
             {
             case 1: // 타이머가 1일때
@@ -706,29 +700,29 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     x--;
                     if (packman[y][x] == 1 || packman[y + 1][x] == 1)//배열의 내용이 1(장애물)일때 위치 복구
                         x++;   
-                    InvalidateRgn(hWnd, NULL, TRUE);
+                    InvalidateRgn(hWnd, NULL, FALSE);
                     break;
                 case 'R'://Right
                     x++;
                     if (packman[y][x + 1] == 1 || packman[y + 1][x + 1] == 1)
                         x--;
-                    InvalidateRgn(hWnd, NULL, TRUE);
+                    InvalidateRgn(hWnd, NULL, FALSE);
                     break;
                 case 'U'://Up
                     y--;
                     if (packman[y][x] == 1 || packman[y][x + 1] == 1)
                         y++;
-                    InvalidateRgn(hWnd, NULL, TRUE);
+                    InvalidateRgn(hWnd, NULL, FALSE);
                     break;
                 case 'D'://Down
                     y++;
                     if (packman[y + 1][x] == 1 || packman[y + 1][x + 1] == 1)
                         y--;                 
-                    InvalidateRgn(hWnd, NULL, TRUE);
+                    InvalidateRgn(hWnd, NULL, FALSE);
                     break;
                 case 'B'://Back
                     x = 1; y = 1;
-                    InvalidateRgn(hWnd, NULL, TRUE);
+                    InvalidateRgn(hWnd, NULL, FALSE);
                     break;
                 }
                               
@@ -748,9 +742,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                         n1++;//배열의 내용이 1(장애물)일때 위치 복구     
                         M1 = rand() % 4 + 1;//배열의 내용이 1(장애물)일때 랜덤으로 방향 설정 모든 방향 다 같은 방식으로 작동
                     }
-                    if (packman[m1][n1] == 5 || packman[m1 + 1][n1] == 6 || packman[m1][n1] == 7 || packman[m1 + 1][n1] == 8)
-                        game_state = false;// 몬스터에게 닿을 시 게임 종료
-                    InvalidateRgn(hWnd, NULL, TRUE);
+                    if (packman[m1][n1] == 5 || packman[m1 + 1][n1] == 6 || packman[m1][n1] == 7 || packman[m1 + 1][n1] == 8) {
+                        game_state = 2;// 몬스터에게 닿을 시 게임 종료
+                        FLAG = TRUE;
+                    }
+                    InvalidateRgn(hWnd, NULL,FLAG);
                     break;
                 case 2://Right
                     n1++;
@@ -759,9 +755,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                         n1--;
                         M1 = rand() % 4 + 1;
                     }
-                    if (packman[m1][n1 + 1] == 5 || packman[m1 + 1][n1 + 1] == 6 || packman[m1][n1 + 1] == 7 || packman[m1+ 1][n1 + 1] == 8)
-                        game_state = false;
-                    InvalidateRgn(hWnd, NULL, TRUE);
+                    if (packman[m1][n1 + 1] == 5 || packman[m1 + 1][n1 + 1] == 6 || packman[m1][n1 + 1] == 7 || packman[m1+ 1][n1 + 1] == 8) {
+                        game_state = 2;// 몬스터에게 닿을 시 게임 종료
+                        FLAG = TRUE;
+                    }
+                    InvalidateRgn(hWnd, NULL, FLAG);
                     break;
                 case 3:  //UP        
                     m1--;
@@ -770,9 +768,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                         m1++;
                         M1 = rand() % 4 + 1;
                     }
-                    if (packman[m1][n1] == 5 || packman[m1][n1 + 6] == 12 || packman[m1][n1] == 7 || packman[m1][n1 + 1] == 8)
-                        game_state = false;
-                    InvalidateRgn(hWnd, NULL, TRUE);
+                    if (packman[m1][n1] == 5 || packman[m1][n1 + 6] == 12 || packman[m1][n1] == 7 || packman[m1][n1 + 1] == 8) {
+                        game_state = 2;// 몬스터에게 닿을 시 게임 종료
+                        FLAG = TRUE;
+                    }
+                    InvalidateRgn(hWnd, NULL, FLAG);
                     break; 
                 case 4://Down
                     m1++;
@@ -781,9 +781,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                         m1--;
                         M1 = rand() % 4 + 1;
                     }
-                    if (packman[m1 + 1][n1] == 5 || packman[m1 + 1][n1 + 1] == 6 || packman[m1 + 1][n1] == 7 || packman[m1 + 1][n1+ 1] == 8)
-                        game_state = false;
-                    InvalidateRgn(hWnd, NULL, TRUE);
+                    if (packman[m1 + 1][n1] == 5 || packman[m1 + 1][n1 + 1] == 6 || packman[m1 + 1][n1] == 7 || packman[m1 + 1][n1+ 1] == 8) {
+                        game_state = 2;// 몬스터에게 닿을 시 게임 종료
+                        FLAG = TRUE;
+                    }
+                    InvalidateRgn(hWnd, NULL, FLAG);
                     break;
                 } 
 
@@ -800,9 +802,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                         n2++;
                         M2 = rand() % 4 + 1;
                     }
-                    if (packman[m2][n2] == 5 || packman[m2 + 1][n2] == 6 || packman[m2][n2] == 7 || packman[m2 + 1][n2] == 8)
-                        game_state = false;
-                    InvalidateRgn(hWnd, NULL, TRUE);
+                    if (packman[m2][n2] == 5 || packman[m2 + 1][n2] == 6 || packman[m2][n2] == 7 || packman[m2 + 1][n2] == 8) {
+                        game_state = 2;// 몬스터에게 닿을 시 게임 종료
+                        FLAG = TRUE;
+                    }
+                    InvalidateRgn(hWnd, NULL, FLAG);
                     break;
                 case 2://Right
                     n2++;
@@ -811,9 +815,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                         n2--;
                         M2 = rand() % 4 + 1;
                     }
-                    if (packman[m2][n2 + 1] == 5 || packman[m2 + 1][n2 + 1] == 6 || packman[m2][n2 + 1] == 7 || packman[m2 + 1][n2 + 1] == 8)
-                        game_state = false;
-                    InvalidateRgn(hWnd, NULL, TRUE);
+                    if (packman[m2][n2 + 1] == 5 || packman[m2 + 1][n2 + 1] == 6 || packman[m2][n2 + 1] == 7 || packman[m2 + 1][n2 + 1] == 8) {
+                        game_state = 2;// 몬스터에게 닿을 시 게임 종료
+                        FLAG = TRUE;
+                    }
+                    InvalidateRgn(hWnd, NULL, FLAG);
                     break;
                 case 3://UP  
                     m2--;
@@ -822,9 +828,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                         m2++;
                         M2 = rand() % 4 + 1;
                     }
-                    if (packman[m2][n2] == 5 || packman[m2][n2 + 6] == 12 || packman[m2][n2] == 7 || packman[m2][n2 + 1] == 8)
-                        game_state = false;
-                    InvalidateRgn(hWnd, NULL, TRUE);
+                    if (packman[m2][n2] == 5 || packman[m2][n2 + 6] == 12 || packman[m2][n2] == 7 || packman[m2][n2 + 1] == 8) {
+                        game_state = 2;// 몬스터에게 닿을 시 게임 종료
+                        FLAG = TRUE;
+                    }
+                    InvalidateRgn(hWnd, NULL, FLAG);
                     break;
                 case 4://Down
                     m2++;
@@ -833,9 +841,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                         m2--;
                         M1 = rand() % 4 + 1;
                     }
-                    if (packman[m2 + 1][n2] == 5 || packman[m2 + 1][n2 + 1] == 6 || packman[m2 + 1][n2] == 7 || packman[m2 + 1][n2 + 1] == 8)
-                        game_state = false;
-                    InvalidateRgn(hWnd, NULL, TRUE);
+                    if (packman[m2 + 1][n2] == 5 || packman[m2 + 1][n2 + 1] == 6 || packman[m2 + 1][n2] == 7 || packman[m2 + 1][n2 + 1] == 8) {
+                        game_state = 2;// 몬스터에게 닿을 시 게임 종료
+                        FLAG = TRUE;
+                    }
+                    InvalidateRgn(hWnd, NULL, FLAG);
                     break;
                 }
 
@@ -854,9 +864,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                         n3++;
                         M1 = rand() % 4 + 1;
                     }
-                    if (packman[m3][n3] == 5 || packman[m3 + 1][n3] == 6 || packman[m3][n3] == 7 || packman[m3 + 1][n3] == 8)
-                        game_state = false;
-                    InvalidateRgn(hWnd, NULL, TRUE);
+                    if (packman[m3][n3] == 5 || packman[m3 + 1][n3] == 6 || packman[m3][n3] == 7 || packman[m3 + 1][n3] == 8) {
+                        game_state = 2;// 몬스터에게 닿을 시 게임 종료
+                        FLAG = TRUE;
+                    }
+                    InvalidateRgn(hWnd, NULL, FLAG);
                     break;
                 case 2://Right
                     n3++;
@@ -865,9 +877,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                         n3--;
                         M3 = rand() % 4 + 1;
                     }
-                    if (packman[m3][n3 + 1] == 5 || packman[m3 + 1][n3 + 1] == 6 || packman[m3][n3 + 1] == 7 || packman[m3 + 1][n3 + 1] == 8)
-                        game_state = false;
-                    InvalidateRgn(hWnd, NULL, TRUE);
+                    if (packman[m3][n3 + 1] == 5 || packman[m3 + 1][n3 + 1] == 6 || packman[m3][n3 + 1] == 7 || packman[m3 + 1][n3 + 1] == 8) {
+                        game_state = 2;// 몬스터에게 닿을 시 게임 종료
+                        FLAG = TRUE;
+                    }
+                    InvalidateRgn(hWnd, NULL, FLAG);
                     break;
                 case 3://UP  
                     m3--;
@@ -876,9 +890,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                         m3++;
                         M3 = rand() % 4 + 1;
                     }
-                    if (packman[m3][n3] == 5 || packman[m3][n3 + 6] == 12 || packman[m3][n3] == 7 || packman[m3][n3 + 1] == 8)
-                        game_state = false;
-                    InvalidateRgn(hWnd, NULL, TRUE);
+                    if (packman[m3][n3] == 5 || packman[m3][n3 + 6] == 12 || packman[m3][n3] == 7 || packman[m3][n3 + 1] == 8) {
+                        game_state = 2;// 몬스터에게 닿을 시 게임 종료
+                        FLAG = TRUE;
+                    }
+                    InvalidateRgn(hWnd, NULL, FLAG);
                     break;
                 case 4://Down
                     m3++;
@@ -887,9 +903,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                         m3--;
                         M3 = rand() % 4 + 1;
                     }
-                    if (packman[m3 + 1][n3] == 5 || packman[m3 + 1][n3 + 1] == 6 || packman[m3 + 1][n3] == 7 || packman[m3 + 1][n3 + 1] == 8)
-                        game_state = false;
-                    InvalidateRgn(hWnd, NULL, TRUE);
+                    if (packman[m3 + 1][n3] == 5 || packman[m3 + 1][n3 + 1] == 6 || packman[m3 + 1][n3] == 7 || packman[m3 + 1][n3 + 1] == 8) {
+                        game_state = 2;// 몬스터에게 닿을 시 게임 종료
+                        FLAG = TRUE;
+                    }
+                    InvalidateRgn(hWnd, NULL, FLAG);
                     break;
                 }
 
@@ -897,9 +915,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 packman[m3][n3] = 17;//민트 위치 조정
             
                 
-                if (count_time < 0 || score >= 93) // 시간이 0보다 작아지거나 과자 다 먹을 시
-                    game_state = false; // false로 만들어 게임 종료 
-   
+                if (count_time < 0 || score >= 93) { // 시간이 0보다 작아지거나 과자 다 먹을 시
+                    game_state = 2; // false로 만들어 게임 종료 
+                    FLAG = TRUE;
+                }
                 break;
             case 2: // 타이머가 2일때
                 if (count_time >= 0)
@@ -910,7 +929,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
                 resultScore_len = wsprintf(resultScore, TEXT("게임종료    SCORE:  %d"), score);
                 time_announcer_len = wsprintf(time_announcer, TEXT("남은시간: %d SCORE: %d"), count_time, score);
-                InvalidateRgn(hWnd, NULL, TRUE);                break;
+                InvalidateRgn(hWnd, NULL, FLAG);         
+                break;
             }
         }
         return 0;

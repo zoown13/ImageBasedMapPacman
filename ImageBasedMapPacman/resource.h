@@ -27,21 +27,18 @@
 #define IDB_MaskLeft                    148
 #define IDB_PackmanUp2                  149
 #define IDB_Map                         150
-#define IDB_BITMAP1                     154
+#define IDB_Snack                       153
+#define IDB_BITMAP2                     154
+#define IDB_MaskSnack                   154
 #define IDB_Pink1                       156
+#define IDR_WAVE1                       156
 #define IDB_Pink2                       160
 #define IDB_MonsterMask1                161
 #define IDB_MonsterMask2                162
 #define IDB_Red1                        163
 #define IDB_Red2                        164
 #define IDB_Mint1                       165
-
 #define IDB_Mint2                       166
-#define IDB_Snack                       153
-#define IDB_BITMAP2                     154
-#define IDB_MaskSnack                   154
-#define IDB_BITMAP1                     155
-#define IDR_WAVE1                       156
 #define ID_MAP_32771                    32771
 #define IDM_UPLOAD                      32772
 #define IDM_DOWNLOAD                    32773
