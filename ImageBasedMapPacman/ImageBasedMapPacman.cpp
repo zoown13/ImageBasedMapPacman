@@ -415,7 +415,7 @@ HDC MintAnimation(HDC hdc)//민트색 몬스터 그리기
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    static HDC hdc, mem1dc, mem2dc, mem3dc;
+    static HDC hdc, mem1dc, mem2dc;
     PAINTSTRUCT ps;
     static HBITMAP hBit1, hBit2, oldBit1, oldBit2;
     static int x, y;
