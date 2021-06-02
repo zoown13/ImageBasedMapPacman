@@ -205,7 +205,7 @@ HDC Snack(HDC hdc) {    // 과자 그리기 함수
 
     for (i = 0; i < 20; i += 2)
         for (j = 0; j < 32; j += 2) {
-            if (packman[i][j] == 0) {
+            if (packman[i][j] == 4) {
                 SelectObject(memdc, Mask);
                 BitBlt(hdc, j * mapE2 - 10, i * mapE1 - 10, snackSize/*10*/, snackSize, memdc, 33, 33, SRCAND);//배경위에 마스크
                 SelectObject(memdc, Snack);
