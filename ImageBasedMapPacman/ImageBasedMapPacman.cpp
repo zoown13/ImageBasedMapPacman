@@ -14,6 +14,7 @@
 #pragma comment(lib,"winmm.lib") // lib 파일을 읽어들이는 메크로 
 
 #define MAX_LOADSTRING 100
+#define ObjectNum 10
 
 //함수들 선언
 HDC MakeMap(HDC hdc);
@@ -32,7 +33,7 @@ HINSTANCE hInst;                                // 현재 인스턴스입니다.
 WCHAR szTitle[] = _T("ImageBasedMapPackman");                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
 OPENFILENAME OFN; // 파일을 열기 위한 구조체
-wchar_t items[3][100] = { L"Dog", L"Human", L"Person" }; // 맵에 표현될 수 있는 오브젝트 목록
+wchar_t items[10][100] = { L"Dog", L"Human", L"Person", L"Tree", L"Car", L"Ball", L"Cat", L"Ballon", L"Bike", L"Fruit"}; // 맵에 표현될 수 있는 오브젝트 목록
 
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -227,7 +228,7 @@ void IsItemInLabels(int* result, wchar_t* labels)
     pwc = wcstok(labels, L" ,", &pt);
     while (pwc != NULL)
     {
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < ObjectNum; i++) {
 
             if (wcsstr(pwc, items[i]) != NULL) {
                 result[i] = 1;
@@ -512,7 +513,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     static wchar_t imageName[100];
     static wchar_t imageNameUrl[100];
     static wchar_t labels[500];
-    static int result[3] = { 0, }; // 오브젝트 목록 여부
+    static int result[ObjectNum] = { 0, }; // 오브젝트 목록 여부
 
     switch (message)
     {
