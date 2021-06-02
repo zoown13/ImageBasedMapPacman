@@ -158,6 +158,7 @@
     <Image Include="..\..\..\..\Desktop\3학년\1학기\윈도우 프로그래밍\6주차 과제\5장_image\bitmap1.bmp" />
     <Image Include="..\background.bmp" />
     <Image Include="..\bitmap1.bmp" />
+    <Image Include="..\bitmap2.bmp" />
     <Image Include="..\bitmap3.bmp" />
     <Image Include="..\bitmap4.bmp" />
     <Image Include="..\bitmap5.bmp" />
@@ -165,6 +166,13 @@
     <Image Include="..\bmp00002.bmp" />
     <Image Include="..\bmp00003.bmp" />
     <Image Include="..\bmp00004.bmp" />
+    <Image Include="..\bmp00005.bmp" />
+    <Image Include="..\bmp00006.bmp" />
+    <Image Include="..\bmp00007.bmp" />
+    <Image Include="..\bmp00008.bmp" />
+    <Image Include="..\bmp00009.bmp" />
+    <Image Include="..\bmp00010.bmp" />
+    <Image Include="..\bmp00011.bmp" />
     <Image Include="..\icon1.ico" />
     <Image Include="..\mask1.bmp" />
     <Image Include="..\mask2.bmp" />
