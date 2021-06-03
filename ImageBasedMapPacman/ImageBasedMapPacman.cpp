@@ -145,7 +145,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 
 
-int packman[20][32] = {
+ int packman[20][32] = {
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
     {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
     {1,0,4,0,4,0,4,0,4,0,4,0,4,0,4,0,4,0,4,0,4,0,4,0,4,0,4,0,4,0,4,1},
@@ -173,7 +173,15 @@ int snackSize = 10;//먹는 오브젝트 크기
 static int score = 0;//출력 스코어 저장변수
 
 HINSTANCE g_hInst;
-
+void clear_map( int packman[][32]) {
+    int i, j;
+    for (i = 0; i < 20; i++) {
+        for (j = 0; j < 32; j++) {
+            if (packman[i][j] == 3 || packman[i][j] == 15 || packman[i][j] == 16 || packman[i][j] == 17 || packman[i][j] == 5)
+                packman[i][j] = 4;
+        }
+    }
+}
 HDC MakeMap(HDC hdc) //맵 장애물 표시
 {
     HDC memdc;
@@ -463,19 +471,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     static BOOL FLAG = FALSE;
 
     static int count_time = 60; // 1분간 게임 가능하게하는 변수
-    static TCHAR time_announcer[1024], time_announcer2[1024], resultScore[1024], /*초기 화면 문구 변수 -> */initial[1024], initial2[1024]; // drawtext할 문자열
-    static int time_announcer_len, time_announcer_len2, resultScore_len, initial_len, initial_len2; // drawtext에서 문자열 길이를 넘겨줄 변수 
-    RECT time_announcer_size;   // drawtext 크기 (남은시간, 현재 점수 출력) 
-    time_announcer_size.left = 1250;
-    time_announcer_size.top = 10;
-    time_announcer_size.right = 1500;
-    time_announcer_size.bottom = 50;
+    static TCHAR time_announcer[1024], time_announcer2[1024], resultScore[1024], resultScore2[1024], /*초기 화면 문구 변수 -> */initial[1024], initial2[1024]; // drawtext할 문자열
+    static int time_announcer_len, time_announcer_len2, resultScore_len, resultScore_len2, initial_len, initial_len2; // drawtext에서 문자열 길이를 넘겨줄 변수 
+    RECT time_announcer_size;   // 게임 실행 중 문구의 위치 
+    time_announcer_size.left = 1155;
+    time_announcer_size.top = 50;
+    time_announcer_size.right = 1600;
+    time_announcer_size.bottom = 80;
 
-    RECT time_announcer_size2;   // drawtext 크기 (남은시간, 현재 점수 출력) 
-    time_announcer_size2.left = 1280;
-    time_announcer_size2.top = 50;
+    RECT time_announcer_size2;   // 게임 실행 중 문구의 위치2
+    time_announcer_size2.left = 1290;
+    time_announcer_size2.top = 90;
     time_announcer_size2.right = 1500;
-    time_announcer_size2.bottom = 100;
+    time_announcer_size2.bottom = 120;
 
     RECT resultScore_size; // 게임 종료시 출력되는 문구의 크기 
     resultScore_size.left = 550;
@@ -483,14 +491,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     resultScore_size.right = 950;
     resultScore_size.bottom = 480;
 
-    RECT initial_size; // 게임 종료시 출력되는 문구의 크기 
-    initial_size.left = 350;
+    RECT resultScore_size2; // 게임 종료시 출력되는 문구의 두 번째 줄 크기
+    resultScore_size2.left = 550;
+    resultScore_size2.top = 480;
+    resultScore_size2.right = 950;
+    resultScore_size2.bottom = 540;
+
+    RECT initial_size; // 게임 시작시 출력되는 문구의 크기 
+    initial_size.left = 450;
     initial_size.top = 380;
     initial_size.right = 1050;
     initial_size.bottom = 480;
 
-    RECT initial_size2; // 게임 시작시 출력되는 문구의 크기2 
-    initial_size2.left = 350;
+    RECT initial_size2; // 게임 시작시 출력되는 문구의 두번째 줄 크기 
+    initial_size2.left = 450;
     initial_size2.top = 480;
     initial_size2.right = 1050;
     initial_size2.bottom = 580;
@@ -547,15 +561,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         hBit2 = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Background));// 배경 비트맵 저장
         break;
 
-
-
     case WM_PAINT:
-
+     
         switch (game_state) { // 60초가 다되면 false로 만들어 게임을 끝낸다 
-        case 0:
+        case 0: // 게임 실행 시 첫 화면 출력
             hdc = BeginPaint(hWnd, &ps);
-            SelectObject(hdc, CreateSolidBrush(RGB(0, 0, 61)));
+            SelectObject(hdc, CreateSolidBrush(RGB(0, 0, 61))); // 배경화면 출력 
             Rectangle(hdc, 0, 0, rectView.right, rectView.bottom);
+
+            /* 첫 화면  문구 출력되는 부분 */
             SetBkMode(hdc, TRANSPARENT); // 글자 배경을 투명하게 한다 
             SetTextColor(hdc, RGB(255, 255, 0));
             hFont = CreateFont(70, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, TEXT("넥슨 풋볼고딕 L"));
@@ -564,7 +578,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             DrawText(hdc, initial2, initial_len2, &initial_size2, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
             DeleteObject(hFont);
             EndPaint(hWnd, &ps);
-        case 1:
+
+        case 1: // 게임 실행중 화면 출력 
             hdc = BeginPaint(hWnd, &ps);
             mem1dc = CreateCompatibleDC(hdc);
             mem2dc = CreateCompatibleDC(mem1dc);
@@ -586,24 +601,34 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             SelectObject(mem2dc, oldBit2);
             DeleteObject(mem2dc);
             DeleteObject(mem1dc);
-            hFont = CreateFont(20, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, TEXT("넥슨 풋볼고딕 L"));
+
+            /* 게임 실행 중 문구 출력되는 부분 */
+           // SetBkMode(hdc, TRANSPARENT); // 글자 배경을 투명하게 한다
+            SetTextColor(hdc, RGB(255, 255, 0));
+            hFont = CreateFont(25, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, TEXT("넥슨 풋볼고딕 L"));
             oldFont = (HFONT)SelectObject(hdc, hFont);
+            SetBkColor(hdc, RGB(0, 0, 61)); // 글자 배경을 투명하게 한다
             DrawText(hdc, time_announcer, time_announcer_len, &time_announcer_size, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
             DrawText(hdc, time_announcer2, time_announcer_len2, &time_announcer_size2, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+       
             DeleteObject(hFont);
             EndPaint(hWnd, &ps);
             break;
-        case 2: // 게임 끝났을 때 화면 출력 
+       
+        case 2: // 게임 종료시 화면 출력
             hdc = BeginPaint(hWnd, &ps);
             SelectObject(hdc, CreateSolidBrush(RGB(0, 0, 61)));
             Rectangle(hdc, 0, 0, rectView.right, rectView.bottom);
+
+            /*게임 종료시 문구 출력하는 부분*/
             SetBkMode(hdc, TRANSPARENT); // 글자 배경을 투명하게 한다 
             SetTextColor(hdc, RGB(255, 255, 0));
             hFont = CreateFont(50, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, TEXT("넥슨 풋볼고딕 L"));
             oldFont = (HFONT)SelectObject(hdc, hFont);
             DrawText(hdc, resultScore, resultScore_len, &resultScore_size, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+            DrawText(hdc, resultScore2, resultScore_len2, &resultScore_size2, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
             DeleteObject(hFont);
-            EndPaint(hWnd, &ps);
+            EndPaint(hWnd, &ps);   
             break;
         }
         break;
@@ -662,6 +687,34 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 break;
             case VK_RETURN://엔터
                 s = 'B';  //처음으로돌아가기
+                break;
+            }
+        }
+        if (game_state == 2) {
+            KillTimer(hWnd, 1);
+            KillTimer(hWnd, 2);
+            score = 0;
+            count_time = 60;
+           
+            switch (wParam) {
+            case VK_RETURN:
+                clear_map(packman);
+                SetTimer(hWnd, 2, 1000, NULL); // 제한시간용 타이머
+                m1 = 9; n1 = 13;
+                m2 = 11; n2 = 13;
+                m3 = 7; n3 = 13;//몬스터들의 처음 좌표
+
+                packman[m1][n1] = 15;//빨간 몬스터 줄력하기 위해 15로 설정
+
+                packman[m2][n2] = 16;//분홍 몬스터 줄력하기 위해 15로 설정
+
+                packman[m3][n3] = 17;//민트 몬스터 줄력하기 위해 15로 설정
+
+                s = 'R';//팩맨의 기본모습
+                M1 = 2;
+                M2 = 2;
+                M3 = 2;//몬스터들의 기본 모습
+                game_state = 1; // 엔터 누르면 게임 다시 시작 
                 break;
             }
         }
@@ -726,6 +779,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     }
                     if (packman[m1][n1] == 5 || packman[m1 + 1][n1] == 6 || packman[m1][n1] == 7 || packman[m1 + 1][n1] == 8) {
                         game_state = 2;// 몬스터에게 닿을 시 게임 종료
+
                         FLAG = TRUE;
                     }
                     InvalidateRgn(hWnd, NULL, FLAG);
@@ -739,6 +793,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     }
                     if (packman[m1][n1 + 1] == 5 || packman[m1 + 1][n1 + 1] == 6 || packman[m1][n1 + 1] == 7 || packman[m1 + 1][n1 + 1] == 8) {
                         game_state = 2;// 몬스터에게 닿을 시 게임 종료
+
                         FLAG = TRUE;
                     }
                     InvalidateRgn(hWnd, NULL, FLAG);
@@ -752,6 +807,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     }
                     if (packman[m1][n1] == 5 || packman[m1][n1 + 6] == 12 || packman[m1][n1] == 7 || packman[m1][n1 + 1] == 8) {
                         game_state = 2;// 몬스터에게 닿을 시 게임 종료
+
                         FLAG = TRUE;
                     }
                     InvalidateRgn(hWnd, NULL, FLAG);
@@ -765,6 +821,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     }
                     if (packman[m1 + 1][n1] == 5 || packman[m1 + 1][n1 + 1] == 6 || packman[m1 + 1][n1] == 7 || packman[m1 + 1][n1 + 1] == 8) {
                         game_state = 2;// 몬스터에게 닿을 시 게임 종료
+\
                         FLAG = TRUE;
                     }
                     InvalidateRgn(hWnd, NULL, FLAG);
@@ -786,6 +843,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     }
                     if (packman[m2][n2] == 5 || packman[m2 + 1][n2] == 6 || packman[m2][n2] == 7 || packman[m2 + 1][n2] == 8) {
                         game_state = 2;// 몬스터에게 닿을 시 게임 종료
+                    
                         FLAG = TRUE;
                     }
                     InvalidateRgn(hWnd, NULL, FLAG);
@@ -799,6 +857,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     }
                     if (packman[m2][n2 + 1] == 5 || packman[m2 + 1][n2 + 1] == 6 || packman[m2][n2 + 1] == 7 || packman[m2 + 1][n2 + 1] == 8) {
                         game_state = 2;// 몬스터에게 닿을 시 게임 종료
+                       
                         FLAG = TRUE;
                     }
                     InvalidateRgn(hWnd, NULL, FLAG);
@@ -812,6 +871,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     }
                     if (packman[m2][n2] == 5 || packman[m2][n2 + 6] == 12 || packman[m2][n2] == 7 || packman[m2][n2 + 1] == 8) {
                         game_state = 2;// 몬스터에게 닿을 시 게임 종료
+                     
                         FLAG = TRUE;
                     }
                     InvalidateRgn(hWnd, NULL, FLAG);
@@ -825,6 +885,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     }
                     if (packman[m2 + 1][n2] == 5 || packman[m2 + 1][n2 + 1] == 6 || packman[m2 + 1][n2] == 7 || packman[m2 + 1][n2 + 1] == 8) {
                         game_state = 2;// 몬스터에게 닿을 시 게임 종료
+ 
                         FLAG = TRUE;
                     }
                     InvalidateRgn(hWnd, NULL, FLAG);
@@ -909,8 +970,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 }
                 score = Counter(packman);
 
-                resultScore_len = wsprintf(resultScore, TEXT("게임종료    SCORE:  %d"), score);
-                time_announcer_len = wsprintf(time_announcer, TEXT("남은시간: %d SCORE: %d"), count_time, score);
+                resultScore_len = wsprintf(resultScore, TEXT("게임종료    SCORE:  %d"), score); // 게임 중 등장하는 문구 설정하는 곳 
+                resultScore_len2 = wsprintf(resultScore2, TEXT("Enter를 눌러 다시하기"));
+                time_announcer_len = wsprintf(time_announcer, TEXT("남은시간: %d"), count_time);
+                time_announcer_len2 = wsprintf(time_announcer2, TEXT("HIGH SCORE: %d"), score);
                 InvalidateRgn(hWnd, NULL, FLAG);
                 break;
             }
@@ -920,8 +983,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_DESTROY:
         if (hBit1)
             DeleteObject(hBit1);
-        KillTimer(hWnd, 1);
-        KillTimer(hWnd, 2);
 
         PostQuitMessage(0);
         break;
