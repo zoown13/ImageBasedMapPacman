@@ -34,6 +34,14 @@ WCHAR szTitle[] = _T("ImageBasedMapPackman");                  // 제목 표시�
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
 OPENFILENAME OFN; // 파일을 열기 위한 구조체
 wchar_t items[10][100] = { L"Dog", L"Human", L"Person", L"Tree", L"Car", L"Ball", L"Cat", L"Ballon", L"Bike", L"Fruit" }; // 맵에 표현될 수 있는 오브젝트 목록
+   /**
+       * imageName: /api/ + 사진 파일 이름
+       * labels: 사진 라벨링 데이터가 저장될 배열
+    */
+static wchar_t imageName[100];
+static wchar_t imageNameUrl[100];
+static wchar_t labels[500];
+static int result[ObjectNum] = { 0, }; // 오브젝트 목록 여부
 
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -134,7 +142,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 }
 
 //
-//  함수: WndProc(HWND, UINT, WPARAM, LPARAM)
+//  함수: WndProc(HWND, UINT, WPARAM, LPARAM)i
 //
 //  용도: 주 창의 메시지를 처리합니다.
 //
@@ -173,10 +181,10 @@ int snackSize = 10;//먹는 오브젝트 크기
 static int score = 0;//출력 스코어 저장변수
 
 HINSTANCE g_hInst;
-void clear_map( int packman[][32]) {
+void clear_map( int packman[][32]) { // 다시 게임 시작시 초기화하는 함수 
     int i, j;
     for (i = 0; i < 20; i++) {
-        for (j = 0; j < 32; j++) {
+        for (j = 0; j < 32; j++) {// 몬스터, 과자, 팩맨 등 초기화 
             if (packman[i][j] == 3 || packman[i][j] == 15 || packman[i][j] == 16 || packman[i][j] == 17 || packman[i][j] == 5)
                 packman[i][j] = 4;
         }
@@ -188,9 +196,30 @@ HDC MakeMap(HDC hdc) //맵 장애물 표시
     HBITMAP hBit;
     int i, j;
 
-    memdc = CreateCompatibleDC(hdc);
-    hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Dog));
-
+    memdc = CreateCompatibleDC(hdc);        // result[i]가 1이면 해당 사진을 맵으로 씀 
+   if(result[0]==1)
+            hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Dog));
+        else if(result[1]==1)
+            hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Person));
+        else if (result[2] == 1)
+       hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Person));
+        else if (result[3] == 1)
+       hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Tree));
+        else if (result[4] == 1)
+       hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Car));
+        else if (result[5] == 1)
+       hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Ball));
+        else if (result[6] == 1)
+       hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Cat));
+        else if (result[7] == 1)
+       hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_ballon));
+        else if (result[8] == 1)
+       hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_bicycle));
+        else if (result[9] == 1)
+       hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Fruit));
+        else
+       hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Person));
+  
     SelectObject(memdc, hBit);
     for (i = 0; i < 20; i++)
         for (j = 0; j < 32; j++)
@@ -357,7 +386,6 @@ HDC RedAnimation(HDC hdc)//빨간 몬스터 그리기
     Mask[1] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_MonsterMask1));
     Mask[2] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_MonsterMask2));
 
-
     memdc = CreateCompatibleDC(hdc);
 
     for (i = 0; i < 20; i++)
@@ -520,15 +548,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     TCHAR str[100], lpstrFile[100] = _T(""), lpstrFileTitle[100] = _T("");
     TCHAR filter[] = _T("JPG(.jpg,.jpeg)\0*.jpg;*.jpeg\0PNG(.png)\0*.png\0");
 
-    /**
-       * imageName: /api/ + 사진 파일 이름
-       * labels: 사진 라벨링 데이터가 저장될 배열
-    */
-    static wchar_t imageName[100];
-    static wchar_t imageNameUrl[100];
-    static wchar_t labels[500];
-    static int result[ObjectNum] = { 0, }; // 오브젝트 목록 여부
-
     switch (message)
     {
     case WM_CREATE:
@@ -585,7 +604,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             mem2dc = CreateCompatibleDC(mem1dc);
 
             if (hBit1 == NULL)
-                hBit1 = CreateCompatibleBitmap(hdc, 1500, 960);
+                hBit1 = CreateCompatibleBitmap(hdc, 1280, 960);
             oldBit1 = (HBITMAP)SelectObject(mem1dc, hBit1);
             oldBit2 = (HBITMAP)SelectObject(mem2dc, hBit2);
 
@@ -603,7 +622,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             DeleteObject(mem1dc);
 
             /* 게임 실행 중 문구 출력되는 부분 */
-           // SetBkMode(hdc, TRANSPARENT); // 글자 배경을 투명하게 한다
             SetTextColor(hdc, RGB(255, 255, 0));
             hFont = CreateFont(25, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, 0, 0, 0, VARIABLE_PITCH || FF_ROMAN, TEXT("넥슨 풋볼고딕 L"));
             oldFont = (HFONT)SelectObject(hdc, hFont);
