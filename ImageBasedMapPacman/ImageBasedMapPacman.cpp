@@ -708,17 +708,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 break;
             }
         }
-        if (game_state == 2) {
-            KillTimer(hWnd, 1);
+        if (game_state == 2) { // 게임 종료 시 
+            KillTimer(hWnd, 1); // 타이머 제거 
             KillTimer(hWnd, 2);
-            score = 0;
+            score = 0;          // 점수와 시간 초기화 
             count_time = 60;
            
             switch (wParam) {
-            case VK_RETURN:
+            case VK_RETURN:         
                 clear_map(packman);
-                SetTimer(hWnd, 2, 1000, NULL); // 제한시간용 타이머
-                m1 = 9; n1 = 13;
+                SetTimer(hWnd, 2, 1000, NULL); // 제한시간용 타이머 재시작
+                m1 = 9; n1 = 13;    // 몬스터, 팩맨 위치 초기화!
                 m2 = 11; n2 = 13;
                 m3 = 7; n3 = 13;//몬스터들의 처음 좌표
 
