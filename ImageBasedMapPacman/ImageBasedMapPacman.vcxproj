@@ -157,6 +157,9 @@
   <ItemGroup>
     <Image Include="..\..\..\..\Desktop\3학년\1학기\윈도우 프로그래밍\6주차 과제\5장_image\bitmap1.bmp" />
     <Image Include="..\background.bmp" />
+    <Image Include="..\ball.bmp" />
+    <Image Include="..\ballon.bmp" />
+    <Image Include="..\bicycle.bmp" />
     <Image Include="..\bitmap1.bmp" />
     <Image Include="..\bitmap2.bmp" />
     <Image Include="..\bitmap3.bmp" />
@@ -173,6 +176,11 @@
     <Image Include="..\bmp00009.bmp" />
     <Image Include="..\bmp00010.bmp" />
     <Image Include="..\bmp00011.bmp" />
+    <Image Include="..\car.bmp" />
+    <Image Include="..\cat.bmp" />
+    <Image Include="..\dog.bmp" />
+    <Image Include="..\fruit.bmp" />
+    <Image Include="..\human.bmp" />
     <Image Include="..\icon1.ico" />
     <Image Include="..\mask1.bmp" />
     <Image Include="..\mask2.bmp" />
@@ -182,6 +190,7 @@
     <Image Include="..\packman1.bmp" />
     <Image Include="..\packman2.bmp" />
     <Image Include="..\snack.bmp" />
+    <Image Include="..\tree.bmp" />
     <Image Include="ImageBasedMapPacman.ico" />
     <Image Include="small.ico" />
   </ItemGroup>
