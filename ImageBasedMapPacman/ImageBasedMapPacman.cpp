@@ -16,10 +16,16 @@
 #define MAX_LOADSTRING 100
 
 //함수들 선언
-HDC MakeMap(HDC hdc);
-HDC Animation(HDC mem1dc, int s);
-HDC Snack(HDC hdc);
+void IsItemInLabels(int* result, wchar_t* labels);
+void MakeMap(HDC hdc);
+void Snack(HDC hdc);
+int Counter(int packman[20][32]);
+void Animation(HDC mem1dc, int s);
+void RedAnimation(HDC hdc);
+void PinkAnimation(HDC hdc);
+void MintAnimation(HDC hdc);
 /**
+
 * 이미지에 존재하는 객체를 확인한 후 표현될 수 있는 오브젝트 목록 반환
 * result: 표현할 수 있는 오브젝트 목록
 * labels: 이미지에 존재하는 객체 목록
@@ -173,7 +179,27 @@ static int score = 0;//출력 스코어 저장변수
 
 HINSTANCE g_hInst;
 
-HDC MakeMap(HDC hdc) //맵 장애물 표시
+void IsItemInLabels(int* result, wchar_t* labels)
+{
+    wchar_t* pwc;
+    wchar_t* pt;
+
+    pwc = wcstok(labels, L" ,", &pt);
+    while (pwc != NULL)
+    {
+        for (int i = 0; i < 3; i++) {
+
+            if (wcsstr(pwc, items[i]) != NULL) {
+                result[i] = 1;
+            }
+        }
+        
+        pwc = wcstok(NULL, L" ,", &pt);
+    }
+
+}
+
+void MakeMap(HDC hdc) //맵 장애물 표시
 {
     HDC memdc;
     HBITMAP hBit;
@@ -190,11 +216,10 @@ HDC MakeMap(HDC hdc) //맵 장애물 표시
 
     DeleteObject(hBit);
     DeleteDC(memdc);
-
-    return hdc;
+    
 }
 
-HDC Snack(HDC hdc) {    // 과자 그리기 함수 
+void Snack(HDC hdc) {    // 과자 그리기 함수 
     HDC memdc;
     HBITMAP Snack, Mask;
     int i, j;
@@ -216,27 +241,6 @@ HDC Snack(HDC hdc) {    // 과자 그리기 함수
     DeleteObject(Snack);
     DeleteObject(Mask);
 
-    return hdc;
-}
-
-void IsItemInLabels(int* result, wchar_t* labels)
-{
-    wchar_t* pwc;
-    wchar_t* pt;
-
-    pwc = wcstok(labels, L" ,", &pt);
-    while (pwc != NULL)
-    {
-        for (int i = 0; i < 3; i++) {
-
-            if (wcsstr(pwc, items[i]) != NULL) {
-                result[i] = 1;
-            }
-        }
-        
-        pwc = wcstok(NULL, L" ,", &pt);
-    }
-
 }
 
 int Counter(int packman[20][32]) {//먹은 오브젝트 개수 세는 함수
@@ -249,7 +253,7 @@ int Counter(int packman[20][32]) {//먹은 오브젝트 개수 세는 함수
     return Score;
 }
 
-HDC Animation(HDC hdc, int s)//팩맨 그리기
+void Animation(HDC hdc, int s)//팩맨 그리기
 {
     HDC memdc;
     HBITMAP RunBit[2], Mask[2];
@@ -326,11 +330,11 @@ HDC Animation(HDC hdc, int s)//팩맨 그리기
         DeleteObject(RunBit[i]);
     }
     DeleteDC(memdc);
-    return hdc;
+   
 }
 
 
-HDC RedAnimation(HDC hdc)//빨간 몬스터 그리기
+void RedAnimation(HDC hdc)//빨간 몬스터 그리기
 {
     HDC memdc;
     HBITMAP RunBit[3], Mask[3];
@@ -367,9 +371,9 @@ HDC RedAnimation(HDC hdc)//빨간 몬스터 그리기
         DeleteObject(RunBit[i]);
     }
     DeleteDC(memdc);
-    return hdc;
+   
 }
-HDC PinkAnimation(HDC hdc)//분홍 몬스터 그리기
+void PinkAnimation(HDC hdc)//분홍 몬스터 그리기
 {
     HDC memdc;
     HBITMAP RunBit[3], Mask[3];
@@ -405,10 +409,10 @@ HDC PinkAnimation(HDC hdc)//분홍 몬스터 그리기
         DeleteObject(RunBit[i]);
     }
     DeleteDC(memdc);
-    return hdc;
+   
 }
 
-HDC MintAnimation(HDC hdc)//민트색 몬스터 그리기
+void MintAnimation(HDC hdc)//민트색 몬스터 그리기
 {
     HDC memdc;
     HBITMAP RunBit[3], Mask[3];
@@ -445,7 +449,7 @@ HDC MintAnimation(HDC hdc)//민트색 몬스터 그리기
         DeleteObject(RunBit[i]);
     }
     DeleteDC(memdc);
-    return hdc;
+  
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -500,7 +504,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     initial_len = wsprintf(initial, TEXT("PAC-MAN GAME")); // 초기 화면 문구 
     initial_len2 = wsprintf(initial2, TEXT("'ENTER 를 눌러 게임 시작'")); // 초기 화면 문구2 
-
     
     TCHAR str[100], lpstrFile[100] = _T(""), lpstrFileTitle[100] = _T("");
     TCHAR filter[] = _T("JPG(.jpg,.jpeg)\0*.jpg;*.jpeg\0PNG(.png)\0*.png\0");
@@ -543,7 +546,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         M2 = 2;
         M3 = 2;//몬스터들의 기본 모습
            
-        hBit2 = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Background));// 배경 비트맵 저장
+        hBit2 = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Background));// 배경 비트맵 저장6
         break;
 
     case WM_COMMAND:
@@ -731,7 +734,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 packman[y + 1][x] = 7;
                 packman[y + 1][x + 1] = 8;//옮겨진 좌표에 팩맨을 그리기 위해 변수 저장
             
-
                packman[m1][n1] = 0;//과자에 영향을 주지 않기 위해 0으로 설정
            
                switch (M1) {//1:왼, 2: 오른, 3:위, 4:아래
