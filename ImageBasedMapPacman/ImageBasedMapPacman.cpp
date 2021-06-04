@@ -242,28 +242,7 @@ void Snack(HDC hdc) {    // 과자 그리기 함수
     DeleteObject(Snack);
     DeleteObject(Mask);
 
-    return hdc;
-}
-
-void IsItemInLabels(int* result, wchar_t* labels)
-{
-    wchar_t* pwc;
-    wchar_t* pt;
-
-    pwc = wcstok(labels, L" ,", &pt);
-    while (pwc != NULL)
-    {
-        for (int i = 0; i < 3; i++) {
-
-            if (wcsstr(pwc, items[i]) != NULL) {
-                result[i] = 1;
-            }
-        }
-        
-        pwc = wcstok(NULL, L" ,", &pt);
     }
-
-}
 
 int Counter(int packman[20][32]) {//먹은 오브젝트 개수 세는 함수
     int i = 0, j = 0, Score = 0;
