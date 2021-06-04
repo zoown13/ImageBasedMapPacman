@@ -8,13 +8,16 @@
 #include "framework.h"
 #include "ImageBasedMapPacman.h"
 #include <wchar.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include "ImageLabels.h"
 #include "mmsystem.h" // 음악 재생을 위해 인클루드 
 
 #pragma comment(lib,"winmm.lib") // lib 파일을 읽어들이는 메크로 
 
 #define MAX_LOADSTRING 100
-#define ObjectNum 10
+#define ObjectNum 9
 
 //함수들 선언
 void IsItemInLabels(int* result, wchar_t* labels);
@@ -26,7 +29,6 @@ void RedAnimation(HDC hdc);
 void PinkAnimation(HDC hdc);
 void MintAnimation(HDC hdc);
 /**
-
 * 이미지에 존재하는 객체를 확인한 후 표현될 수 있는 오브젝트 목록 반환
 * result: 표현할 수 있는 오브젝트 목록
 * labels: 이미지에 존재하는 객체 목록
@@ -39,7 +41,7 @@ HINSTANCE hInst;                                // 현재 인스턴스입니다.
 WCHAR szTitle[] = _T("ImageBasedMapPackman");                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
 OPENFILENAME OFN; // 파일을 열기 위한 구조체
-wchar_t items[10][100] = { L"Dog", L"Human", L"Person", L"Tree", L"Car", L"Ball", L"Cat", L"Ballon", L"Bike", L"Fruit" }; // 맵에 표현될 수 있는 오브젝트 목록
+wchar_t items[ObjectNum][100] = { L"Tree", L"Car", L"Bicycle", L"Dog", L"Person", L"Cat",  L"Ballon", L"Ball", L"Fruit" }; // 맵에 표현될 수 있는 오브젝트 목록
    /**
        * imageName: /api/ + 사진 파일 이름
        * labels: 사진 라벨링 데이터가 저장될 배열
@@ -159,39 +161,45 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 
 
- int packman[20][32] = {
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,4,0,4,0,4,0,4,0,4,0,4,0,4,0,4,0,4,0,4,0,4,0,4,0,4,0,4,0,4,1},
-    {1,0,0,1,1,0,0,0,0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,1,1,1,1,0,0,1},
-    {1,0,4,1,1,0,4,0,4,1,1,1,1,1,1,0,4,1,1,1,1,1,1,0,4,1,1,1,1,0,4,1},
-    {1,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,4,1,1,1,1,0,4,0,4,0,4,0,4,0,4,0,4,1,1,0,4,0,4,0,4,0,4,0,4,1},
-    {1,0,0,1,1,0,0,0,0,0,0,1,1,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1},
-    {1,0,4,1,1,0,4,4,4,0,4,1,1,0,4,1,1,0,4,0,4,0,4,1,1,0,4,0,4,0,4,1},
-    {1,0,0,0,0,0,0,1,1,1,1,1,1,0,0,1,1,0,0,1,1,1,1,1,1,0,0,1,1,1,1,1},
-    {1,0,4,0,4,0,4,1,1,1,1,1,1,0,4,1,1,0,4,1,1,1,1,1,1,0,4,1,1,1,1,1},
-    {1,0,0,1,1,0,0,0,0,0,0,1,1,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1},
-    {1,0,4,1,1,0,4,0,4,0,4,1,1,0,4,1,1,0,4,0,4,0,4,1,1,0,4,0,4,0,4,1},
-    {1,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,4,1,1,1,1,0,4,0,4,0,4,0,4,0,4,0,4,1,1,0,4,0,4,0,4,0,4,0,4,1},
-    {1,0,0,1,1,0,0,0,0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,1,1,1,1,0,0,1},
-    {1,0,4,1,1,0,4,0,4,1,1,1,1,1,1,0,4,1,1,1,1,1,1,0,4,1,1,1,1,0,4,1},
-    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-    {1,0,4,0,4,0,4,0,4,0,4,0,4,0,4,0,4,0,4,0,4,0,4,0,4,0,4,0,4,0,4,1},
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-};// 1 : 벽 , 0 : 빈공간 , 4: 점수 오브젝트 
+
+int packman2[20][32] = {
+   {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+   {1,0,0,9,0,0,0,9,0,0,0,9,0,0,0,9,0,0,0,9,0,0,0,9,0,0,0,9,0,0,0,1},
+   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+   {1,0,0,9,0,0,0,9,0,0,0,9,0,0,0,9,0,0,0,9,0,0,0,9,0,0,0,9,0,0,0,1},
+   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+   {1,0,0,9,0,0,0,9,0,0,0,9,0,0,0,9,0,0,0,9,0,0,0,9,0,0,0,9,0,0,0,1},
+   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+   {1,0,0,9,0,0,0,9,0,0,0,9,0,0,0,9,0,0,0,9,0,0,0,9,0,0,0,9,0,0,0,1},
+   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+   {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+   {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+};
 int mapE1 = 48;//장애물의 세로(960/10)
 int mapE2 = 40;//장애물의 가로(1280/16)
-int snackSize = 10;//먹는 오브젝트 크기
+int snackSize1 = 40;//먹는 오브젝트 크기
+int snackSize2 = 48;
 static int score = 0;//출력 스코어 저장변수
-
+static int ScoreCount = 0;
+static int m, n;
+static BOOL MEMORY;
+  
 HINSTANCE g_hInst;
-void clear_map( int packman[][32]) { // 다시 게임 시작시 초기화하는 함수 
+
+void clear_map(int packman[][32]) { // 다시 게임 시작시 초기화하는 함수 
     int i, j;
     for (i = 0; i < 20; i++) {
         for (j = 0; j < 32; j++) {// 몬스터, 과자, 팩맨 등 초기화 
-            if (packman[i][j] == 3 || packman[i][j] == 15 || packman[i][j] == 16 || packman[i][j] == 17 || packman[i][j] == 5)
+            if (packman[i][j] == 3 || packman[i][j] == 15 || packman[i][j] == 16 || packman[i][j] == 17 || packman[i][j] == 5 || packman[i][j] == 6 || packman[i][j] == 7 || packman[i][j] == 8)
                 packman[i][j] = 4;
         }
     }
@@ -211,7 +219,7 @@ void IsItemInLabels(int* result, wchar_t* labels)
                 result[i] = 1;
             }
         }
-        
+
         pwc = wcstok(NULL, L" ,", &pt);
     }
 
@@ -223,41 +231,202 @@ void MakeMap(HDC hdc) //맵 장애물 표시
     HBITMAP hBit;
     int i, j;
 
-    memdc = CreateCompatibleDC(hdc);        // result[i]가 1이면 해당 사진을 맵으로 씀 
-    if (result[0])
-        hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Dog));
-    else if (result[1])
-        hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Person));
-    else if (result[2])
-        hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Person));
-    else if (result[3])
-        hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Tree));
-    else if (result[4])
-        hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Car));
-    else if (result[5])
-        hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Ball));
-    else if (result[6])
-        hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Cat));
-    else if (result[7])
-        hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_ballon));
-    else if (result[8])
-        hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_bicycle));
-    else if (result[9])
-        hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Fruit));
-    else
-        hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Person));
-  
+    memdc = CreateCompatibleDC(hdc);
+    hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Tree));
     SelectObject(memdc, hBit);
+
     for (i = 0; i < 20; i++)
         for (j = 0; j < 32; j++)
-            if (packman[i][j] == 1)
+            if (packman2[i][j] == 1)
                 BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
 
-    DeleteObject(hBit);
-    DeleteDC(memdc);
-    
-}
+    if (result[0]) {       // result[i]가 1이면 해당 사진을 맵으로 씀 
+        hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Tree));
+        SelectObject(memdc, hBit);
+        for (i = 0; i < 20; i += 19)
+            for (j = 1; j < 32; j += 2)
+                if (packman2[i][j] == 1)
+                    BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+        for (i = 0; i < 20; i += 2)
+            for (j = 0; j < 32; j += 31)
+                if (packman2[i][j] == 1)
+                    BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+    }
+    if (result[1]) {
+        hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Car));
+        SelectObject(memdc, hBit);
+        for (i = 0; i < 20; i += 19)
+            for (j = 0; j < 32; j += 2)
+                if (packman2[i][j] == 1)
+                    BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+        for (i = 1; i < 20; i += 2)
+            for (j = 0; j < 32; j += 31)
+                if (packman2[i][j] == 1)
+                    BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
 
+    }
+    if (result[2]) {
+        hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_bicycle));
+        SelectObject(memdc, hBit);
+        i = 5;
+        for (j = 3; j < 30; j += 4)
+            if (packman2[i][j] == 1) {
+                BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+                BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
+                BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
+                BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
+
+            }
+        i = 9;
+        for (j = 5; j < 30; j += 4)
+            if (packman2[i][j] == 1) {
+                BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+                BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
+                BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
+                BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
+
+            }
+        i = 11;
+        for (j = 3; j < 30; j += 4)
+            if (packman2[i][j] == 1) {
+                BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+                BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
+                BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
+                BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
+
+            }
+        i = 15;
+        for (j = 5; j < 30; j += 4)
+            if (packman2[i][j] == 1) {
+                BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+                BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
+                BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
+                BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
+
+            }
+    }
+
+    if (result[3]) {
+        hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Dog));
+        SelectObject(memdc, hBit);
+        i = 3;
+        for (j = 3; j < 30; j += 4)
+            if (packman2[i][j] == 1) {
+                BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+                BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
+                BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
+                BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
+            }
+        i = 7;
+        for (j = 5; j < 30; j += 4)
+            if (packman2[i][j] == 1) {
+                BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+                BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
+                BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
+                BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
+
+            }
+        i = 13;
+        for (j = 3; j < 30; j += 4)
+            if (packman2[i][j] == 1) {
+                BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+                BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
+                BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
+                BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
+
+            }
+        i = 17;
+        for (j = 5; j < 30; j += 4)
+            if (packman2[i][j] == 1) {
+                BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+                BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
+                BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
+                BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
+
+            }
+    }
+    if (result[4]) {
+        hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Person));
+        SelectObject(memdc, hBit);
+        i = 3;
+        for (j = 5; j < 30; j += 4)
+            if (packman2[i][j] == 1) {
+                BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+                BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
+                BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
+                BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
+
+            }
+        i = 9;
+        for (j = 3; j < 30; j += 4)
+            if (packman2[i][j] == 1) {
+                BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+                BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
+                BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
+                BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
+
+            }
+        i = 13;
+        for (j = 5; j < 30; j += 4)
+            if (packman2[i][j] == 1) {
+                BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+                BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
+                BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
+                BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
+
+            }
+        i = 15;
+        for (j = 3; j < 30; j += 4)
+            if (packman2[i][j] == 1) {
+                BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+                BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
+                BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
+                BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
+
+            }
+
+        if (result[5]) {
+            hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Cat));
+            SelectObject(memdc, hBit);
+            i = 5;
+            for (j = 5; j < 30; j += 4)
+                if (packman2[i][j] == 1) {
+                    BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+                    BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
+                    BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
+                    BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
+                }
+            i = 7;
+            for (j = 3; j < 30; j += 4)
+                if (packman2[i][j] == 1) {
+                    BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+                    BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
+                    BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
+                    BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
+                }
+            i = 11;
+            for (j = 5; j < 30; j += 4)
+                if (packman2[i][j] == 1) {
+                    BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+                    BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
+                    BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
+                    BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
+                }
+            i = 17;
+            for (j = 3; j < 30; j += 4)
+                if (packman2[i][j] == 1) {
+                    BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+                    BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
+                    BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
+                    BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
+                }
+        }
+
+        DeleteObject(hBit);
+        DeleteDC(memdc);
+
+    }
+}
 void Snack(HDC hdc) {    // 과자 그리기 함수 
     HDC memdc;
     HBITMAP Snack, Mask;
@@ -267,20 +436,85 @@ void Snack(HDC hdc) {    // 과자 그리기 함수
     Snack = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_PackmanDown2));
     Mask = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_MaskCLose));
 
+    if (MEMORY)
+        packman2[m][n] = 4;
+    
+
     for (i = 0; i < 20; i += 2)
         for (j = 0; j < 32; j += 2) {
-            if (packman[i][j] == 4) {
-                SelectObject(memdc, Mask);
-                BitBlt(hdc, j * mapE2 - 10, i * mapE1 - 10, snackSize/*10*/, snackSize, memdc, 33, 33, SRCAND);//배경위에 마스크
+            if (packman2[i][j] == 4) {
+                if (packman2[i][j + 1] == 1 && packman2[i + 1][j] == 1 && packman2[i - 2][j] == 1 && packman2[i][j - 2] == 1) {
+                    packman2[i][j] = 1;
+                    packman2[i - 1][j] = 1;
+                    packman2[i][j - 1] = 1;
+                    packman2[i - 1][j - 1] = 1;
+                }               
                 SelectObject(memdc, Snack);
-                BitBlt(hdc, j * mapE2 - 10, i * mapE1 - 10, snackSize, snackSize, memdc, 33, 33, SRCPAINT);//배경위에 원본
+                BitBlt(hdc, j * mapE2 - 10, i * mapE1 - 10, 10, 10, memdc, 33, 33, SRCCOPY);//배경위에 원본
             }
         }
-
+   if (result[6]) {
+       Snack = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_ballon));
+        
+        for (i = 0; i < 20; i += 2)
+            for (j = 0; j < 32; j += 6) {
+                if (packman2[i][j] == 4) {
+                    if (packman2[i][j + 1] == 1 && packman2[i + 1][j] == 1 && packman2[i - 2][j] == 1 && packman2[i][j - 2] == 1) {
+                        packman2[i][j] = 1;
+                        packman2[i - 1][j] = 1;
+                        packman2[i][j - 1] = 1;
+                        packman2[i - 1][j - 1] = 1;
+                    }
+                    // SelectObject(memdc, Mask);
+                        // BitBlt(hdc, j * mapE2 - 20, i * mapE1 - 20, snackSize1, snackSize2, memdc, 0, 0, SRCAND);//배경위에 마스크
+                    SelectObject(memdc, Snack);
+                    BitBlt(hdc, j * mapE2 - 20, i * mapE1 - 20, snackSize1, snackSize2, memdc, 0, 0, SRCCOPY);//배경위에 원본
+                }
+            }
+    }
+    if (result[7]) {
+        Snack = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Ball));
+       
+        for (i = 0; i < 20; i += 2)
+            for (j = 2; j < 32; j += 6) {
+                if (packman2[i][j] == 4) {
+                    if (packman2[i][j + 1] == 1 && packman2[i + 1][j] == 1 && packman2[i - 2][j] == 1 && packman2[i][j - 2] == 1) {
+                        packman2[i][j] = 1;
+                        packman2[i - 1][j] = 1;
+                        packman2[i][j - 1] = 1;
+                        packman2[i - 1][j - 1] = 1;
+                    }
+                    // SelectObject(memdc, Mask);
+                        // BitBlt(hdc, j * mapE2 - 20, i * mapE1 - 20, snackSize1, snackSize2, memdc, 0, 0, SRCAND);//배경위에 마스크
+                    SelectObject(memdc, Snack);
+                    BitBlt(hdc, j * mapE2 - 20, i * mapE1 - 20, snackSize1, snackSize2, memdc, 0, 0, SRCCOPY);//배경위에 원본
+                }
+            }
+    }
+   if (result[8]) {
+        Snack = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Fruit));
+        
+        for (i = 0; i < 20; i += 2)
+            for (j = 4; j < 32; j += 6) {
+                if (packman2[i][j] == 4) {
+                    if (packman2[i][j + 1] == 1 && packman2[i + 1][j] == 1 && packman2[i - 2][j] == 1 && packman2[i][j - 2] == 1) {
+                        packman2[i][j] = 1;
+                        packman2[i - 1][j] = 1;
+                        packman2[i][j - 1] = 1;
+                        packman2[i - 1][j - 1] = 1;
+                    }
+                    // SelectObject(memdc, Mask);
+                        // BitBlt(hdc, j * mapE2 - 20, i * mapE1 - 20, snackSize1, snackSize2, memdc, 0, 0,  SRCAND);//배경위에 마스크
+                    SelectObject(memdc, Snack);
+                    BitBlt(hdc, j * mapE2 - 20, i * mapE1 - 20, snackSize1, snackSize2, memdc, 0, 0, SRCCOPY);//배경위에 원본
+                }
+            }
+    }
+   
     DeleteObject(Snack);
     DeleteObject(Mask);
 
-    }
+}
 
 int Counter(int packman[20][32]) {//먹은 오브젝트 개수 세는 함수
     int i = 0, j = 0, Score = 0;
@@ -338,25 +572,25 @@ void Animation(HDC hdc, int s)//팩맨 그리기
 
     for (i = 0; i < 20; i++)
         for (j = 0; j < 32; j++) {
-            if (packman[i][j] == 5) {//팩맨 그림을 4등분하여 왼쪽위을 영역 배경에 저장
+            if (packman2[i][j] == 5) {//팩맨 그림을 4등분하여 왼쪽위을 영역 배경에 저장
                 SelectObject(memdc, Mask[count]);
                 BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCAND);//배경위에 마스크
                 SelectObject(memdc, RunBit[count]);
                 BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCPAINT);//배경위에 원본
             }
-            if (packman[i][j + 1] == 6) {//팩맨 그림을 4등분하여 오른쪽위 영역을 배경에 저장
+            if (packman2[i][j + 1] == 6) {//팩맨 그림을 4등분하여 오른쪽위 영역을 배경에 저장
                 SelectObject(memdc, Mask[count]);
                 BitBlt(hdc, j * mapE2, i * mapE1 + mapE1, mapE2, mapE1, memdc, 0, mapE1, SRCAND);//배경위에 마스크
                 SelectObject(memdc, RunBit[count]);
                 BitBlt(hdc, j * mapE2, i * mapE1 + mapE1, mapE2, mapE1, memdc, 0, mapE1, SRCPAINT);//배경위에 원본
             }
-            if (packman[i + 1][j] == 7) {//팩맨 그림을 4등분하여 왼쪽아래 영역을 배경에 저장
+            if (packman2[i + 1][j] == 7) {//팩맨 그림을 4등분하여 왼쪽아래 영역을 배경에 저장
                 SelectObject(memdc, Mask[count]);
                 BitBlt(hdc, j * mapE2 + mapE2, i * mapE1, mapE2, mapE1, memdc, mapE2, 0, SRCAND);//배경위에 마스크
                 SelectObject(memdc, RunBit[count]);
                 BitBlt(hdc, j * mapE2 + mapE2, i * mapE1, mapE2, mapE1, memdc, mapE2, 0, SRCPAINT);//배경위에 원본
             }
-            if (packman[i + 1][j + 1] == 8) {//팩맨 그림을 4등분하여 오른쪽아래 영역을 배경에 저장
+            if (packman2[i + 1][j + 1] == 8) {//팩맨 그림을 4등분하여 오른쪽아래 영역을 배경에 저장
                 SelectObject(memdc, Mask[count]);
                 BitBlt(hdc, j * mapE2 + mapE2, i * mapE1 + mapE1, mapE2, mapE1, memdc, mapE2, mapE1, SRCAND);//배경위에 마스크
                 SelectObject(memdc, RunBit[count]);
@@ -369,9 +603,8 @@ void Animation(HDC hdc, int s)//팩맨 그리기
         DeleteObject(RunBit[i]);
     }
     DeleteDC(memdc);
-   
-}
 
+}
 
 void RedAnimation(HDC hdc)//빨간 몬스터 그리기
 {
@@ -390,12 +623,12 @@ void RedAnimation(HDC hdc)//빨간 몬스터 그리기
     Mask[0] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_MonsterMask1));
     Mask[1] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_MonsterMask1));
     Mask[2] = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_MonsterMask2));
-
+             
     memdc = CreateCompatibleDC(hdc);
 
     for (i = 0; i < 20; i++)
         for (j = 0; j < 32; j++) {
-            if (packman[i][j] == 15) {
+            if (packman2[i][j] == 15) {
                 SelectObject(memdc, Mask[count]);
                 BitBlt(hdc, j * mapE2, i * mapE1, mapE2 * 2, mapE1 * 2, memdc, 0, 0, SRCAND);//배경위에 마스크
                 SelectObject(memdc, RunBit[count]);
@@ -403,14 +636,16 @@ void RedAnimation(HDC hdc)//빨간 몬스터 그리기
             }
 
         }
-
+    if (MEMORY)
+        packman2[m][n] = 4;
     for (i = 0; i < 3; i++) {
         DeleteObject(Mask[i]);
         DeleteObject(RunBit[i]);
     }
     DeleteDC(memdc);
-   
+
 }
+
 void PinkAnimation(HDC hdc)//분홍 몬스터 그리기
 {
     HDC memdc;
@@ -433,7 +668,7 @@ void PinkAnimation(HDC hdc)//분홍 몬스터 그리기
 
     for (i = 0; i < 20; i++)
         for (j = 0; j < 32; j++) {
-            if (packman[i][j] == 16) {
+            if (packman2[i][j] == 16) {
                 SelectObject(memdc, Mask[count]);
                 BitBlt(hdc, j * mapE2, i * mapE1, mapE2 * 2, mapE1 * 2, memdc, 0, 0, SRCAND);//배경위에 마스크
                 SelectObject(memdc, RunBit[count]);
@@ -473,7 +708,7 @@ void MintAnimation(HDC hdc)//민트색 몬스터 그리기
 
     for (i = 0; i < 20; i++)
         for (j = 0; j < 32; j++) {
-            if (packman[i][j] == 17) {
+            if (packman2[i][j] == 17) {
                 SelectObject(memdc, Mask[count]);
                 BitBlt(hdc, j * mapE2, i * mapE1, mapE2 * 2, mapE1 * 2, memdc, 0, 0, SRCAND);//배경위에 마스크
                 SelectObject(memdc, RunBit[count]);
@@ -487,7 +722,7 @@ void MintAnimation(HDC hdc)//민트색 몬스터 그리기
         DeleteObject(RunBit[i]);
     }
     DeleteDC(memdc);
-  
+
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -548,11 +783,34 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     initial_len = wsprintf(initial, TEXT("PAC-MAN GAME")); // 초기 화면 문구 
     initial_len2 = wsprintf(initial2, TEXT("'ENTER 를 눌러 게임 시작'")); // 초기 화면 문구2 
-    
+
     TCHAR str[100], lpstrFile[100] = _T(""), lpstrFileTitle[100] = _T("");
     TCHAR filter[] = _T("JPG(.jpg,.jpeg)\0*.jpg;*.jpeg\0PNG(.png)\0*.png\0");
+         
+    srand((unsigned int)time(NULL));
+    int a = 3 + (rand() % 3) * 4, b = 19 + (rand() % 3) * 4;;//ㅏ
+    int a7 = 3 + (rand() % 3) * 4, b7 = 19 + (rand() % 3) * 4;;//ㅏ
+            
+    int a4 = 3 + (rand() % 4) * 4, b4 = 19 + (rand() % 3) * 4;//ㅣ
+    int a5 = 15, b5 = 3 + (rand() % 5) * 4;//ㅗ
 
-    switch (message)
+    int a6 = 3, b6 = 3 + (rand() % 5) * 4;//ㅜ
+    int a2 = 15, b2 = 3 + (rand() % 5) * 4;//ㅜ
+
+    int a3 = 7, b3 = 7;//ㅓ
+    int a8 = 11 + (rand() % 2) * 4, b8 = 27;//ㅓ
+
+    int a1 = 7, b1 = 11;//ㅡ 
+    int a9 = 11, b9 = 11;//ㅡ
+    int a10 = 3 + (rand() % 3) * 4, b10 = 3 + (rand() % 5) * 4;//ㅡ
+    int a11 = 3 + (rand() % 3) * 4, b11 = 3 + (rand() % 5) * 4;//ㅡ
+
+    int a12 = 3, b12 = 3 + (rand() % 5) * 4;//ㅁ
+    int a13 = 7, b13 = 3 + (rand() % 5) * 4;//ㅁ       
+    int a14 = 7 + (rand() % 2) * 4, b14 = 19 + (rand() % 3) * 4;//-ㅁ
+    int a15 = 15, b15 = 3 + (rand() % 5) * 4;//-
+      
+        switch (message)
     {
     case WM_CREATE:
         PlaySound(MAKEINTRESOURCE(IDR_WAVE1), g_hInst, SND_RESOURCE | SND_ASYNC | SND_LOOP); // 소리 내는 함수
@@ -562,30 +820,143 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         GetClientRect(hWnd, &rectView);
         x = 1; y = 1;// 팩맨 처음 좌표
         m1 = 9; n1 = 13;
-        m2 = 11; n2 = 13;
-        m3 = 7; n3 = 13;//몬스터들의 처음 좌표
+        m2 = 9; n2 = 15;
+        m3 = 9; n3 = 17;//몬스터들의 처음 좌표
 
-        packman[y][x] = 5;//팩맨 그림을 4등분하여 왼쪽위를 출력하기 위해 4개의 좌표 중 왼쪽위 좌표를 5로 설정
-        packman[y][x + 1] = 6;//팩맨 그림을 4등분하여  오른쪽위를 출력하기 위해 4개의 좌표 중 왼쪽위 좌표를 6로 설정
-        packman[y + 1][x] = 7;//팩맨 그림을 4등분하여 왼쪽아래를 출력하기 위해 4개의 좌표 중 왼쪽위 좌표를 7로 설정
-        packman[y + 1][x + 1] = 8;//팩맨 그림을 4등분하여 오른쪽아래를 출력하기 위해 4개의 좌표 중 왼쪽위 좌표를 8로 설정
+        packman2[y][x] = 5;//팩맨 그림을 4등분하여 왼쪽위를 출력하기 위해 4개의 좌표 중 왼쪽위 좌표를 5로 설정
+        packman2[y][x + 1] = 6;//팩맨 그림을 4등분하여  오른쪽위를 출력하기 위해 4개의 좌표 중 왼쪽위 좌표를 6로 설정
+        packman2[y + 1][x] = 7;//팩맨 그림을 4등분하여 왼쪽아래를 출력하기 위해 4개의 좌표 중 왼쪽위 좌표를 7로 설정
+        packman2[y + 1][x + 1] = 8;//팩맨 그림을 4등분하여 오른쪽아래를 출력하기 위해 4개의 좌표 중 왼쪽위 좌표를 8로 설정
 
-        packman[m1][n1] = 15;//빨간 몬스터 줄력하기 위해 15로 설정
+        packman2[m1][n1] = 15;//빨간 몬스터 줄력하기 위해 15로 설정
 
-        packman[m2][n2] = 16;//분홍 몬스터 줄력하기 위해 15로 설정
+        packman2[m2][n2] = 16;//분홍 몬스터 줄력하기 위해 15로 설정
 
-        packman[m3][n3] = 17;//민트 몬스터 줄력하기 위해 15로 설정
+        packman2[m3][n3] = 17;//민트 몬스터 줄력하기 위해 15로 설정
 
         s = 'R';//팩맨의 기본모습
-        M1 = 2;
+        M1 = 1;
         M2 = 2;
-        M3 = 2;//몬스터들의 기본 모습
+        M3 = 3;//몬스터들의 기본 모습
+        
+            if (packman2[a][b] == 9) {//ㅏ
+                packman2[a][b] = 1; packman2[a + 1][b] = 1; packman2[a + 2][b] = 1; packman2[a + 3][b] = 1; packman2[a + 4][b] = 1; packman2[a + 5][b] = 1;
+               
+                packman2[a][b + 1] = 1; packman2[a + 1][b + 1] = 1; packman2[a + 2][b + 1] = 1; packman2[a + 3][b + 1] = 1; packman2[a + 4][b + 1] = 1; packman2[a + 5][b + 1] = 1;
+               
+                packman2[a + 2][b + 2] = 1; packman2[a + 3][b + 2] = 1; packman2[a + 2][b + 3] = 1; packman2[a + 3][b + 3] = 1;
+                
+            }
+            if (packman2[a7][b7] == 9) {//ㅏ
+                packman2[a7][b7] = 1;   packman2[a7 + 1][b7] = 1;   packman2[a7 + 2][b7] = 1;   packman2[a7 + 3][b7] = 1;   packman2[a7 + 4][b7] = 1;   packman2[a7 + 5][b7] = 1;
+
+                packman2[a7][b7 + 1] = 1;   packman2[a7 + 1][b7 + 1] = 1;   packman2[a7 + 2][b7 + 1] = 1;   packman2[a7 + 3][b7 + 1] = 1;   packman2[a7 + 4][b7 + 1] = 1;   packman2[a7 + 5][b7 + 1] = 1;
+
+                packman2[a7 + 2][b7 + 2] = 1;   packman2[a7 + 3][b7 + 2] = 1;   packman2[a7 + 2][b7 + 3] = 1;   packman2[a7 + 3][b7 + 3] = 1;
+            }
+
+            if (packman2[a1][b1] == 9) {//ㅡ
+                packman2[a1][b1] = 1;   packman2[a1][b1 + 1] = 1;   packman2[a1][b1 + 2] = 1;   packman2[a1][b1 + 3] = 1;   packman2[a1][b1 + 4] = 1;   packman2[a1][b1 + 5] = 1;
+              
+                packman2[a1 + 1][b1] = 1;   packman2[a1 + 1][b1 + 1] = 1;    packman2[a1 + 1][b1 + 2] = 1;  packman2[a1 + 1][b1 + 3] = 1;   packman2[a1 + 1][b1 + 4] = 1;   packman2[a1 + 1][b1 + 5] = 1;                        
+            }
+            if (packman2[a9][b9] == 9) {//ㅡ
+                packman2[a9][b9] = 1;   packman2[a9][b9 + 1] = 1;   packman2[a9][b9 + 2] = 1;   packman2[a9][b9 + 3] = 1;   packman2[a9][b9 + 4] = 1;   packman2[a9][b9 + 5] = 1;
+            
+                packman2[a9 + 1][b9] = 1;   packman2[a9 + 1][b9 + 1] = 1;   packman2[a9 + 1][b9 + 2] = 1;   packman2[a9 + 1][b9 + 3] = 1;   packman2[a9 + 1][b9 + 4] = 1;   packman2[a9 + 1][b9 + 5] = 1;
+            }
+            if (packman2[a10][b10] == 9) {//ㅡ
+                packman2[a10][b10] = 1;     packman2[a10][b10 + 1] = 1; packman2[a10][b10 + 2] = 1; packman2[a10][b10 + 3] = 1; packman2[a10][b10 + 4] = 1; packman2[a10][b10 + 5] = 1;
+
+                packman2[a10 + 1][b10] = 1; packman2[a10 + 1][b10 + 1] = 1; packman2[a10 + 1][b10 + 2] = 1; packman2[a10 + 1][b10 + 3] = 1; packman2[a10 + 1][b10 + 4] = 1; packman2[a10 + 1][b10 + 5] = 1;
+            }
+            if (packman2[a11][b11] == 9) {//ㅡ
+                packman2[a11][b11] = 1; packman2[a11][b11 + 1] = 1; packman2[a11][b11 + 2] = 1; packman2[a11][b11 + 3] = 1; packman2[a11][b11 + 4] = 1; packman2[a11][b11 + 5] = 1;
+
+                packman2[a11 + 1][b11] = 1; packman2[a11 + 1][b11 + 1] = 1; packman2[a11 + 1][b11 + 2] = 1; packman2[a11 + 1][b11 + 3] = 1; packman2[a11 + 1][b11 + 4] = 1; packman2[a11 + 1][b11 + 5] = 1;
+
+            }
+            if (packman2[a2][b2] == 9) {//ㅜ
+                packman2[a2][b2] = 1;   packman2[a2][b2 + 1] = 1;   packman2[a2][b2 + 2] = 1;   packman2[a2][b2 + 3] = 1;   packman2[a2][b2 + 4] = 1;   packman2[a2][b2 + 5] = 1;
+               
+                packman2[a2+1][b2] = 1; packman2[a2 + 1][b2 + 1] = 1;   packman2[a2 + 1][b2 + 2] = 1;   packman2[a2 + 1][b2 + 3] = 1;   packman2[a2 + 1][b2 + 4] = 1;   packman2[a2 + 1][b2 + 5] = 1;
+
+                packman2[a2 + 2][b2 + 2] = 1;   packman2[a2 + 2][b2 + 3] = 1;   packman2[a2 + 3][b2 + 2] = 1;   packman2[a2 + 3][b2 + 3] = 1;               
+            }
+            if (packman2[a6][b6] == 9) {//ㅜ
+                packman2[a6][b6] = 1;   packman2[a6][b6 + 1] = 1;   packman2[a6][b6 + 2] = 1;   packman2[a6][b6 + 3] = 1;   packman2[a6][b6 + 4] = 1;   packman2[a6][b6 + 5] = 1;
+
+                packman2[a6 + 1][b6] = 1;   packman2[a6 + 1][b6 + 1] = 1;   packman2[a6 + 1][b6 + 2] = 1;   packman2[a6 + 1][b6 + 3] = 1;   packman2[a6 + 1][b6 + 4] = 1;   packman2[a6 + 1][b6 + 5] = 1;
+
+                packman2[a6 + 2][b6 + 2] = 1;   packman2[a6 + 2][b6 + 3] = 1;   packman2[a6 + 3][b6 + 2] = 1;   packman2[a6 + 3][b6 + 3] = 1;
+            }
+            if (packman2[a3][b3] == 9) {//ㅓ
+                packman2[a3][b3] = 1;   packman2[a3 + 1][b3] = 1;   packman2[a3 + 2][b3] = 1;   packman2[a3 + 3][b3] = 1;   packman2[a3 + 4][b3] = 1;   packman2[a3 + 5][b3] = 1;
+
+                packman2[a3][b3 + 1] = 1;   packman2[a3 + 1][b3 + 1] = 1;   packman2[a3 + 2][b3 + 1] = 1;   packman2[a3 + 3][b3 + 1] = 1;   packman2[a3 + 4][b3 + 1] = 1;   packman2[a3 + 5][b3 + 1] = 1;
+
+                packman2[a3 + 2][b3 - 1] = 1;   packman2[a3 + 2][b3 - 2] = 1;   packman2[a3 + 2][b3 - 3] = 1;   packman2[a3 + 2][b3 - 4] = 1;   packman2[a3 + 3][b3] = 1;   packman2[a3 + 3][b3 - 1] = 1;
+                packman2[a3 + 3][b3 - 2] = 1;   packman2[a3 + 3][b3 - 3] = 1;   packman2[a3 + 3][b3 - 4] = 1;
+                
+            }
+            if (packman2[a8][b8] == 9) {//ㅓ
+                packman2[a8][b8] = 1;   packman2[a8 + 1][b8] = 1;   packman2[a8 + 2][b8] = 1;   packman2[a8 + 3][b8] = 1;   packman2[a8 + 4][b8] = 1;   packman2[a8 + 5][b8] = 1;
+
+                packman2[a8][b8 + 1] = 1;   packman2[a8 + 1][b8 + 1] = 1;   packman2[a8 + 2][b8 + 1] = 1;   packman2[a8 + 3][b8 + 1] = 1;   packman2[a8 + 4][b8 + 1] = 1;   packman2[a8 + 5][b8 + 1] = 1;
+
+                packman2[a8 + 2][b8 - 1] = 1;   packman2[a8 + 2][b8 - 2] = 1;   packman2[a8 + 2][b8 - 3] = 1;   packman2[a8 + 2][b8 - 4] = 1;   packman2[a8 + 3][b8] = 1;   packman2[a8 + 3][b8 - 1] = 1;
+                packman2[a8 + 3][b8 - 2] = 1;   packman2[a8 + 3][b8 - 3] = 1;   packman2[a8 + 3][b8 - 4] = 1;
+            }
+            if (packman2[a4][b4] == 9) {//ㅣ
+                packman2[a4][b4] = 1;   packman2[a4 + 1][b4] = 1;   packman2[a4 + 2][b4] = 1;   packman2[a4 + 3][b4] = 1;   packman2[a4 + 4][b4] = 1;   packman2[a4 + 5][b4] = 1;
+
+                packman2[a4][b4 + 1] = 1;   packman2[a4 + 1][b4 + 1] = 1;   packman2[a4 + 2][b4 + 1] = 1;   packman2[a4 + 3][b4 + 1] = 1;   packman2[a4 + 4][b4 + 1] = 1;   packman2[a4 + 5][b4 + 1] = 1;
+            }
+            if (packman2[a5][b5] == 9) {//2ㅡ
+                packman2[a4][b4] = 1;   packman2[a4][b4 + 1] = 1;   packman2[a4][b4 + 2] = 1;   packman2[a4][b4 + 3] = 1;   packman2[a4 + 1][b4] = 1;   packman2[a4 + 1][b4 + 1] = 1;   packman2[a4 + 1][b4 + 2] = 1;   packman2[a4 + 1][b4 + 3] = 1;
+            }
+            if (packman2[a5][b5] == 9) {//ㅗ
+
+                packman2[a5][b5] = 1;   packman2[a5][b5 + 1] = 1;   packman2[a5][b5 + 2] = 1;   packman2[a5][b5 + 3] = 1;   packman2[a5][b5 + 4] = 1;   packman2[a5][b5 + 5] = 1;
+
+                packman2[a5 + 1][b5] = 1;   packman2[a5 + 1][b5 + 1] = 1;   packman2[a5 + 1][b5 + 2] = 1;   packman2[a5 + 1][b5 + 3] = 1;   packman2[a5 + 1][b5 + 4] = 1;   packman2[a5 + 1][b5 + 5] = 1;
+
+                packman2[a5 - 1][b5 + 2] = 1;   packman2[a5 - 1][b5 + 3] = 1;   packman2[a5 - 2][b5 + 2] = 1;   packman2[a5 - 2][b5 + 3] = 1;
+            }
+            if (packman2[a12][b12] == 9) {//ㅁ
+                packman2[a12][b12] = 1; packman2[a12][b12 + 1] = 1; packman2[a12][b12 + 2] = 1; packman2[a12][b12 + 3] = 1; packman2[a12 + 1][b12] = 1; packman2[a12 + 1][b12 + 1] = 1; packman2[a12 + 1][b12 + 2] = 1;
+                packman2[a12 + 1][b12 + 3] = 1; packman2[a12 + 2][b12] = 1; packman2[a12 + 2][b12 + 1] = 1; packman2[a12 + 2][b12 + 2] = 1; packman2[a12 + 2][b12 + 3] = 1; packman2[a12 + 3][b12] = 1;
+                packman2[a12 + 3][b12 + 1] = 1; packman2[a12 + 3][b12 + 2] = 1; packman2[a12 + 3][b12 + 3] = 1;
+            }
+
+            if (packman2[a13][b13] == 9) {//ㅁ
+                packman2[a13][b13] = 1; packman2[a13][b13 + 1] = 1; packman2[a13][b13 + 2] = 1; packman2[a13][b13 + 3] = 1; packman2[a13 + 1][b13] = 1; packman2[a13 + 1][b13 + 1] = 1; packman2[a13 + 1][b13 + 2] = 1; 
+                packman2[a13 + 1][b13 + 3] = 1; packman2[a13 + 2][b13] = 1; packman2[a13 + 2][b13 + 1] = 1; packman2[a13 + 2][b13 + 2] = 1; packman2[a13 + 2][b13 + 3] = 1; packman2[a13 + 3][b13] = 1; 
+                packman2[a13 + 3][b13 + 1] = 1; packman2[a13 + 3][b13 + 2] = 1; packman2[a13 + 3][b13 + 3] = 1;
+            }
+            if (packman2[a14][b14] == 9) {//ㅁ
+                packman2[a14][b14] = 1; packman2[a14][b14 + 1] = 1; packman2[a14][b14 -1] = 1;  packman2[a14][b14 -2] = 1;  packman2[a14 + 1][b14] = 1; packman2[a14 + 1][b14 + 1] = 1;
+                packman2[a14 + 1][b14 -1] = 1;  packman2[a14 + 1][b14 -2] = 1;  packman2[a14 + 2][b14] = 1; packman2[a14 + 2][b14 + 1] = 1; packman2[a14 + 2][b14 -1] = 1;  packman2[a14 + 2][b14 -2] = 1; 
+                packman2[a14 + 3][b14] = 1; packman2[a14 + 3][b14 + 1] = 1; packman2[a14 + 3][b14 -1] = 1;  packman2[a14 + 3][b14 -2] = 1;
+            }
+            if (packman2[a15][b15] == 9) {//ㅡ2
+                packman2[a15][b15] = 1; packman2[a15][b15 + 1] = 1; packman2[a15][b15 -1] = 1;  packman2[a15][b15 -2] = 1;  packman2[a15 + 1][b15] = 1;
+                packman2[a15 + 1][b15 + 1] = 1; packman2[a15 + 1][b15 - 1] = 1; packman2[a15 + 1][b15 - 2] = 1;
+           
+            }
+            for (int i = 0; i < 20; i += 2)
+                for (int j = 0; j < 32; j += 2)
+                    if (packman2[i][j] == 0) {
+                        packman2[i][j] = 4;
+                        ScoreCount++;
+                    }
+
 
         hBit2 = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Background));// 배경 비트맵 저장
         break;
 
     case WM_PAINT:
-     
+
         switch (game_state) { // 60초가 다되면 false로 만들어 게임을 끝낸다 
         case 0: // 게임 실행 시 첫 화면 출력
             hdc = BeginPaint(hWnd, &ps);
@@ -632,11 +1003,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             SetBkColor(hdc, RGB(0, 0, 61)); // 글자 배경을 투명하게 한다
             DrawText(hdc, time_announcer, time_announcer_len, &time_announcer_size, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
             DrawText(hdc, time_announcer2, time_announcer_len2, &time_announcer_size2, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
-       
+
             DeleteObject(hFont);
             EndPaint(hWnd, &ps);
             break;
-       
+
         case 2: // 게임 종료시 화면 출력
             hdc = BeginPaint(hWnd, &ps);
             SelectObject(hdc, CreateSolidBrush(RGB(0, 0, 61)));
@@ -650,7 +1021,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             DrawText(hdc, resultScore, resultScore_len, &resultScore_size, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
             DrawText(hdc, resultScore2, resultScore_len2, &resultScore_size2, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
             DeleteObject(hFont);
-            EndPaint(hWnd, &ps);   
+            EndPaint(hWnd, &ps);
             break;
         }
         break;
@@ -684,7 +1055,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             MessageBox(hWnd, labels,
                 _T("이미지 라벨링 데이터 확인"), MB_OKCANCEL);
 
-
+                
             switch (wParam) {
             case VK_RETURN:
                 game_state = 1; // 엔터 누르면 게임 시작 
@@ -717,25 +1088,32 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             KillTimer(hWnd, 2);
             score = 0;          // 점수와 시간 초기화 
             count_time = 60;
-           
+
             switch (wParam) {
-            case VK_RETURN:         
-                clear_map(packman);
+            case VK_RETURN:
+                clear_map(packman2);
                 SetTimer(hWnd, 2, 1000, NULL); // 제한시간용 타이머 재시작
-                m1 = 9; n1 = 13;    // 몬스터, 팩맨 위치 초기화!
-                m2 = 11; n2 = 13;
-                m3 = 7; n3 = 13;//몬스터들의 처음 좌표
+                x = 1; y = 1;// 팩맨 처음 좌표
+                m1 = 9; n1 = 13;
+                m2 = 9; n2 = 15;
+                m3 = 9; n3 = 17;//몬스터들의 처음 좌표
 
-                packman[m1][n1] = 15;//빨간 몬스터 줄력하기 위해 15로 설정
+                packman2[y][x] = 5;//팩맨 그림을 4등분하여 왼쪽위를 출력하기 위해 4개의 좌표 중 왼쪽위 좌표를 5로 설정
+                packman2[y][x + 1] = 6;//팩맨 그림을 4등분하여  오른쪽위를 출력하기 위해 4개의 좌표 중 왼쪽위 좌표를 6로 설정
+                packman2[y + 1][x] = 7;//팩맨 그림을 4등분하여 왼쪽아래를 출력하기 위해 4개의 좌표 중 왼쪽위 좌표를 7로 설정
+                packman2[y + 1][x + 1] = 8;//팩맨 그림을 4등분하여 오른쪽아래를 출력하기 위해 4개의 좌표 중 왼쪽위 좌표를 8로 설정
 
-                packman[m2][n2] = 16;//분홍 몬스터 줄력하기 위해 15로 설정
+                packman2[m1][n1] = 15;//빨간 몬스터 줄력하기 위해 15로 설정
 
-                packman[m3][n3] = 17;//민트 몬스터 줄력하기 위해 15로 설정
+                packman2[m2][n2] = 16;//분홍 몬스터 줄력하기 위해 15로 설정
+
+                packman2[m3][n3] = 17;//민트 몬스터 줄력하기 위해 15로 설정
 
                 s = 'R';//팩맨의 기본모습
                 M1 = 2;
                 M2 = 2;
                 M3 = 2;//몬스터들의 기본 모습
+                FLAG = FALSE;
                 game_state = 1; // 엔터 누르면 게임 다시 시작 
                 break;
             }
@@ -747,188 +1125,192 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             switch (wParam) // 타이머의 id가 1일때와 2일때의 동작 
             {
             case 1: // 타이머가 1일때
-                packman[y][x] = 3;
-                packman[y][x + 1] = 3;
-                packman[y + 1][x] = 3;
-                packman[y + 1][x + 1] = 3;//팩맨이 중복되어 출력되지 않게하기위해와 과자 출력하지않고 스코어를 위한 변수로 0이아닌 3으로 설정
+                packman2[y][x] = 3;
+                packman2[y][x + 1] = 3;
+                packman2[y + 1][x] = 3;
+                packman2[y + 1][x + 1] = 3;//팩맨이 중복되어 출력되지 않게하기위해와 과자 출력하지않고 스코어를 위한 변수로 0이아닌 3으로 설정
 
                 switch (s) {
                 case 'L'://Left
                     x--;
-                    if (packman[y][x] == 1 || packman[y + 1][x] == 1)//배열의 내용이 1(장애물)일때 위치 복구
+                    if (packman2[y][x] == 1 || packman2[y + 1][x] == 1)//배열의 내용이 1(장애물)일때 위치 복구
                         x++;
-                    InvalidateRgn(hWnd, NULL, FALSE);
+                    InvalidateRgn(hWnd, NULL, FLAG);
                     break;
                 case 'R'://Right
                     x++;
-                    if (packman[y][x + 1] == 1 || packman[y + 1][x + 1] == 1)
+                    if (packman2[y][x + 1] == 1 || packman2[y + 1][x + 1] == 1)
                         x--;
-                    InvalidateRgn(hWnd, NULL, FALSE);
+                    InvalidateRgn(hWnd, NULL, FLAG);
                     break;
                 case 'U'://Up
                     y--;
-                    if (packman[y][x] == 1 || packman[y][x + 1] == 1)
+                    if (packman2[y][x] == 1 || packman2[y][x + 1] == 1)
                         y++;
-                    InvalidateRgn(hWnd, NULL, FALSE);
+                    InvalidateRgn(hWnd, NULL, FLAG);
                     break;
                 case 'D'://Down
                     y++;
-                    if (packman[y + 1][x] == 1 || packman[y + 1][x + 1] == 1)
+                    if (packman2[y + 1][x] == 1 || packman2[y + 1][x + 1] == 1)
                         y--;
-                    InvalidateRgn(hWnd, NULL, FALSE);
+                    InvalidateRgn(hWnd, NULL, FLAG);
                     break;
                 case 'B'://Back
                     x = 1; y = 1;
-                    InvalidateRgn(hWnd, NULL, FALSE);
+                    InvalidateRgn(hWnd, NULL, FLAG);
                     break;
                 }
 
-                packman[y][x] = 5;
-                packman[y][x + 1] = 6;
-                packman[y + 1][x] = 7;
-                packman[y + 1][x + 1] = 8;//옮겨진 좌표에 팩맨을 그리기 위해 변수 저장
-            
-               packman[m1][n1] = 0;//과자에 영향을 주지 않기 위해 0으로 설정
-           
-               switch (M1) {//1:왼, 2: 오른, 3:위, 4:아래
+                packman2[y][x] = 5;
+                packman2[y][x + 1] = 6;
+                packman2[y + 1][x] = 7;
+                packman2[y + 1][x + 1] = 8;//옮겨진 좌표에 팩맨을 그리기 위해 변수 저장
+                            
+                
+                packman2[m1][n1] = 0;//과자에 영향을 주지 않기 위해 0으로 설정
+
+                switch (M1) {//1:왼, 2: 오른, 3:위, 4:아래 빨간몬스터
                 case 1://Left
                     n1--;
-                    if (packman[m1][n1] == 1 || packman[m1 + 1][n1] == 1) {
-                        M1 = 3;
+                    if (packman2[m1][n1] == 1 || packman2[m1 + 1][n1] == 1) {  
+                        M2= 4;
                         n1++;//배열의 내용이 1(장애물)일때 위치 복구     
-                        M1 = rand() % 4 + 1;//배열의 내용이 1(장애물)일때 랜덤으로 방향 설정 모든 방향 다 같은 방식으로 작동
+                        M1 = (rand() % 4) + 1;//배열의 내용이 1(장애물)일때 랜덤으로 방향 설정 모든 방향 다 같은 방식으로 작동
                     }
-                    if (packman[m1][n1] == 5 || packman[m1 + 1][n1] == 6 || packman[m1][n1] == 7 || packman[m1 + 1][n1] == 8) {
+                    if (packman2[m1][n1] == 5 || packman2[m1 + 1][n1] == 6 || packman2[m1][n1] == 7 || packman2[m1 + 1][n1] == 8) {
                         game_state = 2;// 몬스터에게 닿을 시 게임 종료
-
                         FLAG = TRUE;
                     }
                     InvalidateRgn(hWnd, NULL, FLAG);
                     break;
                 case 2://Right
                     n1++;
-                    if (packman[m1][n1 + 1] == 1 || packman[m1 + 1][n1 + 1] == 1) {
-                        M1 = 4;
+                    if (packman2[m1][n1 + 1] == 1 || packman2[m1 + 1][n1 + 1] == 1) {  
+                        M2 = 3;
                         n1--;
-                        M1 = rand() % 4 + 1;
+                        M1 = (rand() % 4) + 1;
                     }
-                    if (packman[m1][n1 + 1] == 5 || packman[m1 + 1][n1 + 1] == 6 || packman[m1][n1 + 1] == 7 || packman[m1 + 1][n1 + 1] == 8) {
+                    if (packman2[m1][n1 + 1] == 5 || packman2[m1 + 1][n1 + 1] == 6 || packman2[m1][n1 + 1] == 7 || packman2[m1 + 1][n1 + 1] == 8) {
                         game_state = 2;// 몬스터에게 닿을 시 게임 종료
-
                         FLAG = TRUE;
                     }
                     InvalidateRgn(hWnd, NULL, FLAG);
                     break;
                 case 3:  //UP        
                     m1--;
-                    if (packman[m1][n1] == 1 || packman[m1][n1 + 1] == 1) {
-                        M1 = 2;
+                    if (packman2[m1][n1] == 1 || packman2[m1][n1 + 1] == 1) {
+                        M2 = 1;
                         m1++;
-                        M1 = rand() % 4 + 1;
+                        M1 = (rand() % 4) + 1;
                     }
-                    if (packman[m1][n1] == 5 || packman[m1][n1 + 6] == 12 || packman[m1][n1] == 7 || packman[m1][n1 + 1] == 8) {
+                    if (packman2[m1][n1] == 5 || packman2[m1][n1 + 6] == 12 || packman2[m1][n1] == 7 || packman2[m1][n1 + 1] == 8) {
                         game_state = 2;// 몬스터에게 닿을 시 게임 종료
-
                         FLAG = TRUE;
                     }
                     InvalidateRgn(hWnd, NULL, FLAG);
                     break;
                 case 4://Down
                     m1++;
-                    if (packman[m1 + 1][n1] == 1 || packman[m1 + 1][n1 + 1] == 1) {
-                        M1 = 1;
+                    if (packman2[m1 + 1][n1] == 1 || packman2[m1 + 1][n1 + 1] == 1) {         
+                        M2 = 2;
                         m1--;
-                        M1 = rand() % 4 + 1;
+                        M1 = (rand() % 4) + 1;
                     }
-                    if (packman[m1 + 1][n1] == 5 || packman[m1 + 1][n1 + 1] == 6 || packman[m1 + 1][n1] == 7 || packman[m1 + 1][n1 + 1] == 8) {
-                        game_state = 2;// 몬스터에게 닿을 시 게임 종료
-\
-                        FLAG = TRUE;
+                    if (packman2[m1 + 1][n1] == 5 || packman2[m1 + 1][n1 + 1] == 6 || packman2[m1 + 1][n1] == 7 || packman2[m1 + 1][n1 + 1] == 8) {
+                        game_state = 2;// 몬스터에게 닿을 시 게임 종료                       
+                            FLAG = TRUE;
                     }
                     InvalidateRgn(hWnd, NULL, FLAG);
                     break;
                 }
+                if (packman2[m1][n1] == 4) {
+                    m = m1;
+                    n = n1;
+                    MEMORY = TRUE;
+                }
+                   
+                packman2[m1][n1] = 15;//빨간 몬스터 위치 조정
 
-                packman[m1][n1] = 15;//빨간 몬스터 위치 조정 
+               
+                packman2[m2][n2] = 0;//과자에 영향을 주지 않기 위해 0으로 설정
 
-
-                packman[m2][n2] = 0;
-
-                switch (M2) {
+                switch (M2) {//분홍 몬스터
                 case 1://Left
                     n2--;
-                    if (packman[m2][n2] == 1 || packman[m2 + 1][n2] == 1) {//배열의 내용이 1(장애물)일때 위치 복구
-                        M2 = 3;
+                    if (packman2[m2][n2] == 1 || packman2[m2 + 1][n2] == 1) {//배열의 내용이 1(장애물)일때 위치 복구 
+                        M3 = 3;
                         n2++;
-                        M2 = rand() % 4 + 1;
+                        M2 = (rand() % 4) + 1;
                     }
-                    if (packman[m2][n2] == 5 || packman[m2 + 1][n2] == 6 || packman[m2][n2] == 7 || packman[m2 + 1][n2] == 8) {
+                    if (packman2[m2][n2] == 5 || packman2[m2 + 1][n2] == 6 || packman2[m2][n2] == 7 || packman2[m2 + 1][n2] == 8) {
                         game_state = 2;// 몬스터에게 닿을 시 게임 종료
-                    
+
                         FLAG = TRUE;
                     }
                     InvalidateRgn(hWnd, NULL, FLAG);
                     break;
                 case 2://Right
                     n2++;
-                    if (packman[m2][n2 + 1] == 1 || packman[m2 + 1][n2 + 1] == 1) {
-                        M2 = 4;
+                    if (packman2[m2][n2 + 1] == 1 || packman2[m2 + 1][n2 + 1] == 1) {
+                        M3 = 4;
                         n2--;
-                        M2 = rand() % 4 + 1;
+                        M2 = (rand() % 4) + 1;
                     }
-                    if (packman[m2][n2 + 1] == 5 || packman[m2 + 1][n2 + 1] == 6 || packman[m2][n2 + 1] == 7 || packman[m2 + 1][n2 + 1] == 8) {
+                    if (packman2[m2][n2 + 1] == 5 || packman2[m2 + 1][n2 + 1] == 6 || packman2[m2][n2 + 1] == 7 || packman2[m2 + 1][n2 + 1] == 8) {
                         game_state = 2;// 몬스터에게 닿을 시 게임 종료
-                       
+
                         FLAG = TRUE;
                     }
                     InvalidateRgn(hWnd, NULL, FLAG);
                     break;
                 case 3://UP  
                     m2--;
-                    if (packman[m2][n2] == 1 || packman[m2][n2 + 1] == 1) {
-                        M2 = 2;
+                    if (packman2[m2][n2] == 1 || packman2[m2][n2 + 1] == 1) {      
+                        M3 = 1;
                         m2++;
-                        M2 = rand() % 4 + 1;
+                        M2 = (rand() % 4) + 1;
                     }
-                    if (packman[m2][n2] == 5 || packman[m2][n2 + 6] == 12 || packman[m2][n2] == 7 || packman[m2][n2 + 1] == 8) {
+                    if (packman2[m2][n2] == 5 || packman2[m2][n2 + 6] == 12 || packman2[m2][n2] == 7 || packman2[m2][n2 + 1] == 8) {
                         game_state = 2;// 몬스터에게 닿을 시 게임 종료
-                     
+
                         FLAG = TRUE;
                     }
                     InvalidateRgn(hWnd, NULL, FLAG);
                     break;
                 case 4://Down
                     m2++;
-                    if (packman[m2 + 1][n2] == 1 || packman[m2 + 1][n2 + 1] == 1) {
-                        M2 = 1;
+                    if (packman2[m2 + 1][n2] == 1 || packman2[m2 + 1][n2 + 1] == 1) { 
+                        M3 = 2;
                         m2--;
-                        M1 = rand() % 4 + 1;
+                        M2 = (rand() % 4) + 1;
                     }
-                    if (packman[m2 + 1][n2] == 5 || packman[m2 + 1][n2 + 1] == 6 || packman[m2 + 1][n2] == 7 || packman[m2 + 1][n2 + 1] == 8) {
+                    if (packman2[m2 + 1][n2] == 5 || packman2[m2 + 1][n2 + 1] == 6 || packman2[m2 + 1][n2] == 7 || packman2[m2 + 1][n2 + 1] == 8) {
                         game_state = 2;// 몬스터에게 닿을 시 게임 종료
- 
+
                         FLAG = TRUE;
                     }
                     InvalidateRgn(hWnd, NULL, FLAG);
                     break;
                 }
+                if (packman2[m2][n2] == 4) {
+                    m = m2;
+                    n = n2;
+                    MEMORY = TRUE;
+                }
 
+                packman2[m2][n2] = 16;//분홍 몬스터 위치조정
+                
+                packman2[m3][n3] = 0;//과자에 영향을 주지 않기 위해 0으로 설정
 
-                packman[m2][n2] = 16;//분홍 몬스터 위치조정
-
-
-                packman[m3][n3] = 0;
-
-
-                switch (M3) {
+                switch (M3) {//민트 몬스터
                 case 1://Left
                     n3--;
-                    if (packman[m3][n3] == 1 || packman[m3 + 1][n3] == 1) {//배열의 내용이 1(장애물)일때 위치 복구
-                        M3 = 3;
+                    if (packman2[m3][n3] == 1 || packman2[m3 + 1][n3] == 1) {//배열의 내용이 1(장애물)일때 위치 복구
+                        M1 = 4;
                         n3++;
-                        M1 = rand() % 4 + 1;
+                        M3 = (rand() % 4) + 1;
                     }
-                    if (packman[m3][n3] == 5 || packman[m3 + 1][n3] == 6 || packman[m3][n3] == 7 || packman[m3 + 1][n3] == 8) {
+                    if (packman2[m3][n3] == 5 || packman2[m3 + 1][n3] == 6 || packman2[m3][n3] == 7 || packman2[m3 + 1][n3] == 8) {
                         game_state = 2;// 몬스터에게 닿을 시 게임 종료
                         FLAG = TRUE;
                     }
@@ -936,12 +1318,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     break;
                 case 2://Right
                     n3++;
-                    if (packman[m3][n3 + 1] == 1 || packman[m3 + 1][n3 + 1] == 1) {
-                        M3 = 4;
+                    if (packman2[m3][n3 + 1] == 1 || packman2[m3 + 1][n3 + 1] == 1) {
+                        M1 = 3;
                         n3--;
-                        M3 = rand() % 4 + 1;
+                        M3 = (rand() % 4) + 1;
                     }
-                    if (packman[m3][n3 + 1] == 5 || packman[m3 + 1][n3 + 1] == 6 || packman[m3][n3 + 1] == 7 || packman[m3 + 1][n3 + 1] == 8) {
+                    if (packman2[m3][n3 + 1] == 5 || packman2[m3 + 1][n3 + 1] == 6 || packman2[m3][n3 + 1] == 7 || packman2[m3 + 1][n3 + 1] == 8) {
                         game_state = 2;// 몬스터에게 닿을 시 게임 종료
                         FLAG = TRUE;
                     }
@@ -949,12 +1331,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     break;
                 case 3://UP  
                     m3--;
-                    if (packman[m3][n3] == 1 || packman[m3][n3 + 1] == 1) {
-                        M3 = 2;
+                    if (packman2[m3][n3] == 1 || packman2[m3][n3 + 1] == 1) {  
+                        M1 = 2;
                         m3++;
-                        M3 = rand() % 4 + 1;
+                        M3 = (rand() % 4) + 1;
                     }
-                    if (packman[m3][n3] == 5 || packman[m3][n3 + 6] == 12 || packman[m3][n3] == 7 || packman[m3][n3 + 1] == 8) {
+                    if (packman2[m3][n3] == 5 || packman2[m3][n3 + 6] == 12 || packman2[m3][n3] == 7 || packman2[m3][n3 + 1] == 8) {
                         game_state = 2;// 몬스터에게 닿을 시 게임 종료
                         FLAG = TRUE;
                     }
@@ -962,24 +1344,28 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     break;
                 case 4://Down
                     m3++;
-                    if (packman[m3 + 1][n3] == 1 || packman[m3 + 1][n3 + 1] == 1) {
-                        M3 = 1;
+                    if (packman2[m3 + 1][n3] == 1 || packman2[m3 + 1][n3 + 1] == 1) {   
+                        M1 = 1;
                         m3--;
-                        M3 = rand() % 4 + 1;
+                        M3 = (rand() % 4) + 1;
                     }
-                    if (packman[m3 + 1][n3] == 5 || packman[m3 + 1][n3 + 1] == 6 || packman[m3 + 1][n3] == 7 || packman[m3 + 1][n3 + 1] == 8) {
+                    if (packman2[m3 + 1][n3] == 5 || packman2[m3 + 1][n3 + 1] == 6 || packman2[m3 + 1][n3] == 7 || packman2[m3 + 1][n3 + 1] == 8) {
                         game_state = 2;// 몬스터에게 닿을 시 게임 종료
                         FLAG = TRUE;
                     }
                     InvalidateRgn(hWnd, NULL, FLAG);
                     break;
                 }
+                if (packman2[m3][n3] == 4) {
+                    m = m3;
+                    n = n3;
+                    MEMORY = TRUE;
+                }
+
+                packman2[m3][n3] = 17;//민트 위치 조정
 
 
-                packman[m3][n3] = 17;//민트 위치 조정
-
-
-                if (count_time < 0 || score >= 93) { // 시간이 0보다 작아지거나 과자 다 먹을 시
+                if (count_time < 0 || score >= ScoreCount) { // 시간이 0보다 작아지거나 과자 다 먹을 시
                     game_state = 2; // false로 만들어 게임 종료 
                     FLAG = TRUE;
                 }
@@ -989,7 +1375,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 {
                     count_time = count_time--; // 1초씩 감소 
                 }
-                score = Counter(packman);
+                score = Counter(packman2);
 
                 resultScore_len = wsprintf(resultScore, TEXT("게임종료    SCORE:  %d"), score); // 게임 중 등장하는 문구 설정하는 곳 
                 resultScore_len2 = wsprintf(resultScore2, TEXT("Enter를 눌러 다시하기"));
