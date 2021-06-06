@@ -29,6 +29,7 @@ void PackmanAnimation(HDC hdc, int s);
 void RedAnimation(HDC hdc);
 void PinkAnimation(HDC hdc);
 void MintAnimation(HDC hdc);
+void RandomMap(void);
 
 /**
 * 이미지에 존재하는 객체를 확인한 후 표현될 수 있는 오브젝트 목록 반환
@@ -231,7 +232,7 @@ void MakeMap(HDC hdc) //맵 장애물 표시
 {
     HDC memdc;
     HBITMAP hBit, mBit;
-    int i, j;
+    int i, j;   
 
     memdc = CreateCompatibleDC(hdc);
     hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Tree));
@@ -742,6 +743,160 @@ void MintAnimation(HDC hdc)//민트색 몬스터 그리기
 
 }
 
+void RandomMap(void) {//맵 구성물 랜덤생생
+    int i, j;
+
+    for (i = 0; i < 20; i += 19)
+        for (j = 0; j < 32; j++)
+            Packman[i][j] = 1;
+    for (i = 0; i < 20; i++)
+        for (j = 0; j < 32; j += 31)
+            Packman[i][j] == 1;
+    for (i = 1; i < 19; i++)
+        for (j = 1; j < 31; j++)
+            Packman[i][j] = 0;
+    for (i = 3; i < 16; i += 4)
+        for (j = 3; j < 28; j += 4)
+            Packman[i][j] = 9;
+
+    srand((unsigned int)time(NULL));
+    int a = 3 + (rand() % 3) * 4, b = 19 + (rand() % 3) * 4;;//ㅏ 난수를 이용하여 랜덤 좌표를 설정
+    int a7 = 3 + (rand() % 3) * 4, b7 = 19 + (rand() % 3) * 4;;//ㅏ 모양 장애물
+
+    int a4 = 3 + (rand() % 4) * 4, b4 = 19 + (rand() % 3) * 4;//ㅣ
+    int a5 = 15, b5 = 3 + (rand() % 5) * 4;//ㅗ
+
+    int a6 = 3, b6 = 3 + (rand() % 5) * 4;//ㅜ
+    int a2 = 15, b2 = 3 + (rand() % 5) * 4;//ㅜ
+
+    int a3 = 7, b3 = 7;//ㅓ
+    int a8 = 11 + (rand() % 2) * 4, b8 = 27;//ㅓ
+
+    int a1 = 7, b1 = 11;//ㅡ 
+    int a9 = 11, b9 = 11;//ㅡ
+    int a10 = 3 + (rand() % 3) * 4, b10 = 3 + (rand() % 5) * 4;//ㅡ
+    int a11 = 3 + (rand() % 3) * 4, b11 = 3 + (rand() % 5) * 4;//ㅡ
+
+    int a12 = 3, b12 = 3 + (rand() % 5) * 4;//ㅁ
+    int a13 = 7, b13 = 3 + (rand() % 5) * 4;//ㅁ       
+    int a14 = 7 + (rand() % 2) * 4, b14 = 19 + (rand() % 3) * 4;//-ㅁ
+    int a15 = 15, b15 = 3 + (rand() % 5) * 4;//-
+
+    if (Packman[a][b] == 9) {//ㅏ 모양 장애물 설정
+        Packman[a][b] = 1; Packman[a + 1][b] = 1; Packman[a + 2][b] = 1; Packman[a + 3][b] = 1; Packman[a + 4][b] = 1; Packman[a + 5][b] = 1;
+
+        Packman[a][b + 1] = 1; Packman[a + 1][b + 1] = 1; Packman[a + 2][b + 1] = 1; Packman[a + 3][b + 1] = 1; Packman[a + 4][b + 1] = 1; Packman[a + 5][b + 1] = 1;
+
+        Packman[a + 2][b + 2] = 1; Packman[a + 3][b + 2] = 1; Packman[a + 2][b + 3] = 1; Packman[a + 3][b + 3] = 1;
+
+    }
+    if (Packman[a7][b7] == 9) {//ㅏ
+        Packman[a7][b7] = 1;   Packman[a7 + 1][b7] = 1;   Packman[a7 + 2][b7] = 1;   Packman[a7 + 3][b7] = 1;   Packman[a7 + 4][b7] = 1;   Packman[a7 + 5][b7] = 1;
+
+        Packman[a7][b7 + 1] = 1;   Packman[a7 + 1][b7 + 1] = 1;   Packman[a7 + 2][b7 + 1] = 1;   Packman[a7 + 3][b7 + 1] = 1;   Packman[a7 + 4][b7 + 1] = 1;   Packman[a7 + 5][b7 + 1] = 1;
+
+        Packman[a7 + 2][b7 + 2] = 1;   Packman[a7 + 3][b7 + 2] = 1;   Packman[a7 + 2][b7 + 3] = 1;   Packman[a7 + 3][b7 + 3] = 1;
+    }
+
+    if (Packman[a1][b1] == 9) {//ㅡ 모양 장애물 설정
+        Packman[a1][b1] = 1;   Packman[a1][b1 + 1] = 1;   Packman[a1][b1 + 2] = 1;   Packman[a1][b1 + 3] = 1;   Packman[a1][b1 + 4] = 1;   Packman[a1][b1 + 5] = 1;
+
+        Packman[a1 + 1][b1] = 1;   Packman[a1 + 1][b1 + 1] = 1;    Packman[a1 + 1][b1 + 2] = 1;  Packman[a1 + 1][b1 + 3] = 1;   Packman[a1 + 1][b1 + 4] = 1;   Packman[a1 + 1][b1 + 5] = 1;
+    }
+    if (Packman[a9][b9] == 9) {//ㅡ
+        Packman[a9][b9] = 1;   Packman[a9][b9 + 1] = 1;   Packman[a9][b9 + 2] = 1;   Packman[a9][b9 + 3] = 1;   Packman[a9][b9 + 4] = 1;   Packman[a9][b9 + 5] = 1;
+
+        Packman[a9 + 1][b9] = 1;   Packman[a9 + 1][b9 + 1] = 1;   Packman[a9 + 1][b9 + 2] = 1;   Packman[a9 + 1][b9 + 3] = 1;   Packman[a9 + 1][b9 + 4] = 1;   Packman[a9 + 1][b9 + 5] = 1;
+    }
+    if (Packman[a10][b10] == 9) {//ㅡ
+        Packman[a10][b10] = 1;     Packman[a10][b10 + 1] = 1; Packman[a10][b10 + 2] = 1; Packman[a10][b10 + 3] = 1; Packman[a10][b10 + 4] = 1; Packman[a10][b10 + 5] = 1;
+
+        Packman[a10 + 1][b10] = 1; Packman[a10 + 1][b10 + 1] = 1; Packman[a10 + 1][b10 + 2] = 1; Packman[a10 + 1][b10 + 3] = 1; Packman[a10 + 1][b10 + 4] = 1; Packman[a10 + 1][b10 + 5] = 1;
+    }
+    if (Packman[a11][b11] == 9) {//ㅡ
+        Packman[a11][b11] = 1; Packman[a11][b11 + 1] = 1; Packman[a11][b11 + 2] = 1; Packman[a11][b11 + 3] = 1; Packman[a11][b11 + 4] = 1; Packman[a11][b11 + 5] = 1;
+
+        Packman[a11 + 1][b11] = 1; Packman[a11 + 1][b11 + 1] = 1; Packman[a11 + 1][b11 + 2] = 1; Packman[a11 + 1][b11 + 3] = 1; Packman[a11 + 1][b11 + 4] = 1; Packman[a11 + 1][b11 + 5] = 1;
+
+    }
+    if (Packman[a2][b2] == 9) {//ㅜ 모양 장애물 설정
+        Packman[a2][b2] = 1;   Packman[a2][b2 + 1] = 1;   Packman[a2][b2 + 2] = 1;   Packman[a2][b2 + 3] = 1;   Packman[a2][b2 + 4] = 1;   Packman[a2][b2 + 5] = 1;
+
+        Packman[a2 + 1][b2] = 1; Packman[a2 + 1][b2 + 1] = 1;   Packman[a2 + 1][b2 + 2] = 1;   Packman[a2 + 1][b2 + 3] = 1;   Packman[a2 + 1][b2 + 4] = 1;   Packman[a2 + 1][b2 + 5] = 1;
+
+        Packman[a2 + 2][b2 + 2] = 1;   Packman[a2 + 2][b2 + 3] = 1;   Packman[a2 + 3][b2 + 2] = 1;   Packman[a2 + 3][b2 + 3] = 1;
+    }
+    if (Packman[a6][b6] == 9) {//ㅜ
+        Packman[a6][b6] = 1;   Packman[a6][b6 + 1] = 1;   Packman[a6][b6 + 2] = 1;   Packman[a6][b6 + 3] = 1;   Packman[a6][b6 + 4] = 1;   Packman[a6][b6 + 5] = 1;
+
+        Packman[a6 + 1][b6] = 1;   Packman[a6 + 1][b6 + 1] = 1;   Packman[a6 + 1][b6 + 2] = 1;   Packman[a6 + 1][b6 + 3] = 1;   Packman[a6 + 1][b6 + 4] = 1;   Packman[a6 + 1][b6 + 5] = 1;
+
+        Packman[a6 + 2][b6 + 2] = 1;   Packman[a6 + 2][b6 + 3] = 1;   Packman[a6 + 3][b6 + 2] = 1;   Packman[a6 + 3][b6 + 3] = 1;
+    }
+    if (Packman[a3][b3] == 9) {//ㅓ 모양 장애물 설정
+        Packman[a3][b3] = 1;   Packman[a3 + 1][b3] = 1;   Packman[a3 + 2][b3] = 1;   Packman[a3 + 3][b3] = 1;   Packman[a3 + 4][b3] = 1;   Packman[a3 + 5][b3] = 1;
+
+        Packman[a3][b3 + 1] = 1;   Packman[a3 + 1][b3 + 1] = 1;   Packman[a3 + 2][b3 + 1] = 1;   Packman[a3 + 3][b3 + 1] = 1;   Packman[a3 + 4][b3 + 1] = 1;   Packman[a3 + 5][b3 + 1] = 1;
+
+        Packman[a3 + 2][b3 - 1] = 1;   Packman[a3 + 2][b3 - 2] = 1;   Packman[a3 + 2][b3 - 3] = 1;   Packman[a3 + 2][b3 - 4] = 1;   Packman[a3 + 3][b3] = 1;   Packman[a3 + 3][b3 - 1] = 1;
+        Packman[a3 + 3][b3 - 2] = 1;   Packman[a3 + 3][b3 - 3] = 1;   Packman[a3 + 3][b3 - 4] = 1;
+
+    }
+    if (Packman[a8][b8] == 9) {//ㅓ
+        Packman[a8][b8] = 1;   Packman[a8 + 1][b8] = 1;   Packman[a8 + 2][b8] = 1;   Packman[a8 + 3][b8] = 1;   Packman[a8 + 4][b8] = 1;   Packman[a8 + 5][b8] = 1;
+
+        Packman[a8][b8 + 1] = 1;   Packman[a8 + 1][b8 + 1] = 1;   Packman[a8 + 2][b8 + 1] = 1;   Packman[a8 + 3][b8 + 1] = 1;   Packman[a8 + 4][b8 + 1] = 1;   Packman[a8 + 5][b8 + 1] = 1;
+
+        Packman[a8 + 2][b8 - 1] = 1;   Packman[a8 + 2][b8 - 2] = 1;   Packman[a8 + 2][b8 - 3] = 1;   Packman[a8 + 2][b8 - 4] = 1;   Packman[a8 + 3][b8] = 1;   Packman[a8 + 3][b8 - 1] = 1;
+        Packman[a8 + 3][b8 - 2] = 1;   Packman[a8 + 3][b8 - 3] = 1;   Packman[a8 + 3][b8 - 4] = 1;
+    }
+    if (Packman[a4][b4] == 9) {//ㅣ//모양 장애물 설정
+        Packman[a4][b4] = 1;   Packman[a4 + 1][b4] = 1;   Packman[a4 + 2][b4] = 1;   Packman[a4 + 3][b4] = 1;   Packman[a4 + 4][b4] = 1;   Packman[a4 + 5][b4] = 1;
+
+        Packman[a4][b4 + 1] = 1;   Packman[a4 + 1][b4 + 1] = 1;   Packman[a4 + 2][b4 + 1] = 1;   Packman[a4 + 3][b4 + 1] = 1;   Packman[a4 + 4][b4 + 1] = 1;   Packman[a4 + 5][b4 + 1] = 1;
+    }
+    if (Packman[a5][b5] == 9) {//- 모양 장애물 설정
+        Packman[a4][b4] = 1;   Packman[a4][b4 + 1] = 1;   Packman[a4][b4 + 2] = 1;   Packman[a4][b4 + 3] = 1;   Packman[a4 + 1][b4] = 1;   Packman[a4 + 1][b4 + 1] = 1;   Packman[a4 + 1][b4 + 2] = 1;   Packman[a4 + 1][b4 + 3] = 1;
+    }
+    if (Packman[a5][b5] == 9) {//ㅗ 모양 장애물 설정
+
+        Packman[a5][b5] = 1;   Packman[a5][b5 + 1] = 1;   Packman[a5][b5 + 2] = 1;   Packman[a5][b5 + 3] = 1;   Packman[a5][b5 + 4] = 1;   Packman[a5][b5 + 5] = 1;
+
+        Packman[a5 + 1][b5] = 1;   Packman[a5 + 1][b5 + 1] = 1;   Packman[a5 + 1][b5 + 2] = 1;   Packman[a5 + 1][b5 + 3] = 1;   Packman[a5 + 1][b5 + 4] = 1;   Packman[a5 + 1][b5 + 5] = 1;
+
+        Packman[a5 - 1][b5 + 2] = 1;   Packman[a5 - 1][b5 + 3] = 1;   Packman[a5 - 2][b5 + 2] = 1;   Packman[a5 - 2][b5 + 3] = 1;
+    }
+    if (Packman[a12][b12] == 9) {//ㅁ 모양 장애물 설정
+        Packman[a12][b12] = 1; Packman[a12][b12 + 1] = 1; Packman[a12][b12 + 2] = 1; Packman[a12][b12 + 3] = 1; Packman[a12 + 1][b12] = 1; Packman[a12 + 1][b12 + 1] = 1; Packman[a12 + 1][b12 + 2] = 1;
+        Packman[a12 + 1][b12 + 3] = 1; Packman[a12 + 2][b12] = 1; Packman[a12 + 2][b12 + 1] = 1; Packman[a12 + 2][b12 + 2] = 1; Packman[a12 + 2][b12 + 3] = 1; Packman[a12 + 3][b12] = 1;
+        Packman[a12 + 3][b12 + 1] = 1; Packman[a12 + 3][b12 + 2] = 1; Packman[a12 + 3][b12 + 3] = 1;
+    }
+
+    if (Packman[a13][b13] == 9) {//ㅁ
+        Packman[a13][b13] = 1; Packman[a13][b13 + 1] = 1; Packman[a13][b13 + 2] = 1; Packman[a13][b13 + 3] = 1; Packman[a13 + 1][b13] = 1; Packman[a13 + 1][b13 + 1] = 1; Packman[a13 + 1][b13 + 2] = 1;
+        Packman[a13 + 1][b13 + 3] = 1; Packman[a13 + 2][b13] = 1; Packman[a13 + 2][b13 + 1] = 1; Packman[a13 + 2][b13 + 2] = 1; Packman[a13 + 2][b13 + 3] = 1; Packman[a13 + 3][b13] = 1;
+        Packman[a13 + 3][b13 + 1] = 1; Packman[a13 + 3][b13 + 2] = 1; Packman[a13 + 3][b13 + 3] = 1;
+    }
+    if (Packman[a14][b14] == 9) {//ㅁ
+        Packman[a14][b14] = 1; Packman[a14][b14 + 1] = 1; Packman[a14][b14 - 1] = 1;  Packman[a14][b14 - 2] = 1;  Packman[a14 + 1][b14] = 1; Packman[a14 + 1][b14 + 1] = 1;
+        Packman[a14 + 1][b14 - 1] = 1;  Packman[a14 + 1][b14 - 2] = 1;  Packman[a14 + 2][b14] = 1; Packman[a14 + 2][b14 + 1] = 1; Packman[a14 + 2][b14 - 1] = 1;  Packman[a14 + 2][b14 - 2] = 1;
+        Packman[a14 + 3][b14] = 1; Packman[a14 + 3][b14 + 1] = 1; Packman[a14 + 3][b14 - 1] = 1;  Packman[a14 + 3][b14 - 2] = 1;
+    }
+    if (Packman[a15][b15] == 9) {//- 뒤로 장애물 설정
+        Packman[a15][b15] = 1; Packman[a15][b15 + 1] = 1; Packman[a15][b15 - 1] = 1;  Packman[a15][b15 - 2] = 1;  Packman[a15 + 1][b15] = 1;
+        Packman[a15 + 1][b15 + 1] = 1; Packman[a15 + 1][b15 - 1] = 1; Packman[a15 + 1][b15 - 2] = 1;
+
+    }
+    for (int i = 0; i < 20; i += 2)
+        for (int j = 0; j < 32; j += 2)
+            if (Packman[i][j] == 0) {
+                Packman[i][j] = 4;//장애물 구성 후 남은 공간에 과자 배치
+                ScoreCount++;//과자수 
+            }
+
+
+}
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     static HDC hdc, mem1dc, mem2dc;
@@ -803,30 +958,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     TCHAR str[100], lpstrFile[100] = _T(""), lpstrFileTitle[100] = _T("");
     TCHAR filter[] = _T("JPG(.jpg,.jpeg)\0*.jpg;*.jpeg\0PNG(.png)\0*.png\0");
-         
-    srand((unsigned int)time(NULL));
-    int a = 3 + (rand() % 3) * 4, b = 19 + (rand() % 3) * 4;;//ㅏ 난수를 이용하여 랜덤 좌표를 설정
-    int a7 = 3 + (rand() % 3) * 4, b7 = 19 + (rand() % 3) * 4;;//ㅏ 모양 장애물
-            
-    int a4 = 3 + (rand() % 4) * 4, b4 = 19 + (rand() % 3) * 4;//ㅣ
-    int a5 = 15, b5 = 3 + (rand() % 5) * 4;//ㅗ
-
-    int a6 = 3, b6 = 3 + (rand() % 5) * 4;//ㅜ
-    int a2 = 15, b2 = 3 + (rand() % 5) * 4;//ㅜ
-
-    int a3 = 7, b3 = 7;//ㅓ
-    int a8 = 11 + (rand() % 2) * 4, b8 = 27;//ㅓ
-
-    int a1 = 7, b1 = 11;//ㅡ 
-    int a9 = 11, b9 = 11;//ㅡ
-    int a10 = 3 + (rand() % 3) * 4, b10 = 3 + (rand() % 5) * 4;//ㅡ
-    int a11 = 3 + (rand() % 3) * 4, b11 = 3 + (rand() % 5) * 4;//ㅡ
-
-    int a12 = 3, b12 = 3 + (rand() % 5) * 4;//ㅁ
-    int a13 = 7, b13 = 3 + (rand() % 5) * 4;//ㅁ       
-    int a14 = 7 + (rand() % 2) * 4, b14 = 19 + (rand() % 3) * 4;//-ㅁ
-    int a15 = 15, b15 = 3 + (rand() % 5) * 4;//-
-      
+    
         switch (message)
     {
     case WM_CREATE:
@@ -855,120 +987,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         M1 = 1;
         M2 = 2;
         M3 = 3;//몬스터들의 기본 모습
-        
-            if (Packman[a][b] == 9) {//ㅏ 모양 장애물 설정
-                Packman[a][b] = 1; Packman[a + 1][b] = 1; Packman[a + 2][b] = 1; Packman[a + 3][b] = 1; Packman[a + 4][b] = 1; Packman[a + 5][b] = 1;
-               
-                Packman[a][b + 1] = 1; Packman[a + 1][b + 1] = 1; Packman[a + 2][b + 1] = 1; Packman[a + 3][b + 1] = 1; Packman[a + 4][b + 1] = 1; Packman[a + 5][b + 1] = 1;
-               
-                Packman[a + 2][b + 2] = 1; Packman[a + 3][b + 2] = 1; Packman[a + 2][b + 3] = 1; Packman[a + 3][b + 3] = 1;
-                
-            }
-            if (Packman[a7][b7] == 9) {//ㅏ
-                Packman[a7][b7] = 1;   Packman[a7 + 1][b7] = 1;   Packman[a7 + 2][b7] = 1;   Packman[a7 + 3][b7] = 1;   Packman[a7 + 4][b7] = 1;   Packman[a7 + 5][b7] = 1;
 
-                Packman[a7][b7 + 1] = 1;   Packman[a7 + 1][b7 + 1] = 1;   Packman[a7 + 2][b7 + 1] = 1;   Packman[a7 + 3][b7 + 1] = 1;   Packman[a7 + 4][b7 + 1] = 1;   Packman[a7 + 5][b7 + 1] = 1;
-
-                Packman[a7 + 2][b7 + 2] = 1;   Packman[a7 + 3][b7 + 2] = 1;   Packman[a7 + 2][b7 + 3] = 1;   Packman[a7 + 3][b7 + 3] = 1;
-            }
-
-            if (Packman[a1][b1] == 9) {//ㅡ 모양 장애물 설정
-                Packman[a1][b1] = 1;   Packman[a1][b1 + 1] = 1;   Packman[a1][b1 + 2] = 1;   Packman[a1][b1 + 3] = 1;   Packman[a1][b1 + 4] = 1;   Packman[a1][b1 + 5] = 1;
-              
-                Packman[a1 + 1][b1] = 1;   Packman[a1 + 1][b1 + 1] = 1;    Packman[a1 + 1][b1 + 2] = 1;  Packman[a1 + 1][b1 + 3] = 1;   Packman[a1 + 1][b1 + 4] = 1;   Packman[a1 + 1][b1 + 5] = 1;                        
-            }
-            if (Packman[a9][b9] == 9) {//ㅡ
-                Packman[a9][b9] = 1;   Packman[a9][b9 + 1] = 1;   Packman[a9][b9 + 2] = 1;   Packman[a9][b9 + 3] = 1;   Packman[a9][b9 + 4] = 1;   Packman[a9][b9 + 5] = 1;
-            
-                Packman[a9 + 1][b9] = 1;   Packman[a9 + 1][b9 + 1] = 1;   Packman[a9 + 1][b9 + 2] = 1;   Packman[a9 + 1][b9 + 3] = 1;   Packman[a9 + 1][b9 + 4] = 1;   Packman[a9 + 1][b9 + 5] = 1;
-            }
-            if (Packman[a10][b10] == 9) {//ㅡ
-                Packman[a10][b10] = 1;     Packman[a10][b10 + 1] = 1; Packman[a10][b10 + 2] = 1; Packman[a10][b10 + 3] = 1; Packman[a10][b10 + 4] = 1; Packman[a10][b10 + 5] = 1;
-
-                Packman[a10 + 1][b10] = 1; Packman[a10 + 1][b10 + 1] = 1; Packman[a10 + 1][b10 + 2] = 1; Packman[a10 + 1][b10 + 3] = 1; Packman[a10 + 1][b10 + 4] = 1; Packman[a10 + 1][b10 + 5] = 1;
-            }
-            if (Packman[a11][b11] == 9) {//ㅡ
-                Packman[a11][b11] = 1; Packman[a11][b11 + 1] = 1; Packman[a11][b11 + 2] = 1; Packman[a11][b11 + 3] = 1; Packman[a11][b11 + 4] = 1; Packman[a11][b11 + 5] = 1;
-
-                Packman[a11 + 1][b11] = 1; Packman[a11 + 1][b11 + 1] = 1; Packman[a11 + 1][b11 + 2] = 1; Packman[a11 + 1][b11 + 3] = 1; Packman[a11 + 1][b11 + 4] = 1; Packman[a11 + 1][b11 + 5] = 1;
-
-            }
-            if (Packman[a2][b2] == 9) {//ㅜ 모양 장애물 설정
-                Packman[a2][b2] = 1;   Packman[a2][b2 + 1] = 1;   Packman[a2][b2 + 2] = 1;   Packman[a2][b2 + 3] = 1;   Packman[a2][b2 + 4] = 1;   Packman[a2][b2 + 5] = 1;
-               
-                Packman[a2+1][b2] = 1; Packman[a2 + 1][b2 + 1] = 1;   Packman[a2 + 1][b2 + 2] = 1;   Packman[a2 + 1][b2 + 3] = 1;   Packman[a2 + 1][b2 + 4] = 1;   Packman[a2 + 1][b2 + 5] = 1;
-
-                Packman[a2 + 2][b2 + 2] = 1;   Packman[a2 + 2][b2 + 3] = 1;   Packman[a2 + 3][b2 + 2] = 1;   Packman[a2 + 3][b2 + 3] = 1;               
-            }
-            if (Packman[a6][b6] == 9) {//ㅜ
-                Packman[a6][b6] = 1;   Packman[a6][b6 + 1] = 1;   Packman[a6][b6 + 2] = 1;   Packman[a6][b6 + 3] = 1;   Packman[a6][b6 + 4] = 1;   Packman[a6][b6 + 5] = 1;
-
-                Packman[a6 + 1][b6] = 1;   Packman[a6 + 1][b6 + 1] = 1;   Packman[a6 + 1][b6 + 2] = 1;   Packman[a6 + 1][b6 + 3] = 1;   Packman[a6 + 1][b6 + 4] = 1;   Packman[a6 + 1][b6 + 5] = 1;
-
-                Packman[a6 + 2][b6 + 2] = 1;   Packman[a6 + 2][b6 + 3] = 1;   Packman[a6 + 3][b6 + 2] = 1;   Packman[a6 + 3][b6 + 3] = 1;
-            }
-            if (Packman[a3][b3] == 9) {//ㅓ 모양 장애물 설정
-                Packman[a3][b3] = 1;   Packman[a3 + 1][b3] = 1;   Packman[a3 + 2][b3] = 1;   Packman[a3 + 3][b3] = 1;   Packman[a3 + 4][b3] = 1;   Packman[a3 + 5][b3] = 1;
-
-                Packman[a3][b3 + 1] = 1;   Packman[a3 + 1][b3 + 1] = 1;   Packman[a3 + 2][b3 + 1] = 1;   Packman[a3 + 3][b3 + 1] = 1;   Packman[a3 + 4][b3 + 1] = 1;   Packman[a3 + 5][b3 + 1] = 1;
-
-                Packman[a3 + 2][b3 - 1] = 1;   Packman[a3 + 2][b3 - 2] = 1;   Packman[a3 + 2][b3 - 3] = 1;   Packman[a3 + 2][b3 - 4] = 1;   Packman[a3 + 3][b3] = 1;   Packman[a3 + 3][b3 - 1] = 1;
-                Packman[a3 + 3][b3 - 2] = 1;   Packman[a3 + 3][b3 - 3] = 1;   Packman[a3 + 3][b3 - 4] = 1;
-                
-            }
-            if (Packman[a8][b8] == 9) {//ㅓ
-                Packman[a8][b8] = 1;   Packman[a8 + 1][b8] = 1;   Packman[a8 + 2][b8] = 1;   Packman[a8 + 3][b8] = 1;   Packman[a8 + 4][b8] = 1;   Packman[a8 + 5][b8] = 1;
-
-                Packman[a8][b8 + 1] = 1;   Packman[a8 + 1][b8 + 1] = 1;   Packman[a8 + 2][b8 + 1] = 1;   Packman[a8 + 3][b8 + 1] = 1;   Packman[a8 + 4][b8 + 1] = 1;   Packman[a8 + 5][b8 + 1] = 1;
-
-                Packman[a8 + 2][b8 - 1] = 1;   Packman[a8 + 2][b8 - 2] = 1;   Packman[a8 + 2][b8 - 3] = 1;   Packman[a8 + 2][b8 - 4] = 1;   Packman[a8 + 3][b8] = 1;   Packman[a8 + 3][b8 - 1] = 1;
-                Packman[a8 + 3][b8 - 2] = 1;   Packman[a8 + 3][b8 - 3] = 1;   Packman[a8 + 3][b8 - 4] = 1;
-            }
-            if (Packman[a4][b4] == 9) {//ㅣ//모양 장애물 설정
-                Packman[a4][b4] = 1;   Packman[a4 + 1][b4] = 1;   Packman[a4 + 2][b4] = 1;   Packman[a4 + 3][b4] = 1;   Packman[a4 + 4][b4] = 1;   Packman[a4 + 5][b4] = 1;
-
-                Packman[a4][b4 + 1] = 1;   Packman[a4 + 1][b4 + 1] = 1;   Packman[a4 + 2][b4 + 1] = 1;   Packman[a4 + 3][b4 + 1] = 1;   Packman[a4 + 4][b4 + 1] = 1;   Packman[a4 + 5][b4 + 1] = 1;
-            }
-            if (Packman[a5][b5] == 9) {//- 모양 장애물 설정
-                Packman[a4][b4] = 1;   Packman[a4][b4 + 1] = 1;   Packman[a4][b4 + 2] = 1;   Packman[a4][b4 + 3] = 1;   Packman[a4 + 1][b4] = 1;   Packman[a4 + 1][b4 + 1] = 1;   Packman[a4 + 1][b4 + 2] = 1;   Packman[a4 + 1][b4 + 3] = 1;
-            }
-            if (Packman[a5][b5] == 9) {//ㅗ 모양 장애물 설정
-
-                Packman[a5][b5] = 1;   Packman[a5][b5 + 1] = 1;   Packman[a5][b5 + 2] = 1;   Packman[a5][b5 + 3] = 1;   Packman[a5][b5 + 4] = 1;   Packman[a5][b5 + 5] = 1;
-
-                Packman[a5 + 1][b5] = 1;   Packman[a5 + 1][b5 + 1] = 1;   Packman[a5 + 1][b5 + 2] = 1;   Packman[a5 + 1][b5 + 3] = 1;   Packman[a5 + 1][b5 + 4] = 1;   Packman[a5 + 1][b5 + 5] = 1;
-
-                Packman[a5 - 1][b5 + 2] = 1;   Packman[a5 - 1][b5 + 3] = 1;   Packman[a5 - 2][b5 + 2] = 1;   Packman[a5 - 2][b5 + 3] = 1;
-            }
-            if (Packman[a12][b12] == 9) {//ㅁ 모양 장애물 설정
-                Packman[a12][b12] = 1; Packman[a12][b12 + 1] = 1; Packman[a12][b12 + 2] = 1; Packman[a12][b12 + 3] = 1; Packman[a12 + 1][b12] = 1; Packman[a12 + 1][b12 + 1] = 1; Packman[a12 + 1][b12 + 2] = 1;
-                Packman[a12 + 1][b12 + 3] = 1; Packman[a12 + 2][b12] = 1; Packman[a12 + 2][b12 + 1] = 1; Packman[a12 + 2][b12 + 2] = 1; Packman[a12 + 2][b12 + 3] = 1; Packman[a12 + 3][b12] = 1;
-                Packman[a12 + 3][b12 + 1] = 1; Packman[a12 + 3][b12 + 2] = 1; Packman[a12 + 3][b12 + 3] = 1;
-            }
-
-            if (Packman[a13][b13] == 9) {//ㅁ
-                Packman[a13][b13] = 1; Packman[a13][b13 + 1] = 1; Packman[a13][b13 + 2] = 1; Packman[a13][b13 + 3] = 1; Packman[a13 + 1][b13] = 1; Packman[a13 + 1][b13 + 1] = 1; Packman[a13 + 1][b13 + 2] = 1; 
-                Packman[a13 + 1][b13 + 3] = 1; Packman[a13 + 2][b13] = 1; Packman[a13 + 2][b13 + 1] = 1; Packman[a13 + 2][b13 + 2] = 1; Packman[a13 + 2][b13 + 3] = 1; Packman[a13 + 3][b13] = 1; 
-                Packman[a13 + 3][b13 + 1] = 1; Packman[a13 + 3][b13 + 2] = 1; Packman[a13 + 3][b13 + 3] = 1;
-            }
-            if (Packman[a14][b14] == 9) {//ㅁ
-                Packman[a14][b14] = 1; Packman[a14][b14 + 1] = 1; Packman[a14][b14 -1] = 1;  Packman[a14][b14 -2] = 1;  Packman[a14 + 1][b14] = 1; Packman[a14 + 1][b14 + 1] = 1;
-                Packman[a14 + 1][b14 -1] = 1;  Packman[a14 + 1][b14 -2] = 1;  Packman[a14 + 2][b14] = 1; Packman[a14 + 2][b14 + 1] = 1; Packman[a14 + 2][b14 -1] = 1;  Packman[a14 + 2][b14 -2] = 1; 
-                Packman[a14 + 3][b14] = 1; Packman[a14 + 3][b14 + 1] = 1; Packman[a14 + 3][b14 -1] = 1;  Packman[a14 + 3][b14 -2] = 1;
-            }
-            if (Packman[a15][b15] == 9) {//- 뒤로 장애물 설정
-                Packman[a15][b15] = 1; Packman[a15][b15 + 1] = 1; Packman[a15][b15 -1] = 1;  Packman[a15][b15 -2] = 1;  Packman[a15 + 1][b15] = 1;
-                Packman[a15 + 1][b15 + 1] = 1; Packman[a15 + 1][b15 - 1] = 1; Packman[a15 + 1][b15 - 2] = 1;
-           
-            }
-            for (int i = 0; i < 20; i += 2)
-                for (int j = 0; j < 32; j += 2)
-                    if (Packman[i][j] == 0) {
-                        Packman[i][j] = 4;//장애물 구성 후 남은 공간에 과자 배치
-                        ScoreCount++;//과자수 
-                    }
-            
-            hBit2 = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Background));// 배경 비트맵 저장
+        RandomMap();
+    
+        hBit2 = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Background));// 배경 비트맵 저장
 
         break;
 
@@ -1096,8 +1118,36 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             case VK_DOWN:
                 s = 'D';//아래쪽상수
                 break;
-            case VK_RETURN://엔터
-                s = 'B';  //처음으로돌아가기
+            case VK_ESCAPE://ESC누르면 맵재생성/ 재시작
+                RandomMap();
+                hBit2 = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_Background));
+                score = 0;
+                count_time = 60;
+                Clear_Map(Packman);
+                
+                SetTimer(hWnd, 2, 1000, NULL); // 제한시간용 타이머 재시작
+                x = 1; y = 1;// 팩맨 처음 좌표
+                m1 = 9; n1 = 13;
+                m2 = 9; n2 = 15;
+                m3 = 9; n3 = 17;//몬스터들의 처음 좌표
+
+                Packman[y][x] = 5;//팩맨 그림을 4등분하여 왼쪽위를 출력하기 위해 4개의 좌표 중 왼쪽위 좌표를 5로 설정
+                Packman[y][x + 1] = 6;//팩맨 그림을 4등분하여  오른쪽위를 출력하기 위해 4개의 좌표 중 왼쪽위 좌표를 6로 설정
+                Packman[y + 1][x] = 7;//팩맨 그림을 4등분하여 왼쪽아래를 출력하기 위해 4개의 좌표 중 왼쪽위 좌표를 7로 설정
+                Packman[y + 1][x + 1] = 8;//팩맨 그림을 4등분하여 오른쪽아래를 출력하기 위해 4개의 좌표 중 왼쪽위 좌표를 8로 설정
+
+                Packman[m1][n1] = 15;//빨간 몬스터 줄력하기 위해 15로 설정
+
+                Packman[m2][n2] = 16;//분홍 몬스터 줄력하기 위해 15로 설정
+
+                Packman[m3][n3] = 17;//민트 몬스터 줄력하기 위해 15로 설정
+
+                s = 'R';//팩맨의 기본모습
+                M1 = 2;
+                M2 = 2;
+                M3 = 2;//몬스터들의 기본 모습
+                FLAG = FALSE;
+                game_state = 1; // 엔터 누르면 게임 다시 시작 
                 break;
             }
         }
@@ -1398,7 +1448,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 resultScore_len = wsprintf(resultScore, TEXT("게임종료    SCORE:  %d"), score); // 게임 중 등장하는 문구 설정하는 곳 
                 resultScore_len2 = wsprintf(resultScore2, TEXT("Enter를 눌러 다시하기"));
                 time_announcer_len = wsprintf(time_announcer, TEXT("남은시간: %d"), count_time);
-                time_announcer_len2 = wsprintf(time_announcer2, TEXT("HIGH SCORE: %d"), score);
+                time_announcer_len2 = wsprintf(time_announcer2, TEXT("SCORE: %d"), score);
                 InvalidateRgn(hWnd, NULL, FLAG);
                 break;
             }
