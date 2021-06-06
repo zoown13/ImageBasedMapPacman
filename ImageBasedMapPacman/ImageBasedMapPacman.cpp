@@ -231,7 +231,7 @@ void IsItemInLabels(int* result, wchar_t* labels)
 void MakeMap(HDC hdc) //맵 장애물 표시
 {
     HDC memdc;
-    HBITMAP hBit, mBit;
+    HBITMAP hBit;
     int i, j;   
 
     memdc = CreateCompatibleDC(hdc);
@@ -751,7 +751,7 @@ void RandomMap(void) {//맵 구성물 랜덤생생
             Packman[i][j] = 1;
     for (i = 0; i < 20; i++)
         for (j = 0; j < 32; j += 31)
-            Packman[i][j] == 1;
+            Packman[i][j] = 1;
     for (i = 1; i < 19; i++)
         for (j = 1; j < 31; j++)
             Packman[i][j] = 0;
@@ -963,7 +963,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
     case WM_CREATE:
         PlaySound(MAKEINTRESOURCE(IDR_WAVE1), g_hInst, SND_RESOURCE | SND_ASYNC | SND_LOOP); // 소리 내는 함수
-        AddFontResourceA("C:\Windows\Fonts\NEXONFootballGothicB.ttf"); // 폰트 불러오기 
+        AddFontResourceA("C:\\Windows\\Fonts\\NEXONFootballGothicB.ttf"); // 폰트 불러오기 
 
         SetTimer(hWnd, 2, 1000, NULL); // 제한시간용 타이머
         GetClientRect(hWnd, &rectView);
@@ -1091,11 +1091,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             getImageLabels(imageName, labels); // 라벨링 데이터 가져와 labels에 저장
 
             IsItemInLabels(result, labels); // 라벨링 데이터에서 맵에 표현가능한 오브젝트 확인
-
-            MessageBox(hWnd, labels,
-                _T("이미지 라벨링 데이터 확인"), MB_OKCANCEL);
-
-                
+           
             switch (wParam) {
             case VK_RETURN:
                 game_state = 1; // 엔터 누르면 게임 시작 
