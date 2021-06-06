@@ -231,8 +231,8 @@ void IsItemInLabels(int* result, wchar_t* labels)
 void MakeMap(HDC hdc) //맵 장애물 표시
 {
     HDC memdc;
-    HBITMAP hBit, mBit;
-    int i, j;
+    HBITMAP hBit;
+    int i, j;   
 
     memdc = CreateCompatibleDC(hdc);
     hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Tree));
@@ -750,7 +750,7 @@ void RandomMap(void) {//맵 구성물 랜덤생생
             Packman[i][j] = 1;
     for (i = 0; i < 20; i++)
         for (j = 0; j < 32; j += 31)
-            Packman[i][j] == 1;
+            Packman[i][j] = 1;
     for (i = 1; i < 19; i++)
         for (j = 1; j < 31; j++)
             Packman[i][j] = 0;
@@ -962,7 +962,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
     case WM_CREATE:
         PlaySound(MAKEINTRESOURCE(IDR_WAVE1), g_hInst, SND_RESOURCE | SND_ASYNC | SND_LOOP); // 소리 내는 함수
-        AddFontResourceA("C:\Windows\Fonts\NEXONFootballGothicB.ttf"); // 폰트 불러오기 
+        AddFontResourceA("C:\\Windows\\Fonts\\NEXONFootballGothicB.ttf"); // 폰트 불러오기 
 
         SetTimer(hWnd, 2, 1000, NULL); // 제한시간용 타이머
         GetClientRect(hWnd, &rectView);
@@ -1067,6 +1067,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_KEYDOWN: //키보드의 어떤 버튼이 내려간 것을 감지했을 때 발생되는 메시지
 
         if (game_state == 0) {
+            int error = 0;
 
             memset(&OFN, 0, sizeof(OPENFILENAME));
             OFN.lStructSize = sizeof(OPENFILENAME);
@@ -1082,19 +1083,27 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 _stprintf_s(imageNameUrl, _T("/api/uploads/%s"), lpstrFileTitle); // url을 가져오기 위해 필요한 파일명 저장
                 _stprintf_s(str, _T("%s 파일이 성공적으로 업로드 되었습니다."), lpstrFile);
 
-                uploadImage(lpstrFile, imageNameUrl); // 이미지 업로드
+                error = uploadImage(lpstrFile, imageNameUrl); // 이미지 업로드
+
+                if (error != 0) {
+                    MessageBox(hWnd, _T("이미지 업로드 문제 발생!"), _T("업로드 확인"), MB_OK);
+                    break;
+                }
 
                 MessageBox(hWnd, str, _T("업로드 확인"), MB_OK);
+
+                Sleep(3000);// 백엔드에서 이미지 분석하는 동안 대기
+
+                getImageLabels(imageName, labels); // 라벨링 데이터 가져와 labels에 저장
+
+                IsItemInLabels(result, labels); // 라벨링 데이터에서 맵에 표현가능한 오브젝트 확인
             }
-
-            getImageLabels(imageName, labels); // 라벨링 데이터 가져와 labels에 저장
-
-            IsItemInLabels(result, labels); // 라벨링 데이터에서 맵에 표현가능한 오브젝트 확인
-
-            MessageBox(hWnd, labels,
-                _T("이미지 라벨링 데이터 확인"), MB_OKCANCEL);
-
-                
+            else {
+                MessageBox(hWnd, _T("이미지 파일을 다시 선택해주세요!"), _T("업로드 확인"), MB_OK);
+                break;
+            }
+            
+           
             switch (wParam) {
             case VK_RETURN:
                 game_state = 1; // 엔터 누르면 게임 시작 
