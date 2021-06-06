@@ -141,6 +141,36 @@
     <Image Include="..\tree.bmp">
       <Filter>리소스 파일</Filter>
     </Image>
+    <Image Include="..\bmp00012.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\bmp00013.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\bmp00014.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\bmp00015.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\bmp00016.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\bmp00017.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\bitmap6.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\bitmap7.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\bitmap8.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="..\obj_tree.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\Pac Baby (3 Minutes) - Pac-Man CE 2 Music.wav">
