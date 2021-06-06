@@ -51,6 +51,11 @@
 #define IDB_BITMAP9                     175
 #define IDB_obj_Person                  175
 #define IDB_obj_Tree                    176
+#define IDB_obj_FruitMask               177
+#define IDB_obj_BallMask                178
+#define IDB_obj_ballonMask              179
+#define IDB_obj_Tree1                   180
+#define IDB_obj_TreeX2                  180
 #define ID_MAP_32771                    32771
 #define IDM_UPLOAD                      32772
 #define IDM_DOWNLOAD                    32773
@@ -61,7 +66,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        177
+#define _APS_NEXT_RESOURCE_VALUE        186
 #define _APS_NEXT_COMMAND_VALUE         32776
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           110
