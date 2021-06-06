@@ -232,17 +232,17 @@ void MakeMap(HDC hdc) //맵 장애물 표시
 {
     HDC memdc;
     HBITMAP hBit, mBit;
-    int i, j;   
+    int i, j;
 
     memdc = CreateCompatibleDC(hdc);
     hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Tree));
     SelectObject(memdc, hBit);
 
     for (i = 0; i < 20; i += 19)
-        for (j = 0; j < 32; j ++)
+        for (j = 0; j < 32; j++)
             if (Packman[i][j] == 1)
                 BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
-    for (i = 0; i < 20; i ++)
+    for (i = 0; i < 20; i++)
         for (j = 0; j < 32; j += 31)
             if (Packman[i][j] == 1)
                 BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);//테두리 나무로 출력
@@ -259,190 +259,189 @@ void MakeMap(HDC hdc) //맵 장애물 표시
                 BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);//장애물 출력에 규칙성은 있지만 맵생성이 랜덤
             }
     if (result[0]) {       // result[i]가 1이면 해당 사진을 맵으로 씀 
-        hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Tree));//나무
-        SelectObject(memdc, hBit);
-        for (i = 0; i < 20; i += 19)
-            for (j = 1; j < 32; j += 2)
-                if (Packman[i][j] == 1)
-                    BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
-        for (i = 0; i < 20; i += 2)
-            for (j = 0; j < 32; j += 31)
-                if (Packman[i][j] == 1)
-                    BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);//겉에 태두리 부분 나무와 차로 구성
-    }
-    if (result[1]) {
-        hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Car));//차
-        SelectObject(memdc, hBit);
-        for (i = 0; i < 20; i += 19)
-            for (j = 0; j < 32; j += 2)
-                if (Packman[i][j] == 1)
-                    BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
-        for (i = 1; i < 20; i += 2)
-            for (j = 0; j < 32; j += 31)
-                if (Packman[i][j] == 1)
-                    BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);//겉에 태두리 부분 나무와 차로 구성
+    hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Tree));//나무
+    SelectObject(memdc, hBit);
+    for (i = 0; i < 20; i += 19)
+        for (j = 1; j < 32; j += 2)
+            if (Packman[i][j] == 1)
+                BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+    for (i = 0; i < 20; i += 2)
+        for (j = 0; j < 32; j += 31)
+            if (Packman[i][j] == 1)
+                BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);//겉에 태두리 부분 나무와 차로 구성
+ }
+ if (result[1]) {
+    hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Car));//차
+    SelectObject(memdc, hBit);
+    for (i = 0; i < 20; i += 19)
+        for (j = 0; j < 32; j += 2)
+            if (Packman[i][j] == 1)
+                BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+    for (i = 1; i < 20; i += 2)
+        for (j = 0; j < 32; j += 31)
+            if (Packman[i][j] == 1)
+                BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);//겉에 태두리 부분 나무와 차로 구성
 
-    }
+}
     if (result[2]) {
-        hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_bicycle));//자전거
-        SelectObject(memdc, hBit);
-        i = 5;
-        for (j = 3; j < 30; j += 4)
-            if (Packman[i][j] == 1) {
-                BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
-                BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
-                BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
-                BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);//장애물 출력에 규칙성은 있지만 맵생성이 랜덤
+    hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_bicycle));//자전거
+    SelectObject(memdc, hBit);
+    i = 5;
+    for (j = 3; j < 30; j += 4)
+        if (Packman[i][j] == 1) {
+            BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+            BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
+            BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
+            BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);//장애물 출력에 규칙성은 있지만 맵생성이 랜덤
 
-            }
-        i = 9;
-        for (j = 5; j < 30; j += 4)
-            if (Packman[i][j] == 1) {
-                BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
-                BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
-                BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
-                BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
+        }
+    i = 9;
+    for (j = 5; j < 30; j += 4)
+        if (Packman[i][j] == 1) {
+            BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+            BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
+            BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
+            BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
 
-            }
-        i = 11;
-        for (j = 3; j < 30; j += 4)
-            if (Packman[i][j] == 1) {
-                BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
-                BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
-                BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
-                BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
+        }
+    i = 11;
+    for (j = 3; j < 30; j += 4)
+        if (Packman[i][j] == 1) {
+            BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+            BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
+            BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
+            BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
 
-            }
-        i = 15;
-        for (j = 5; j < 30; j += 4)
-            if (Packman[i][j] == 1) {
-                BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
-                BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
-                BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
-                BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);//사이즈 키워서 4칸에 들어가게 장애물 출력
+        }
+    i = 15;
+    for (j = 5; j < 30; j += 4)
+        if (Packman[i][j] == 1) {
+            BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+            BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
+            BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
+            BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);//사이즈 키워서 4칸에 들어가게 장애물 출력
 
-            }
+        }
     }
 
     if (result[3]) {
-        hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Dog));//강아지
-        SelectObject(memdc, hBit);
-        i = 3;
-        for (j = 3; j < 30; j += 4)
-            if (Packman[i][j] == 1) {
-                BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
-                BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
-                BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
-                BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
-            }
-        i = 7;
-        for (j = 5; j < 30; j += 4)
-            if (Packman[i][j] == 1) {
-                BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
-                BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
-                BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
-                BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
+    hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Dog));//강아지
+    SelectObject(memdc, hBit);
+    i = 3;
+    for (j = 3; j < 30; j += 4)
+        if (Packman[i][j] == 1) {
+            BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+            BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
+            BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
+            BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
+        }
+    i = 7;
+    for (j = 5; j < 30; j += 4)
+        if (Packman[i][j] == 1) {
+            BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+            BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
+            BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
+            BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
 
-            }
-        i = 13;
-        for (j = 3; j < 30; j += 4)
-            if (Packman[i][j] == 1) {
-                BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
-                BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
-                BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
-                BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
+        }
+    i = 13;
+    for (j = 3; j < 30; j += 4)
+        if (Packman[i][j] == 1) {
+            BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+            BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
+            BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
+            BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
 
-            }
-        i = 17;
-        for (j = 5; j < 30; j += 4)
-            if (Packman[i][j] == 1) {
-                BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
-                BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
-                BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
-                BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);//사이즈 키워서 4칸에 들어가게 장애물 출력
+        }
+    i = 17;
+    for (j = 5; j < 30; j += 4)
+        if (Packman[i][j] == 1) {
+            BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+            BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
+            BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
+            BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);//사이즈 키워서 4칸에 들어가게 장애물 출력
 
-            }
+        }
     }
     if (result[4]) {
-        hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Person));//사람
-        SelectObject(memdc, hBit);
-        i = 3;
-        for (j = 5; j < 30; j += 4)
-            if (Packman[i][j] == 1) {
-                BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
-                BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
-                BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
-                BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
+    hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Person));//사람
+    SelectObject(memdc, hBit);
+    i = 3;
+    for (j = 5; j < 30; j += 4)
+        if (Packman[i][j] == 1) {
+            BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+            BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
+            BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
+            BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
 
-            }
-        i = 9;
-        for (j = 3; j < 30; j += 4)
-            if (Packman[i][j] == 1) {
-                BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
-                BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
-                BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
-                BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
-
-            }
-        i = 13;
-        for (j = 5; j < 30; j += 4)
-            if (Packman[i][j] == 1) {
-                BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
-                BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
-                BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
-                BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
-
-            }
-        i = 15;
-        for (j = 3; j < 30; j += 4)
-            if (Packman[i][j] == 1) {
-                BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
-                BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
-                BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
-                BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);//사이즈 키워서 4칸에 들어가게 장애물 출력
-            }
-
-        if (result[5]) {
-            hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Cat));//고양이
-            SelectObject(memdc, hBit);
-            i = 5;
-            for (j = 5; j < 30; j += 4)
-                if (Packman[i][j] == 1) {
-                    BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
-                    BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
-                    BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
-                    BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
-                }
-            i = 7;
-            for (j = 3; j < 30; j += 4)
-                if (Packman[i][j] == 1) {
-                    BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
-                    BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
-                    BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
-                    BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
-                }
-            i = 11;
-            for (j = 5; j < 30; j += 4)
-                if (Packman[i][j] == 1) {
-                    BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
-                    BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
-                    BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
-                    BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
-                }
-            i = 17;
-            for (j = 3; j < 30; j += 4)
-                if (Packman[i][j] == 1) {
-                    BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
-                    BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
-                    BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
-                    BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);//사이즈 키워서 4칸에 들어가게 장애물 출력
-                }
         }
+    i = 9;
+    for (j = 3; j < 30; j += 4)
+        if (Packman[i][j] == 1) {
+            BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+            BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
+            BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
+            BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
 
-        DeleteObject(hBit);
-        DeleteDC(memdc);
+        }
+    i = 13;
+    for (j = 5; j < 30; j += 4)
+        if (Packman[i][j] == 1) {
+            BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+            BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
+            BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
+            BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
 
+        }
+    i = 15;
+    for (j = 3; j < 30; j += 4)
+        if (Packman[i][j] == 1) {
+            BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+            BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
+            BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
+            BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);//사이즈 키워서 4칸에 들어가게 장애물 출력
+        }
     }
+    if (result[5]) {
+    hBit = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Cat));//고양이
+    SelectObject(memdc, hBit);
+    i = 5;
+    for (j = 5; j < 30; j += 4)
+        if (Packman[i][j] == 1) {
+            BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+            BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
+            BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
+            BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
+        }
+    i = 7;
+    for (j = 3; j < 30; j += 4)
+        if (Packman[i][j] == 1) {
+            BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+            BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
+            BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
+            BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
+        }
+    i = 11;
+    for (j = 5; j < 30; j += 4)
+        if (Packman[i][j] == 1) {
+            BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+            BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
+            BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
+            BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);
+        }
+    i = 17;
+    for (j = 3; j < 30; j += 4)
+        if (Packman[i][j] == 1) {
+            BitBlt(hdc, j * mapE2, i * mapE1, mapE2, mapE1, memdc, 0, 0, SRCCOPY);
+            BitBlt(hdc, (j + 1) * mapE2, i * mapE1, mapE2 + mapE2, mapE1, memdc, mapE2, 0, SRCCOPY);
+            BitBlt(hdc, j * mapE2, (i + 1) * mapE1, mapE2, mapE1 + mapE1, memdc, 0, mapE1, SRCCOPY);
+            BitBlt(hdc, (j + 1) * mapE2, (i + 1) * mapE1, mapE2 + mapE2, mapE1 + mapE1, memdc, mapE2, mapE1, SRCCOPY);//사이즈 키워서 4칸에 들어가게 장애물 출력
+        }
+     }
+
+    DeleteObject(hBit);
+    DeleteDC(memdc);
+
 }
 
 void Snack(HDC hdc) {    // 과자 그리기 함수 
@@ -471,7 +470,7 @@ void Snack(HDC hdc) {    // 과자 그리기 함수
                 BitBlt(hdc, j * mapE2 - 10, i * mapE1 - 10, 10, 10, memdc, 33, 33, SRCCOPY);//배경위에 원본
             }
         }
-    if (result[6]) {
+   if (result[6]) {
        Snack = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_ballon));//풍선
        Mask = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_ballonMask));
         for (i = 0; i < 20; i += 2)
@@ -489,7 +488,7 @@ void Snack(HDC hdc) {    // 과자 그리기 함수
                     BitBlt(hdc, j * mapE2 - 20, i * mapE1 - 20, snackSize1, snackSize2, memdc, 0, 0, SRCPAINT);//배경위에 원본
                 }
             }
-    }
+   }
    if (result[7]) {
         Snack = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_Ball));//공
         Mask = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_obj_BallMask));
