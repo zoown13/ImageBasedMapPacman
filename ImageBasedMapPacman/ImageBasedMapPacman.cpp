@@ -922,7 +922,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     time_announcer_size2.left = 1290;
     time_announcer_size2.top = 90;
     time_announcer_size2.right = 1500;
-    time_announcer_size2.bottom = 120;
+    time_announcer_size2.bottom = 120;   
 
     RECT resultScore_size; // 게임 종료시 출력되는 문구의 크기 
     resultScore_size.left = 550;
@@ -948,6 +948,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     initial_size2.right = 1050;
     initial_size2.bottom = 580;
 
+    RECT ESC;   // 게임 실행 중 문구의 위치
+    ESC.left = 1260;
+    ESC.top = 180;
+    ESC.right = 1600;
+    ESC.bottom = 250;
     static int game_state = 0; // 1분이 지나면 2로 바뀌고 게임 종료 
 
     HFONT hFont, oldFont;
@@ -1041,7 +1046,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             SetBkColor(hdc, RGB(0, 0, 61)); // 글자 배경을 투명하게 한다
             DrawText(hdc, time_announcer, time_announcer_len, &time_announcer_size, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
             DrawText(hdc, time_announcer2, time_announcer_len2, &time_announcer_size2, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
-
+            DrawText(hdc, _T("게임 진행 불가시 재시작 : ESC"), _tcslen(_T("게임 진행 불가시 재시작 : ESC")), &ESC, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
             DeleteObject(hFont);
             EndPaint(hWnd, &ps);
             break;
@@ -1059,6 +1064,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             oldFont = (HFONT)SelectObject(hdc, hFont);
             DrawText(hdc, resultScore, resultScore_len, &resultScore_size, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
             DrawText(hdc, resultScore2, resultScore_len2, &resultScore_size2, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+
             DeleteObject(hFont);
             EndPaint(hWnd, &ps);
             break;
